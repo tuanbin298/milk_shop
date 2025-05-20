@@ -5,6 +5,7 @@ import LoginPage from "./page/LoginPage/LoginPage";
 import RegisterPage from "./page/RegisterPage/RegisterPage";
 import Header from "./component/Header/Header";
 import Footer from "./component/Footer/Footer";
+import Homepage from "./page/HomePage/HomePage";
 
 function MainLayout() {
   return (
@@ -12,6 +13,7 @@ function MainLayout() {
       <Header />
 
       <Routes>
+        <Route path="/" element={<Homepage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
       </Routes>
