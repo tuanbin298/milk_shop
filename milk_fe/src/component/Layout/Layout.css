@@ -1,0 +1,13 @@
+.layout_background {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  background-color: #f4f4f4;
+}
+
+.layout_content {
+  max-width: 1264.67px;
+  width: 100%;
+  padding: 0 20px;
+  box-sizing: border-box;
+}

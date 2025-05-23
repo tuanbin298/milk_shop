@@ -1,0 +1,12 @@
+.carousel {
+  background-color: beige;
+  margin-top: 100px;
+  height: 80dvh;
+  position: relative;
+  object-position: top;
+}
+
+img {
+  width: 100%;
+  object-fit: contain;
+}
