@@ -1,10 +1,10 @@
-import Carousel from "../../component/Carousel/carousel";
+import CarouselImage from "../../component/Carousel/Carousel";
 
 export default function Homepage() {
   return (
     <div>
       {/* Carousel */}
-      <Carousel></Carousel>
+      <CarouselImage></CarouselImage>
     </div>
   );
 }

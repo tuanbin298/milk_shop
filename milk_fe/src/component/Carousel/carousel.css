@@ -1,12 +1,22 @@
 .carousel {
-  background-color: beige;
-  margin-top: 100px;
-  height: 80dvh;
-  position: relative;
-  object-position: top;
+  height: 60dvh;
 }
 
 img {
   width: 100%;
   object-fit: contain;
+}
+
+/* Arrow to move banner */
+.ant-carousel .slick-prev,
+.ant-carousel .slick-next,
+.ant-carousel .slick-prev:hover,
+.ant-carousel .slick-next:hover {
+  font-size: inherit;
+  color: currentColor;
+}
+
+/* Color of dot not select */
+.ant-carousel .slick-dots li button {
+  background: #333;
 }

@@ -1,27 +1,26 @@
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay } from "swiper/modules";
 import "./Carousel.css";
-import "swiper/css";
+import { Carousel } from "antd";
 
-function Carousel() {
-  const images = [1, 2, 3, 4, 5, 6].map(
+function CarouselImage() {
+  const contentStyle = {
+    height: "500px",
+    width: "100%",
+    objectFit: "cover",
+  };
+
+  const images = [1, 2, 3, 4].map(
     (i) => `src/assets/img/banner/banner${i}.jpg`
   );
 
   return (
-    <Swiper
-      loop={true}
-      modules={[Autoplay]}
-      autoplay={{ delay: 2500, disableOnInteraction: false }}
-      className="carousel"
-    >
-      {images.map((src, index) => (
-        <SwiperSlide key={index}>
-          <img src={src} />
-        </SwiperSlide>
+    <Carousel autoplay arrows infinite={true}>
+      {images.map((images, index) => (
+        <div className="carousel">
+          <img key={index} style={contentStyle} src={images} />
+        </div>
       ))}
-    </Swiper>
+    </Carousel>
   );
 }
 
-export default Carousel;
+export default CarouselImage;
