@@ -29,7 +29,7 @@ export default function Header() {
 
           <button className="flex items-center space-x-1">
             <UserOutlined />
-            <span>Đăng nhập | Đăng ký</span>
+            <span className="text-base">Đăng nhập | Đăng ký</span>
           </button>
         </div>
 
