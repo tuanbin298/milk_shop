@@ -36,20 +36,3 @@
   font-size: 13px;
   padding: 3px;
 }
-
-.header_search-icon {
-  font-size: 18px;
-  color: #333;
-}
-
-.header_cart-container {
-  display: flex;
-  align-items: center;
-  margin-right: 97px;
-  font-size: 20px;
-}
-
-.header_cart-icon {
-  font-size: 18px;
-  margin-right: 9px;
-}

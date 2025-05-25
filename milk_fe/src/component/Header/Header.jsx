@@ -61,14 +61,14 @@ export default function Header() {
             <input type="text" placeholder="Ba mẹ muốn tìm mua gì hôm nay ?" />
 
             <button>
-              <SearchOutlined className="header_search-icon" />
+              <SearchOutlined />
             </button>
           </div>
 
           {/* Cart and login */}
-          <div className="header_cart-container">
+          <div className="flex items-center mr-[97px] text-[20px]">
             <button>
-              <ShoppingCartOutlined className="header_cart-icon" />
+              <ShoppingCartOutlined className="text-[18px] mr-[9px]" />
               <Link to="/cart">Giỏ hàng</Link>
             </button>
           </div>
