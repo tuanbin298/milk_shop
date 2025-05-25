@@ -3,8 +3,8 @@ import {
   SearchOutlined,
   PhoneOutlined,
   ShoppingCartOutlined,
-  UserOutlined,
 } from "@ant-design/icons";
+import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import { Link } from "react-router";
 import "./Header.css";
 
@@ -28,8 +28,16 @@ export default function Header() {
           </div>
 
           <button className="flex items-center space-x-1">
-            <UserOutlined />
-            <span className="text-base">Đăng nhập | Đăng ký</span>
+            <PersonOutlineOutlinedIcon />
+            <span className="text-base">
+              <Link to="/login" className="hover:underline">
+                Đăng nhập
+              </Link>{" "}
+              |{" "}
+              <Link to="/register" className="hover:underline">
+                Đăng ký
+              </Link>
+            </span>
           </button>
         </div>
 
@@ -37,7 +45,7 @@ export default function Header() {
         <div className="flex items-center justify-between px-16 py-2 bg-white shadow">
           {/* Header Logo */}
           <div className="flex items-center header_mid-logo">
-            <Link href="/">
+            <Link to="/">
               <img src="./src/assets/logo/web logo.png" alt="Milk Logo" />
             </Link>
 

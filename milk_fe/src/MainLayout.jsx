@@ -7,21 +7,26 @@ import Header from "./component/Header/Header";
 import Footer from "./component/Footer/Footer";
 import Homepage from "./page/HomePage/HomePage";
 import Layout from "./component/Layout/Layout";
-import Dashboard from "./page/Dashboard/Dashbroard";
+import AdminDashboard from "./page/Admin/AdminDashboard";
 
 function MainLayout() {
+  const location = useLocation();
+  const isDashboard = location.pathname === "/dashboard";
+
   return (
     <>
-      <Header />
+      {!isDashboard && <Header />}
+
       <Layout>
         <Routes>
           <Route path="/" element={<Homepage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<AdminDashboard />} />
         </Routes>
       </Layout>
-      <Footer />
+
+      {!isDashboard && <Footer />}
     </>
   );
 }
