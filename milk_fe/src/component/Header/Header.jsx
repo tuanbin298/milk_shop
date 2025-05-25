@@ -83,19 +83,27 @@ export default function Header() {
           </div>
 
           <div className="flex items-center space-x-1">
-            <span className="text-base">GIỚI THIỆU</span>
+            <Link href="/">
+              <span className="text-base">GIỚI THIỆU</span>
+            </Link>
           </div>
 
           <div className="flex items-center space-x-1">
-            <span className="text-base">SỮA CHO TRẺ NHỎ</span>
+            <Link href="/">
+              <span className="text-base">SỮA CHO TRẺ NHỎ</span>
+            </Link>
           </div>
 
           <div className="flex items-center space-x-1">
-            <span className="text-base">SỮA CHO MẸ BẦU & SAU SINH</span>
+            <Link href="/">
+              <span className="text-base">SỮA CHO MẸ BẦU & SAU SINH</span>
+            </Link>
           </div>
 
           <div className="flex items-center space-x-1">
-            <span className="text-base">LIÊN HỆ</span>
+            <Link href="/">
+              <span className="text-base">LIÊN HỆ</span>
+            </Link>
           </div>
         </div>
       </header>
