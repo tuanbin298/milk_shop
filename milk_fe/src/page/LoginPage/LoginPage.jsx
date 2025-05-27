@@ -1,4 +1,59 @@
+import PersonIcon from "@mui/icons-material/Person";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
+import { toast } from "react-toastify";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 const LoginPage = () => {
+  const navigate = useNavigate();
+
+  // State of input
+  const [input, setInput] = useState({
+    username: "",
+    password: "",
+  });
+
+  // Function change state of input
+  const handleInputChange = (e) => {
+    // Name of input, value of input
+    const { name, value } = e.target;
+
+    setInput({
+      ...input,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch("http://localhost:8080/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          accept: "*/*",
+        },
+        body: JSON.stringify(input),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        localStorage.setItem("sessionToken", data.token);
+        localStorage.setItem("id", data.id);
+        localStorage.setItem("username", data.username);
+        // localStorage.setItem("email", data.email);
+        localStorage.setItem("phone", data.phone);
+        // localStorage.setItem("address", data.address);
+        toast.success("Đăng nhập thành công");
+        navigate("/");
+      }
+    } catch (err) {
+      toast.error("Đăng nhập thất bại");
+    }
+  };
+
   return (
     <div className="flex items-center justify-center bg-white">
       <div className="w-full max-w-md">
@@ -7,12 +62,20 @@ const LoginPage = () => {
         </h2>
 
         {/* Form */}
-        <form className="space-y-4">
+        <form className="space-y-4" onSubmit={handleSubmit}>
           {/* Email */}
           <div className="flex items-center">
-            <label className="font-medium mr-5 min-w-[100px]">Email: </label>
+            <label className="font-medium mr-5 min-w-[100px]">
+              <div className="flex item-center">
+                <PersonIcon />
+                Email:
+              </div>
+            </label>
             <input
               type="email"
+              name="username"
+              value={input.username}
+              onChange={handleInputChange}
               required
               className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
               placeholder="Nhập email"
@@ -21,9 +84,17 @@ const LoginPage = () => {
 
           {/* Password */}
           <div className="flex items-center">
-            <label className="font-medium mr-5 min-w-[100px]">Mật khẩu: </label>
+            <label className="font-medium mr-5 min-w-[100px]">
+              <div className="flex item-center">
+                <LockOpenIcon />
+                Mật khẩu:
+              </div>
+            </label>
             <input
               type="password"
+              name="password"
+              value={input.password}
+              onChange={handleInputChange}
               required
               className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
               placeholder="Nhập mật khẩu"
