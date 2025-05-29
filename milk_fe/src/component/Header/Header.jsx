@@ -5,10 +5,74 @@ import {
   ShoppingCartOutlined,
 } from "@ant-design/icons";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import "./Header.css";
+import { useEffect, useState } from "react";
+import { Avatar, Menu, MenuItem } from "@mui/material";
+import { toast } from "react-toastify";
 
 export default function Header() {
+  const role = localStorage.getItem("roles");
+
+  // State
+  const [anchorEl, setAnchorEl] = useState(null); //State for close menu
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [fullName, setFullName] = useState("");
+  const navigate = useNavigate();
+
+  // Check status of login
+  const checkLoginStatus = () => {
+    const sessionToken = localStorage.getItem("sessionToken");
+    const fullname = localStorage.getItem("fullName");
+    console.log(fullName);
+
+    if (sessionToken) {
+      setLoggedIn(true);
+      setFullName(fullname);
+    } else {
+      setLoggedIn(false);
+    }
+  };
+
+  // Run when component reload
+  useEffect(() => {
+    checkLoginStatus();
+
+    // Listen event in storage of another tab
+    window.addEventListener("storage", checkLoginStatus);
+
+    return () => {
+      window.removeEventListener("storage", checkLoginStatus);
+    };
+  }, []);
+
+  // Logic open/close menu
+  const handleMenuClick = (e) => {
+    setAnchorEl(e.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  // Logout logic
+  const handleLogout = () => {
+    localStorage.removeItem("sessionToken");
+    localStorage.removeItem("id");
+    localStorage.removeItem("username");
+    localStorage.removeItem("fullName");
+    localStorage.removeItem("roles");
+    localStorage.removeItem("address");
+    localStorage.removeItem("phone");
+
+    setLoggedIn(false);
+    setAnchorEl(null);
+
+    toast.success("Đăng xuất thành công");
+
+    navigate("/login");
+  };
+
   return (
     <div>
       <header className="w-full">
@@ -26,19 +90,6 @@ export default function Header() {
             <PhoneOutlined className="text-lg" />
             <span className="text-base">Hotline: 1800 6886</span>
           </div>
-
-          <button className="flex items-center space-x-1">
-            <PersonOutlineOutlinedIcon />
-            <span className="text-base">
-              <Link to="/login" className="hover:underline">
-                Đăng nhập
-              </Link>{" "}
-              |{" "}
-              <Link to="/register" className="hover:underline">
-                Đăng ký
-              </Link>
-            </span>
-          </button>
         </div>
 
         {/* Main header */}
@@ -66,11 +117,59 @@ export default function Header() {
           </div>
 
           {/* Cart and login */}
-          <div className="flex items-center mr-[97px] text-[20px]">
+          <div className="flex items-center  text-[20px]">
             <button>
-              <ShoppingCartOutlined className="text-[18px] mr-[9px]" />
+              <ShoppingCartOutlined className="text-[16px] mr-[9px]" />
               <Link to="/cart">Giỏ hàng</Link>
             </button>
+          </div>
+
+          {/* Login / Register */}
+          <div className="flex items-center space-x-1 mr-[97px]">
+            {loggedIn ? (
+              <>
+                <button
+                  onClick={handleMenuClick}
+                  className="flex items-center space-x-2 px-3 py-1 rounded-full hover:bg-gray-100 transition"
+                >
+                  {" "}
+                  <Avatar
+                    alt="Default avatar"
+                    src="src/assets/img/user/avatar.png"
+                  />
+                  <span className="text-base text-[16px]">{fullName}</span>
+                </button>
+
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleMenuClose}
+                >
+                  <MenuItem onClick={() => navigate("/profile")}>
+                    Thông tin cá nhân
+                  </MenuItem>
+                  {(role === "ADMIN" || role === "STAFF") && (
+                    <MenuItem onClick={() => navigate("/dashboard")}>
+                      Trang quản lý
+                    </MenuItem>
+                  )}
+                  <MenuItem onClick={handleLogout}>Đăng xuất</MenuItem>
+                </Menu>
+              </>
+            ) : (
+              <>
+                <PersonOutlineOutlinedIcon />
+                <span className="text-base text-[16px]">
+                  <Link to="/login" className="hover:underline">
+                    Đăng nhập
+                  </Link>{" "}
+                  |{" "}
+                  <Link to="/register" className="hover:underline">
+                    Đăng ký
+                  </Link>
+                </span>
+              </>
+            )}
           </div>
         </div>
 

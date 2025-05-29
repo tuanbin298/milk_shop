@@ -39,16 +39,30 @@ const LoginPage = () => {
       console.log(response);
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
+        // console.log(data);
+
         localStorage.setItem("sessionToken", data.token);
         localStorage.setItem("id", data.id);
         localStorage.setItem("fullName", data.fullName);
         localStorage.setItem("username", data.username);
-        // localStorage.setItem("email", data.email);
+        localStorage.setItem("fullName", data.fullName);
+        localStorage.setItem("roles", data.roles);
+        localStorage.setItem("address", data.address);
         localStorage.setItem("phone", data.phone);
-        // localStorage.setItem("address", data.address);
-        toast.success("Đăng nhập thành công");
-        navigate("/");
+
+        // Auto trigger storage event to reload header
+        window.dispatchEvent(new Event("storage"));
+
+        if (data.roles === "ADMIN" || data.roles === "STAFF") {
+          toast.success("Quản trị viên đăng nhập thành công");
+
+          navigate("/dashboard");
+        } else {
+          toast.success("Ba mẹ đăng nhập thành công");
+          navigate("/");
+        }
+      } else {
+        toast.error("Đăng nhập thất bại");
       }
     } catch (err) {
       toast.error("Đăng nhập thất bại");
