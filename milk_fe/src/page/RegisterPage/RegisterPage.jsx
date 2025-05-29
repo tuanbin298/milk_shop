@@ -9,10 +9,11 @@ const RegisterPage = () => {
 
   // State to store user input values and errors
   const [input, setInput] = useState({
-    fullname: "",
     username: "",
-    phone: "",
+    address: "",
+    fullName: "",
     password: "",
+    phone: "",
     confirmPassword: "",
   });
 
@@ -97,12 +98,12 @@ const RegisterPage = () => {
         <form className="space-y-4" onSubmit={handleSubmit}>
           <InputField
             label="Họ và tên"
-            name="fullname"
+            name="fullName"
             type="text"
-            value={input.fullname}
+            value={input.fullName}
             onChange={handleInputChange}
             placeholder="Nhập họ và tên"
-            error={errors.fullname}
+            error={errors.fullName}
           />
           <InputField
             label="Email"
@@ -121,6 +122,14 @@ const RegisterPage = () => {
             onChange={handleInputChange}
             placeholder="Nhập số điện thoại"
             error={errors.phone}
+          />
+          <InputField
+            label="Địa chỉ"
+            name="address"
+            type="text"
+            value={input.address}
+            onChange={handleInputChange}
+            placeholder="Nhập địa chỉ"
           />
           <InputField
             label="Mật khẩu"
@@ -159,6 +168,26 @@ const RegisterPage = () => {
             </a>
           </p>
         </form>
+        {/* Divider */}
+        <div className="flex items-center my-6">
+          <hr className="flex-grow border-gray-300" />
+          <span className="mx-3 text-gray-400 text-sm">
+            Hoặc đăng nhập bằng
+          </span>
+          <hr className="flex-grow border-gray-300" />
+        </div>
+
+        {/* Google login */}
+        <button className="w-full flex items-center justify-center border border-blue-500 rounded py-2 hover:bg-blue-50 transition">
+          <span className="flex items-center">
+            <img
+              src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg"
+              alt="Google"
+              className="w-5 h-5 mr-2"
+            />
+            Google
+          </span>
+        </button>
       </div>
     </div>
   );

@@ -42,6 +42,7 @@ const LoginPage = () => {
         console.log(data);
         localStorage.setItem("sessionToken", data.token);
         localStorage.setItem("id", data.id);
+        localStorage.setItem("fullName", data.fullName);
         localStorage.setItem("username", data.username);
         // localStorage.setItem("email", data.email);
         localStorage.setItem("phone", data.phone);
@@ -111,8 +112,16 @@ const LoginPage = () => {
             </button>
           </div>
 
-          {/* Forgot password */}
-          <p className="text-sm text-center mt-2">
+          {/* Forgot password  */}
+          <p className="text-sm text-center mb-0">
+            Quên mật khẩu?{" "}
+            <a href="/forgot" className="text-red-500 hover:underline">
+              Tại đây
+            </a>
+          </p>
+
+          {/* Register */}
+          <p className="text-sm text-center mt-1 mb-0">
             Bạn chưa có tài khoản?{" "}
             <a href="/register" className="text-red-500 hover:underline">
               Tại đây

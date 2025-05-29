@@ -8,6 +8,7 @@ import Footer from "./component/Footer/Footer";
 import Homepage from "./page/HomePage/HomePage";
 import Layout from "./component/Layout/Layout";
 import AdminDashboard from "./page/Admin/AdminDashboard";
+import CartPage from "./page/CartPage/CartPage";
 
 function MainLayout() {
   const location = useLocation();
@@ -22,6 +23,7 @@ function MainLayout() {
           <Route path="/" element={<Homepage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/cart" element={<CartPage />} />
           <Route path="/dashboard" element={<AdminDashboard />} />
         </Routes>
       </Layout>
