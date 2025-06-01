@@ -32,6 +32,7 @@ const LoginPage = () => {
     });
   };
 
+  // Logic submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -105,6 +106,7 @@ const LoginPage = () => {
       toast.error("Lỗi kết nối server!");
     } finally {
       setLoading(false);
+      console.error("Xảy ra lỗi khi đăng nhập: ", err);
     }
   };
 

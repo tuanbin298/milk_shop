@@ -11,3 +11,12 @@
   padding: 0 20px;
   box-sizing: border-box;
 }
+
+.layout_background_admin {
+  background-color: #f0f9ff;
+  min-height: 100vh;
+}
+
+.layout_content_admin {
+  height: 100%;
+}
