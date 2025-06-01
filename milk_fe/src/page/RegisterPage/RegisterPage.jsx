@@ -1,13 +1,13 @@
-// Import necessary dependencies
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { TextField, InputAdornment, IconButton } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { CircularProgress } from "@mui/material";
 
-// Define the RegisterPage component
 const RegisterPage = () => {
   const navigate = useNavigate();
 
-  // State to store user input values and errors
   const [input, setInput] = useState({
     username: "",
     address: "",
@@ -18,13 +18,14 @@ const RegisterPage = () => {
   });
 
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  // Handle input change and validate data
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setInput({ ...input, [name]: value });
 
-    // Validate fields
     let newErrors = { ...errors };
 
     if (name === "username") {
@@ -52,17 +53,15 @@ const RegisterPage = () => {
     setErrors(newErrors);
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Check for validation errors
     if (Object.values(errors).some((error) => error)) {
       toast.error("Vui lòng kiểm tra lại thông tin!");
       return;
     }
 
-    const { confirmPassword, ...payload } = input;
+    setLoading(true);
 
     try {
       const response = await fetch("http://localhost:8080/api/register", {
@@ -71,7 +70,7 @@ const RegisterPage = () => {
           "Content-Type": "application/json",
           accept: "*/*",
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(input),
       });
 
       if (response.ok) {
@@ -83,18 +82,18 @@ const RegisterPage = () => {
       }
     } catch (err) {
       toast.error("Lỗi kết nối server!");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="flex items-center justify-center bg-white">
       <div className="w-full max-w-md">
-        {/* Title */}
         <h2 className="text-2xl font-bold text-center mb-8 mt-10">
           Đăng ký tài khoản
         </h2>
 
-        {/* Registration Form */}
         <form className="space-y-4" onSubmit={handleSubmit}>
           <InputField
             label="Họ và tên"
@@ -134,33 +133,46 @@ const RegisterPage = () => {
           <InputField
             label="Mật khẩu"
             name="password"
-            type="password"
+            type={showPassword ? "text" : "password"}
             value={input.password}
             onChange={handleInputChange}
             placeholder="Nhập mật khẩu"
             error={errors.password}
+            icon={{
+              visible: showPassword,
+              toggle: () => setShowPassword(!showPassword),
+            }}
           />
           <InputField
             label="Xác nhận mật khẩu"
             name="confirmPassword"
-            type="password"
+            type={showConfirmPassword ? "text" : "password"}
             value={input.confirmPassword}
             onChange={handleInputChange}
             placeholder="Xác nhận mật khẩu"
             error={errors.confirmPassword}
+            icon={{
+              visible: showConfirmPassword,
+              toggle: () => setShowConfirmPassword(!showConfirmPassword),
+            }}
           />
-
-          {/* Submit Button */}
           <div className="flex justify-center">
             <button
               type="submit"
-              className="w-80 mt-5 bg-sky-400 hover:bg-sky-500 text-white py-2 px-4 rounded transition"
+              disabled={loading}
+              className="w-80 mt-5 flex items-center justify-center bg-sky-400 hover:bg-sky-500 text-white py-2 px-4 rounded transition disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              Đăng ký
+              {loading ? (
+                <>
+                  <CircularProgress size={16} sx={{ color: "white", mr: 1 }} />
+                  <span>Đang đăng ký...</span>
+                </>
+              ) : (
+                "Đăng ký"
+              )}
             </button>
           </div>
 
-          {/* Link to login */}
           <p className="text-sm text-center mt-2">
             Bạn đã có tài khoản?{" "}
             <a href="/login" className="text-red-500 hover:underline">
@@ -168,7 +180,7 @@ const RegisterPage = () => {
             </a>
           </p>
         </form>
-        {/* Divider */}
+
         <div className="flex items-center my-6">
           <hr className="flex-grow border-gray-300" />
           <span className="mx-3 text-gray-400 text-sm">
@@ -177,7 +189,6 @@ const RegisterPage = () => {
           <hr className="flex-grow border-gray-300" />
         </div>
 
-        {/* Google login */}
         <button className="w-full flex items-center justify-center border border-blue-500 rounded py-2 hover:bg-blue-50 transition">
           <span className="flex items-center">
             <img
@@ -193,7 +204,6 @@ const RegisterPage = () => {
   );
 };
 
-// Reusable InputField component with error handling
 const InputField = ({
   label,
   name,
@@ -202,21 +212,47 @@ const InputField = ({
   onChange,
   placeholder,
   error,
+  icon,
 }) => (
-  <div className="flex items-center space-x-4">
-    <label className="font-medium min-w-[150px]">{label}:</label>
+  <div className="flex items-center space-x-2">
+    <label className="font-medium min-w-[120px]">{label}:</label>
     <div className="w-full">
-      <input
+      <TextField
+        fullWidth
+        size="small"
         type={type}
         name={name}
         value={value}
         onChange={onChange}
         required
-        className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
         placeholder={placeholder}
+        error={Boolean(error)}
+        helperText={error}
+        sx={{
+          maxWidth: 360,
+          input: {
+            fontSize: 14,
+            // padding: "8px ",
+          },
+        }}
+        {...(icon && {
+          InputProps: {
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={icon.toggle} edge="end" sx={{ p: 0.5 }}>
+                  {icon.visible ? (
+                    <Visibility fontSize="small" />
+                  ) : (
+                    <VisibilityOff fontSize="small" />
+                  )}
+                </IconButton>
+              </InputAdornment>
+            ),
+          },
+        })}
       />
-      {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
     </div>
   </div>
 );
+
 export default RegisterPage;

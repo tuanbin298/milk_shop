@@ -10,6 +10,7 @@ import "./Header.css";
 import { useEffect, useState } from "react";
 import { Avatar, Menu, MenuItem } from "@mui/material";
 import { toast } from "react-toastify";
+import ListAltIcon from "@mui/icons-material/ListAlt";
 
 export default function Header() {
   const role = localStorage.getItem("roles");
@@ -90,42 +91,8 @@ export default function Header() {
             <PhoneOutlined className="text-lg" />
             <span className="text-base">Hotline: 1800 6886</span>
           </div>
-        </div>
-
-        {/* Main header */}
-        <div className="flex items-center justify-between px-16 py-2 bg-white shadow">
-          {/* Header Logo */}
-          <div className="flex items-center header_mid-logo">
-            <Link to="/">
-              <img src="./src/assets/logo/web logo.png" alt="Milk Logo" />
-            </Link>
-
-            <h2 className="header_mid-logo-title">
-              Mầm Sữa
-              <br />
-              Yêu Thương
-            </h2>
-          </div>
-
-          {/* Search bar */}
-          <div className="header_seach-container">
-            <input type="text" placeholder="Ba mẹ muốn tìm mua gì hôm nay ?" />
-
-            <button>
-              <SearchOutlined />
-            </button>
-          </div>
-
-          {/* Cart and login */}
-          <div className="flex items-center  text-[20px]">
-            <button>
-              <ShoppingCartOutlined className="text-[16px] mr-[9px]" />
-              <Link to="/cart">Giỏ hàng</Link>
-            </button>
-          </div>
-
           {/* Login / Register */}
-          <div className="flex items-center space-x-1 mr-[97px]">
+          <div className="flex items-center space-x-1 ">
             {loggedIn ? (
               <>
                 <button
@@ -170,6 +137,47 @@ export default function Header() {
                 </span>
               </>
             )}
+          </div>
+        </div>
+
+        {/* Main header */}
+        <div className="flex items-center justify-between px-16 py-2 bg-white shadow">
+          {/* Header Logo */}
+          <div className="flex items-center header_mid-logo">
+            <Link to="/">
+              <img src="./src/assets/logo/web logo.png" alt="Milk Logo" />
+            </Link>
+
+            <h2 className="header_mid-logo-title">
+              Mầm Sữa
+              <br />
+              Yêu Thương
+            </h2>
+          </div>
+
+          {/* Search bar */}
+          <div className="header_seach-container">
+            <input type="text" placeholder="Ba mẹ muốn tìm mua gì hôm nay ?" />
+
+            <button>
+              <SearchOutlined />
+            </button>
+          </div>
+
+          {/* Cart and login */}
+          <div className="flex items-center  text-[20px] ">
+            <button>
+              <ShoppingCartOutlined className="text-[16px] mr-[9px]" />
+              <Link to="/cart">Giỏ hàng</Link>
+            </button>
+          </div>
+
+          {/* Cart and login */}
+          <div className="flex items-center  text-[20px] mr-[98px]">
+            <button>
+              <ListAltIcon className="text-[16px] mr-[9px]" />
+              <Link to="/">Đơn hàng</Link>
+            </button>
           </div>
         </div>
 
