@@ -125,7 +125,6 @@ const RegisterPage = () => {
           <InputField
             label="Mật khẩu"
             name="password"
-            type="password"
             value={input.password}
             onChange={handleInputChange}
             placeholder="Nhập mật khẩu"

@@ -1,9 +1,14 @@
-import AdminSideBar from "../../component/Admin/AdminSidebar";
+import { Outlet } from "react-router-dom";
+import AdminSidebar from "./AdminSideBar";
 
 const AdminDashboard = () => {
   return (
-    <div>
-      <AdminSideBar />
+    <div style={{ display: "flex" }}>
+      <AdminSidebar />
+
+      <div style={{ flexGrow: 1 }}>
+        <Outlet /> {/* Render child route */}
+      </div>
     </div>
   );
 };

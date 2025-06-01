@@ -1,0 +1,288 @@
+import {
+  Box,
+  Button,
+  IconButton,
+  InputAdornment,
+  MenuItem,
+  Modal,
+  TextField,
+  Typography,
+} from "@mui/material";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import { useState } from "react";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 900,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 2,
+};
+
+const roles = [
+  { value: "ADMIN", label: "ADMIN" },
+  { value: "STAFF", label: "STAFF" },
+];
+
+const AddUser = ({ open, handleClose }) => {
+  const navigate = useNavigate();
+
+  // State
+  const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [input, setInput] = useState({
+    fullName: "",
+    username: "",
+    phone: "",
+    roles: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  // Function change state of input
+  const handleInputChange = (e) => {
+    // Name of input, value of input
+    const { name, value } = e.target;
+
+    setInput({
+      ...input,
+      [name]: value,
+    });
+
+    let newErrors = { ...errors };
+
+    if (name === "username") {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      newErrors.username = emailRegex.test(value) ? "" : "Email không hợp lệ!";
+    }
+
+    if (name === "phone") {
+      const phoneRegex = /^(84|0[3|5|7|8|9])\d{8}$/;
+      newErrors.phone = phoneRegex.test(value)
+        ? ""
+        : "Số điện thoại không hợp lệ!";
+    }
+
+    if (name === "password") {
+      newErrors.password =
+        value.length >= 6 ? "" : "Mật khẩu phải có ít nhất 6 ký tự!";
+    }
+
+    if (name === "confirmPassword") {
+      newErrors.confirmPassword =
+        value === input.password ? "" : "Mật khẩu không khớp!";
+    }
+
+    setErrors(newErrors);
+  };
+
+  //Reset all input when cancel and clods modal
+  const handleCancel = () => {
+    setInput({
+      fullName: "",
+      username: "",
+      phone: "",
+      roles: "",
+      password: "",
+      confirmPassword: "",
+    });
+
+    handleClose();
+  };
+
+  // Logic submit
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Check for validation errors
+    if (Object.values(errors).some((error) => error)) {
+      toast.error("Vui lòng kiểm tra lại thông tin!");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:8080/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          accept: "*/*",
+        },
+        body: JSON.stringify(input),
+      });
+
+      if (response.ok) {
+        toast.success("Tạo người dùng thành công!");
+
+        // Navigate to view users
+        setTimeout(() => {
+          handleClose();
+          navigate("userlist");
+        }, 1000);
+      }
+    } catch (err) {
+      toast.error("Tạo người dùng thất bại");
+      console.error("Xảy ra lỗi khi tạo người dùng: ", err);
+    }
+  };
+
+  return (
+    <>
+      <Modal open={open} onClose={handleClose}>
+        <form onSubmit={handleSubmit}>
+          <Box sx={style}>
+            <Typography
+              sx={{ fontWeight: "bold" }}
+              variant="h6"
+              gutterBottom
+              align="center"
+            >
+              Thêm người dùng
+            </Typography>
+
+            {/* Full Name */}
+            <Box maxWidth={400} mx="auto">
+              <TextField
+                fullWidth
+                margin="normal"
+                required
+                label="Tên đầy đủ"
+                name="fullName"
+                value={input.fullName}
+                onChange={handleInputChange}
+                error={errors.fullname}
+                helperText={errors.fullname}
+              />
+
+              {/* Gmail */}
+              <TextField
+                fullWidth
+                margin="normal"
+                required
+                label="Gmail"
+                name="username"
+                type="gmail"
+                value={input.username}
+                onChange={handleInputChange}
+                error={errors.username}
+                helperText={errors.username}
+              />
+
+              {/* Phone */}
+              <TextField
+                fullWidth
+                margin="normal"
+                required
+                label="Số điện thoại"
+                name="phone"
+                value={input.phone}
+                onChange={handleInputChange}
+                error={errors.phone}
+                helperText={errors.phone}
+              />
+
+              {/* Roles */}
+              <TextField
+                fullWidth
+                margin="normal"
+                required
+                select
+                label="Quyền hạn"
+                name="roles"
+                value={input.roles}
+                onChange={handleInputChange}
+              >
+                {roles.map((option) => {
+                  return (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  );
+                })}
+              </TextField>
+
+              {/* Password */}
+              <TextField
+                fullWidth
+                margin="normal"
+                required
+                label="Mật khẩu"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                value={input.password}
+                error={errors.password}
+                helperText={errors.password}
+                onChange={handleInputChange}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowPassword((show) => !show)}
+                        edge="end"
+                      >
+                        {showPassword ? (
+                          <VisibilityOffIcon />
+                        ) : (
+                          <VisibilityIcon />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+
+              {/* Confirm password */}
+              <TextField
+                fullWidth
+                margin="normal"
+                required
+                label="Xác nhận mật khẩu"
+                name="confirmPassword"
+                type={showConfirmPassword ? "text" : "password"}
+                value={input.confirmPassword}
+                error={errors.confirmPassword}
+                helperText={errors.confirmPassword}
+                onChange={handleInputChange}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowConfirmPassword((show) => !show)}
+                        edge="end"
+                      >
+                        {showConfirmPassword ? (
+                          <VisibilityOffIcon />
+                        ) : (
+                          <VisibilityIcon />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Box>
+
+            <Box display="flex" justifyContent="flex-end" mt={3}>
+              <Button onClick={handleCancel} variant="outlined" sx={{ mr: 2 }}>
+                Hủy
+              </Button>
+
+              <Button type="submit" variant="contained">
+                Thêm
+              </Button>
+            </Box>
+          </Box>
+        </form>
+      </Modal>
+    </>
+  );
+};
+
+export default AddUser;

@@ -24,6 +24,7 @@ const LoginPage = () => {
     });
   };
 
+  // Logic submit
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -36,8 +37,9 @@ const LoginPage = () => {
         },
         body: JSON.stringify(input),
       });
-      console.log(response);
-      if (response.ok) {
+      // console.log(response);
+
+      if (response?.ok) {
         const data = await response.json();
         // console.log(data);
 
@@ -65,6 +67,7 @@ const LoginPage = () => {
       }
     } catch (err) {
       toast.error("Đăng nhập thất bại");
+      console.error("Xảy ra lỗi khi đăng nhập: ", err);
     }
   };
 

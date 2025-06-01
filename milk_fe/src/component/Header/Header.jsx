@@ -5,6 +5,9 @@ import {
   ShoppingCartOutlined,
 } from "@ant-design/icons";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
+import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { Link, useNavigate } from "react-router";
 import "./Header.css";
 import { useEffect, useState } from "react";
@@ -140,20 +143,32 @@ export default function Header() {
                   <span className="text-base text-[16px]">{fullName}</span>
                 </button>
 
+                {/* Menu of user */}
                 <Menu
                   anchorEl={anchorEl}
                   open={Boolean(anchorEl)}
                   onClose={handleMenuClose}
                 >
                   <MenuItem onClick={() => navigate("/profile")}>
-                    Thông tin cá nhân
+                    <div className="flex items-center">
+                      <AssignmentIndIcon className="mr-2" />
+                      Thông tin cá nhân
+                    </div>
                   </MenuItem>
                   {(role === "ADMIN" || role === "STAFF") && (
                     <MenuItem onClick={() => navigate("/dashboard")}>
-                      Trang quản lý
+                      <div className="flex items-center">
+                        <ManageAccountsIcon className="mr-2" />
+                        Trang quản lý
+                      </div>
                     </MenuItem>
                   )}
-                  <MenuItem onClick={handleLogout}>Đăng xuất</MenuItem>
+                  <MenuItem onClick={handleLogout}>
+                    <div className="flex items-center">
+                      <LogoutIcon className="mr-2" />
+                      Đăng xuất
+                    </div>
+                  </MenuItem>
                 </Menu>
               </>
             ) : (

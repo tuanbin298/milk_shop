@@ -9,6 +9,8 @@ import CustomCloseButton from "./utils/customCloseBtn.jsx";
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <App />
+
+    {/* Toast msg */}
     <ToastContainer
       position="top-right"
       autoClose={3000}
