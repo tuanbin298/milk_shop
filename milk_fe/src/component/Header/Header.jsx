@@ -94,13 +94,14 @@ export default function Header() {
             <PhoneOutlined className="text-lg" />
             <span className="text-base">Hotline: 1800 6886</span>
           </div>
+
           {/* Login / Register */}
           <div className="flex items-center space-x-1 ">
             {loggedIn ? (
               <>
                 <button
                   onClick={handleMenuClick}
-                  className="flex items-center space-x-2 px-3 py-1 rounded-full hover:bg-gray-100 transition"
+                  className="flex items-center space-x-2 px-3 py-1 rounded-full hover:bg-gray-300 transition"
                 >
                   {" "}
                   <Avatar

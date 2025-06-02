@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  CircularProgress,
   IconButton,
   InputAdornment,
   MenuItem,
@@ -35,6 +36,7 @@ const AddUser = ({ open, handleClose }) => {
   const navigate = useNavigate();
 
   // State
+  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -42,7 +44,7 @@ const AddUser = ({ open, handleClose }) => {
     fullName: "",
     username: "",
     phone: "",
-    roles: "",
+    role: "",
     password: "",
     confirmPassword: "",
   });
@@ -90,7 +92,7 @@ const AddUser = ({ open, handleClose }) => {
       fullName: "",
       username: "",
       phone: "",
-      roles: "",
+      role: "",
       password: "",
       confirmPassword: "",
     });
@@ -108,6 +110,8 @@ const AddUser = ({ open, handleClose }) => {
       return;
     }
 
+    setLoading(true);
+
     try {
       const response = await fetch("http://localhost:8080/api/register", {
         method: "POST",
@@ -123,7 +127,7 @@ const AddUser = ({ open, handleClose }) => {
 
         // Navigate to view users
         setTimeout(() => {
-          handleClose();
+          handleCancel();
           navigate("userlist");
         }, 1000);
       }
@@ -195,8 +199,8 @@ const AddUser = ({ open, handleClose }) => {
                 required
                 select
                 label="Quyền hạn"
-                name="roles"
-                value={input.roles}
+                name="role"
+                value={input.role}
                 onChange={handleInputChange}
               >
                 {roles.map((option) => {
@@ -228,9 +232,9 @@ const AddUser = ({ open, handleClose }) => {
                         edge="end"
                       >
                         {showPassword ? (
-                          <VisibilityOffIcon />
-                        ) : (
                           <VisibilityIcon />
+                        ) : (
+                          <VisibilityOffIcon />
                         )}
                       </IconButton>
                     </InputAdornment>
@@ -258,9 +262,9 @@ const AddUser = ({ open, handleClose }) => {
                         edge="end"
                       >
                         {showConfirmPassword ? (
-                          <VisibilityOffIcon />
-                        ) : (
                           <VisibilityIcon />
+                        ) : (
+                          <VisibilityOffIcon />
                         )}
                       </IconButton>
                     </InputAdornment>
@@ -274,8 +278,18 @@ const AddUser = ({ open, handleClose }) => {
                 Hủy
               </Button>
 
-              <Button type="submit" variant="contained">
-                Thêm
+              <Button disabled={loading} type="submit" variant="contained">
+                {loading ? (
+                  <>
+                    <CircularProgress
+                      size={16}
+                      sx={{ color: "white", mr: 1 }}
+                    />
+                    <span>Đang tạo người dùng...</span>
+                  </>
+                ) : (
+                  "Tạo người dùng"
+                )}
               </Button>
             </Box>
           </Box>

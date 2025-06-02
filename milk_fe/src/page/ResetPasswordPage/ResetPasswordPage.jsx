@@ -1,13 +1,7 @@
 import { useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import {
-  TextField,
-  InputAdornment,
-  IconButton,
-  Typography,
-  Button,
-} from "@mui/material";
+import { TextField, InputAdornment, IconButton } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const ResetPasswordPage = () => {

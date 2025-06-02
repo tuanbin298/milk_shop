@@ -14,7 +14,7 @@ const BackToDashboardButton = () => {
       onClick={handleBackDashboard}
       startIcon={<ArrowBackIcon />}
       variant="outlined"
-      sx={{ mb: 2 }}
+      sx={{ mb: 2, mt: 2 }}
     >
       Quay lại Dashboard
     </Button>
