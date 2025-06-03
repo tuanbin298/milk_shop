@@ -5,21 +5,22 @@
 }
 
 .header_mid-logo-title {
-  font-family: "Times New Roman", serif;
-  font-weight: bold;
-  font-size: 24px;
+  font-family: "Titan One", sans-serif;
+  font-weight: normal; /* Không quá đậm */
+  font-size: 40px; /* Điều chỉnh kích thước theo ảnh */
   color: white;
-  text-shadow: -1px -1px 0 #0077a3, 1px -1px 0 #0077a3, -1px 1px 0 #0077a3,
-    1px 1px 0 #0077a3;
+  text-shadow: -2px -2px 0 #ef608c, 2px -2px 0 #ef608c, -2px 2px 0 #ef608c,
+    2px 2px 0 #ef608c; /* Độ đậm của bóng chữ */
   text-align: center;
-  line-height: 1.5;
-  margin-left: 18px;
+  line-height: auto;
+  letter-spacing: 0px;
+  margin-left: 0px; /* Điều chỉnh nếu cần */
 }
 
 .header_seach-container {
   display: flex;
   align-items: center;
-  border: 2px solid #0077a3;
+  border: 2px solid #ef608c;
   border-radius: 999px;
   padding: 5px 10px;
   width: 35%;

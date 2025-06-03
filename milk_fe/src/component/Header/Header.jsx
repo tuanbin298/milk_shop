@@ -81,7 +81,7 @@ export default function Header() {
     <div>
       <header className="w-full">
         {/* Top bar header */}
-        <div className="bg-sky-600 text-white text-sm flex justify-between px-38 py-3">
+        <div className="bg-[#EF608C] text-white text-sm flex justify-between px-38 py-3">
           <div className="flex items-center space-x-1">
             <EnvironmentOutlined className="text-lg" />
 
@@ -164,11 +164,7 @@ export default function Header() {
               <img src="./src/assets/logo/web logo.png" alt="Milk Logo" />
             </Link>
 
-            <h2 className="header_mid-logo-title">
-              Mầm Sữa
-              <br />
-              Yêu Thương
-            </h2>
+            <h2 className="header_mid-logo-title">LunaMilk</h2>
           </div>
 
           {/* Search bar */}
@@ -181,24 +177,36 @@ export default function Header() {
           </div>
 
           {/* Cart and login */}
-          <div className="flex items-center  text-[20px] ">
+          <div className="flex items-center text-[20px]">
             <button>
-              <ShoppingCartOutlined className="text-[16px] mr-[9px]" />
-              <Link to="/cart">Giỏ hàng</Link>
+              <Link to="/cart">
+                <img
+                  src="src/assets/img/icon/cart-icon.png"
+                  alt="Giỏ hàng"
+                  className="w-[30px] h-[30px] mr-[9px]"
+                />
+                Giỏ hàng
+              </Link>
             </button>
           </div>
 
           {/* Cart and login */}
           <div className="flex items-center  text-[20px] mr-[98px]">
             <button>
-              <ListAltIcon className="text-[16px] mr-[9px]" />
-              <Link to="/">Đơn hàng</Link>
+              <Link to="/">
+                <img
+                  src="src/assets/img/icon/order-icon.png"
+                  alt="Giỏ hàng"
+                  className="w-[30px] h-[32px] mr-[9px]"
+                />
+                Đơn hàng
+              </Link>
             </button>
           </div>
         </div>
 
         {/* Bottom bar header */}
-        <div className="bg-sky-600 text-white text-sm flex justify-between px-40 py-3">
+        <div className="bg-[#EF608C] text-white text-sm flex justify-between px-40 py-3">
           <div className="flex items-center space-x-1">
             <Link href="/">
               <span className="text-base">TRANG CHỦ</span>
