@@ -2,14 +2,80 @@ import {
   EnvironmentOutlined,
   SearchOutlined,
   PhoneOutlined,
-  ShoppingCartOutlined,
 } from "@ant-design/icons";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import "@fontsource/luckiest-guy";
-import { Link } from "react-router";
+import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import LogoutIcon from "@mui/icons-material/Logout";
+import { Link, useNavigate } from "react-router";
 import "./Header.css";
+import { useEffect, useState } from "react";
+import { Avatar, Menu, MenuItem } from "@mui/material";
+import { toast } from "react-toastify";
 
 export default function Header() {
+  const role = localStorage.getItem("roles");
+
+  // State
+  const [anchorEl, setAnchorEl] = useState(null); //State for close menu
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [fullName, setFullName] = useState("");
+  const navigate = useNavigate();
+
+  // Check status of login
+  const checkLoginStatus = () => {
+    const sessionToken = localStorage.getItem("sessionToken");
+    const fullname = localStorage.getItem("fullName");
+    console.log(fullName);
+
+    if (sessionToken) {
+      setLoggedIn(true);
+      setFullName(fullname);
+    } else {
+      setLoggedIn(false);
+    }
+  };
+
+  // Run when component reload
+  useEffect(() => {
+    checkLoginStatus();
+
+    // Listen event in storage of another tab
+    window.addEventListener("storage", checkLoginStatus);
+
+    return () => {
+      window.removeEventListener("storage", checkLoginStatus);
+    };
+  }, []);
+
+  // Logic open/close menu
+  const handleMenuClick = (e) => {
+    setAnchorEl(e.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  // Logout logic
+  const handleLogout = () => {
+    localStorage.removeItem("sessionToken");
+    localStorage.removeItem("id");
+    localStorage.removeItem("username");
+    localStorage.removeItem("fullName");
+    localStorage.removeItem("roles");
+    localStorage.removeItem("address");
+    localStorage.removeItem("phone");
+
+    setLoggedIn(false);
+    setAnchorEl(null);
+
+    toast.success("Đăng xuất thành công");
+
+    navigate("/login");
+  };
+
   return (
     <div>
       <header className="w-full">
@@ -28,18 +94,65 @@ export default function Header() {
             <span className="text-base">Hotline: 1800 6886</span>
           </div>
 
-          <button className="flex items-center space-x-1">
-            <PersonOutlineOutlinedIcon />
-            <span className="text-base">
-              <Link to="/login" className="hover:underline">
-                Đăng nhập
-              </Link>{" "}
-              |{" "}
-              <Link to="/register" className="hover:underline">
-                Đăng ký
-              </Link>
-            </span>
-          </button>
+          {/* Login / Register */}
+          <div className="flex items-center space-x-1 ">
+            {loggedIn ? (
+              <>
+                <button
+                  onClick={handleMenuClick}
+                  className="flex items-center space-x-2 px-3 py-1 rounded-full hover:bg-gray-300 transition"
+                >
+                  {" "}
+                  <Avatar
+                    alt="Default avatar"
+                    src="src/assets/img/user/avatar.png"
+                  />
+                  <span className="text-base text-[16px]">{fullName}</span>
+                </button>
+
+                {/* Menu of user */}
+                <Menu
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl)}
+                  onClose={handleMenuClose}
+                >
+                  <MenuItem onClick={() => navigate("/profile")}>
+                    <div className="flex items-center">
+                      <AssignmentIndIcon className="mr-2" />
+                      Thông tin cá nhân
+                    </div>
+                  </MenuItem>
+                  {(role === "ADMIN" || role === "STAFF") && (
+                    <MenuItem onClick={() => navigate("/dashboard")}>
+                      <div className="flex items-center">
+                        <ManageAccountsIcon className="mr-2" />
+                        Trang quản lý
+                      </div>
+                    </MenuItem>
+                  )}
+                  <MenuItem onClick={handleLogout}>
+                    <div className="flex items-center">
+                      <LogoutIcon className="mr-2" />
+                      Đăng xuất
+                    </div>
+                  </MenuItem>
+                </Menu>
+              </>
+            ) : (
+              <>
+                <PersonOutlineOutlinedIcon />
+                <span className="text-base text-[16px]">
+                  <Link to="/login" className="hover:underline">
+                    Đăng nhập
+                  </Link>{" "}
+                  |{" "}
+                  <Link to="/register" className="hover:underline">
+                    Đăng ký
+                  </Link>
+                </span>
+              </>
+            )}
+          </div>
         </div>
 
         {/* Main header */}
@@ -75,13 +188,32 @@ export default function Header() {
             </button>
           </div>
 
-          {/* Cart */}
-          <div className="flex items-center border border-[#EF608C] rounded-md px-3 py-2 space-x-1">
-            <ShoppingCartOutlined className="text-[20px] text-[#EF608C]" />
-            <span className="text-black text-sm">Giỏ hàng</span>
-            <span className="bg-[#F5D1DE] text-black text-xs font-semibold px-2 py-[1px] rounded-sm border border-[#EF608C]">
-              0
-            </span>
+          {/* Cart and login */}
+          <div className="flex items-center text-[20px]">
+            <button>
+              <Link to="/cart">
+                <img
+                  src="src/assets/img/icon/cart-icon.png"
+                  alt="Giỏ hàng"
+                  className="w-[30px] h-[30px] mr-[9px]"
+                />
+                Giỏ hàng
+              </Link>
+            </button>
+          </div>
+
+          {/* Cart and login */}
+          <div className="flex items-center  text-[20px] mr-[98px]">
+            <button>
+              <Link to="/">
+                <img
+                  src="src/assets/img/icon/order-icon.png"
+                  alt="Giỏ hàng"
+                  className="w-[30px] h-[32px] mr-[9px]"
+                />
+                Đơn hàng
+              </Link>
+            </button>
           </div>
         </div>
 
