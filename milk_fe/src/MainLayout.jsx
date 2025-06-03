@@ -38,6 +38,7 @@ function MainLayout() {
 
   return (
     <>
+    {!isDashboard && <Header />}
       {/* Dashboard will not have header, footer and layout */}
       {isDashboard ? (
         hasDashboardAccess ? (
