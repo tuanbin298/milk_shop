@@ -130,9 +130,13 @@ const AddUser = ({ open, handleClose }) => {
           handleCancel();
           navigate("userlist");
         }, 1000);
+      } else {
+        toast.error("Lỗi tạo người dùng thất bại");
+        setLoading(false);
       }
     } catch (err) {
       toast.error("Tạo người dùng thất bại");
+      setLoading(false);
       console.error("Xảy ra lỗi khi tạo người dùng: ", err);
     }
   };

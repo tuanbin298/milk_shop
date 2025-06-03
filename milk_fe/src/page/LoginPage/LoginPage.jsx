@@ -117,11 +117,11 @@ const LoginPage = () => {
           {showForgotPassword ? "Quên mật khẩu" : "Đăng nhập tài khoản"}
         </h2>
 
-        {/* ===== Form Đăng Nhập ===== */}
+        {/* ===== Form Login===== */}
         {!showForgotPassword && (
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div className="flex items-center">
-              <label className="font-medium mr-5 min-w-[100px]">
+              <label className="font-medium mr-5 min-w-[105px]">
                 <div className="flex item-center">
                   <PersonIcon />
                   Email:
@@ -139,7 +139,7 @@ const LoginPage = () => {
             </div>
 
             <div className="flex items-center">
-              <label className="font-medium mr-5 min-w-[100px]">
+              <label className="font-medium mr-5 min-w-[105px]">
                 <div className="flex item-center">
                   <LockOpenIcon />
                   Mật khẩu:
@@ -151,7 +151,7 @@ const LoginPage = () => {
                 value={input.password}
                 onChange={handleInputChange}
                 required
-                className="w-full border border-gray-300 rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 placeholder="Nhập mật khẩu"
               />
             </div>
@@ -160,7 +160,7 @@ const LoginPage = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-80 mt-5 bg-sky-400 hover:bg-sky-500 text-white py-2 px-4 rounded transition"
+                className="w-80 mt-5 bg-sky-400 hover:bg-sky-500 text-white py-2 px-3 rounded transition"
               >
                 {loading ? (
                   <>

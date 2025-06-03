@@ -37,6 +37,7 @@ import { useNavigate } from "react-router-dom";
 
 const AdminSidebar = () => {
   const navigate = useNavigate();
+  const role = localStorage.getItem("roles");
 
   // State
   const [openAddUserModal, setOpenAddUserModal] = useState(false);
@@ -157,17 +158,19 @@ const AdminSidebar = () => {
                     </ListItemButton>
                   </ListItem>
 
-                  <ListItem disablePadding>
-                    <ListItemButton
-                      onClick={() => {
-                        setSelectedSection("addUser");
-                        setOpenAddUserModal(true);
-                      }}
-                    >
-                      <PersonAddOutlinedIcon className="mr-5" />
-                      <ListItemText primary="Thêm người dùng" />
-                    </ListItemButton>
-                  </ListItem>
+                  {role === "ADMIN" && (
+                    <ListItem disablePadding>
+                      <ListItemButton
+                        onClick={() => {
+                          setSelectedSection("addUser");
+                          setOpenAddUserModal(true);
+                        }}
+                      >
+                        <PersonAddOutlinedIcon className="mr-5" />
+                        <ListItemText primary="Thêm người dùng" />
+                      </ListItemButton>
+                    </ListItem>
+                  )}
                 </List>
               </Collapse>
 
@@ -202,14 +205,16 @@ const AdminSidebar = () => {
                     </ListItemButton>
                   </ListItem>
 
-                  <ListItem disablePadding>
-                    <ListItemButton
-                      onClick={() => setSelectedSection("addProduct")}
-                    >
-                      <AddBusinessOutlinedIcon className="mr-5" />
-                      <ListItemText primary="Thêm sản phẩm" />
-                    </ListItemButton>
-                  </ListItem>
+                  {role === "ADMIN" && (
+                    <ListItem disablePadding>
+                      <ListItemButton
+                        onClick={() => setSelectedSection("addProduct")}
+                      >
+                        <AddBusinessOutlinedIcon className="mr-5" />
+                        <ListItemText primary="Thêm sản phẩm" />
+                      </ListItemButton>
+                    </ListItem>
+                  )}
                 </List>
               </Collapse>
 
