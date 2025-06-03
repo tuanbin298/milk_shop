@@ -8,6 +8,7 @@ import Footer from "./component/Footer/Footer";
 import Homepage from "./page/HomePage/HomePage";
 import Layout from "./component/Layout/Layout";
 import AdminDashboard from "./page/Admin/AdminDashboard";
+import IntroPage from "./page/IntroPage/IntroPage";
 
 function MainLayout() {
   const location = useLocation();
@@ -23,6 +24,7 @@ function MainLayout() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/dashboard" element={<AdminDashboard />} />
+          <Route path="/gioi-thieu" element={<IntroPage />} />
         </Routes>
       </Layout>
 
