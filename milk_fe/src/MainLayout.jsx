@@ -14,6 +14,7 @@ import CartPage from "./page/CartPage/CartPage";
 import ResetPasswordPage from "./page/ResetPasswordPage/ResetPasswordPage";
 import UserTable from "./page/Admin/Tables/UserTable";
 import LayoutAdmin from "./component/Layout/LayoutAdmin";
+import ProductTable from "./page/Admin/Tables/ProductTable";
 
 function MainLayout() {
   const location = useLocation();
@@ -46,6 +47,7 @@ function MainLayout() {
             <Routes>
               <Route path="/dashboard" element={<AdminDashboard />}>
                 <Route path="userlist" element={<UserTable />} />
+                <Route path="productlist" element={<ProductTable />} />
               </Route>
             </Routes>
           </LayoutAdmin>

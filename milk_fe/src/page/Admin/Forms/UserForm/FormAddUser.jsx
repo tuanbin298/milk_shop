@@ -155,8 +155,9 @@ const AddUser = ({ open, handleClose }) => {
               Thêm người dùng
             </Typography>
 
-            {/* Full Name */}
+            {/* Input fields */}
             <Box maxWidth={400} mx="auto">
+              {/* Full Name */}
               <TextField
                 fullWidth
                 margin="normal"

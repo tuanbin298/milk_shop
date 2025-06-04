@@ -34,13 +34,14 @@ import AddUser from "./Forms/UserForm/FormAddUser";
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import AddProduct from "./Forms/ProductForm/FormAddProduct";
 
 const AdminSidebar = () => {
   const navigate = useNavigate();
   const role = localStorage.getItem("roles");
 
   // State
-  const [openAddUserModal, setOpenAddUserModal] = useState(false);
+  const [openAddModal, setOpenAddModal] = useState(false);
   const [selectedSection, setSelectedSection] = useState("overview");
 
   const [openDropdowns, setOpenDropdowns] = useState({
@@ -80,8 +81,15 @@ const AdminSidebar = () => {
       case "addUser":
         return (
           <AddUser
-            open={openAddUserModal}
-            handleClose={() => setOpenAddUserModal(false)}
+            open={openAddModal}
+            handleClose={() => setOpenAddModal(false)}
+          />
+        );
+      case "addProduct":
+        return (
+          <AddProduct
+            open={openAddModal}
+            handleClose={() => setOpenAddModal(false)}
           />
         );
     }
@@ -163,7 +171,7 @@ const AdminSidebar = () => {
                       <ListItemButton
                         onClick={() => {
                           setSelectedSection("addUser");
-                          setOpenAddUserModal(true);
+                          setOpenAddModal(true);
                         }}
                       >
                         <PersonAddOutlinedIcon className="mr-5" />
@@ -199,7 +207,7 @@ const AdminSidebar = () => {
               >
                 <List component="div" disablePadding sx={{ pl: 2 }}>
                   <ListItem disablePadding>
-                    <ListItemButton onClick={() => setSelectedSection("users")}>
+                    <ListItemButton onClick={() => navigate("productlist")}>
                       <StoreOutlinedIcon className="mr-5" />
                       <ListItemText primary="Danh sách sản phẩm" />
                     </ListItemButton>
@@ -208,7 +216,10 @@ const AdminSidebar = () => {
                   {role === "ADMIN" && (
                     <ListItem disablePadding>
                       <ListItemButton
-                        onClick={() => setSelectedSection("addProduct")}
+                        onClick={() => {
+                          setSelectedSection("addProduct");
+                          setOpenAddModal(true);
+                        }}
                       >
                         <AddBusinessOutlinedIcon className="mr-5" />
                         <ListItemText primary="Thêm sản phẩm" />

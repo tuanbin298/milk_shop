@@ -33,6 +33,21 @@ const UserTable = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [selectedUserDelete, setSelectedUserDelete] = useState(null);
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [roleFilter, setRoleFilter] = useState("");
+
+  // Search and filter user
+  const filterUser = usersData.filter((user) => {
+    const matchesKeyword = user.fullName
+      .toLowerCase()
+      .includes(searchKeyword.toLowerCase());
+
+    const matchesRole = roleFilter
+      ? user.roles.toLowerCase() === roleFilter.toLowerCase()
+      : true;
+
+    return matchesKeyword && matchesRole;
+  });
 
   // Pagination configuration
   const [page, setPage] = useState(1); //Current page
@@ -42,7 +57,7 @@ const UserTable = () => {
   const startIndex = (page - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
 
-  const paginatedItems = usersData.slice(startIndex, endIndex) || [];
+  const paginatedItems = filterUser.slice(startIndex, endIndex) || [];
 
   // Handle page change
   const handlePageChange = (e, value) => setPage(value);
@@ -146,19 +161,44 @@ const UserTable = () => {
             Danh sách người dùng
           </Typography>
 
-          {/* Search */}
-          <TextField
-            sx={{ mr: 2 }}
-            size="small"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-            placeholder="Tìm kiếm người dùng"
-          />
+          {/* Search & Filter */}
+          <Box>
+            <TextField
+              sx={{ mr: 2 }}
+              size="small"
+              value={searchKeyword}
+              onChange={(e) => {
+                setSearchKeyword(e.target.value);
+                setPage(1);
+              }}
+              placeholder="Tìm theo tên"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+
+            <TextField
+              select
+              size="small"
+              value={roleFilter}
+              onChange={(e) => {
+                setRoleFilter(e.target.value);
+                setPage(1); // reset về trang đầu
+              }}
+              SelectProps={{
+                native: true,
+              }}
+            >
+              <option value="">Tất cả quyền</option>
+              <option value="ADMIN">ADMIN</option>
+              <option value="STAFF">STAFF</option>
+              <option value="CUSTOMER">CUSTOMER</option>
+            </TextField>
+          </Box>
         </Box>
 
         <TableContainer component={Paper} sx={{ maxHeight: 440 }}>
@@ -297,7 +337,7 @@ const UserTable = () => {
                     />
 
                     <Typography color="text.secondary">
-                      Tổng số người dùng: {usersData.length}
+                      Tổng số người: {filterUser.length}
                     </Typography>
                   </Box>
                 </TableCell>
