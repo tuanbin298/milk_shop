@@ -30,7 +30,7 @@ import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { toast } from "react-toastify";
 
-import AddUser from "./Forms/UserForm";
+import AddUser from "./Forms/UserForm/FormAddUser";
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";

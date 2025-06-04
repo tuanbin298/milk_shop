@@ -282,7 +282,22 @@ const AddUser = ({ open, handleClose }) => {
                 Hủy
               </Button>
 
-              <Button disabled={loading} type="submit" variant="contained">
+              <Button
+                disabled={loading}
+                type="submit"
+                variant="contained"
+                sx={{
+                  border: "2px solid #1976d2",
+                  color: "#1976d2",
+                  backgroundColor: "#ffffff",
+                  textTransform: "none",
+                  borderRadius: 2,
+                  "&:hover": {
+                    backgroundColor: "#1976d2",
+                    color: "#ffffff",
+                  },
+                }}
+              >
                 {loading ? (
                   <>
                     <CircularProgress

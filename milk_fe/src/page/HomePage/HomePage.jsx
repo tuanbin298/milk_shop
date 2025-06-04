@@ -10,10 +10,16 @@ export default function Homepage() {
       {/* Carousel */}
       <CarouselImage></CarouselImage>
 
-      {/* Sản phẩm hot */}
+      {/* Best selling products */}
       <HotProductSection />
+
+      {/* Brands */}
       <FeaturedBrands />
+
+      {/* Articles */}
       <NewsSection />
+
+      {/* Feedbacks */}
       <FeedbackSection />
     </div>
   );
