@@ -6,7 +6,7 @@ const AdminDashboard = () => {
     <div style={{ display: "flex" }}>
       <AdminSidebar />
 
-      <div style={{ flexGrow: 1 }}>
+      <div style={{ flexGrow: 1, height: "100vh" }}>
         <Outlet /> {/* Render child route */}
       </div>
     </div>

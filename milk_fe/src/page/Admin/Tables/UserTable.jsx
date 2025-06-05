@@ -16,19 +16,38 @@ import {
   Typography,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import CloseIcon from "@mui/icons-material/Close";
+import DeleteIcon from "@mui/icons-material/Delete";
 import BackToDashboardButton from "../../../utils/backToDashboardBtn";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Sheet, Table } from "@mui/joy";
+import UpdateUser from "../Forms/UserForm/FormUpdateUser";
 
 const UserTable = () => {
   const token = localStorage.getItem("sessionToken");
+  const userRole = localStorage.getItem("roles");
 
   // State
   const [usersData, setUserData] = useState([]);
   const [openModal, setOpenModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [selectedUserDelete, setSelectedUserDelete] = useState(null);
+  const [searchKeyword, setSearchKeyword] = useState("");
+  const [roleFilter, setRoleFilter] = useState("");
+
+  // Search and filter user
+  const filterUser = usersData.filter((user) => {
+    const matchesKeyword = user.fullName
+      .toLowerCase()
+      .includes(searchKeyword.toLowerCase());
+
+    const matchesRole = roleFilter
+      ? user.roles.toLowerCase() === roleFilter.toLowerCase()
+      : true;
+
+    return matchesKeyword && matchesRole;
+  });
 
   // Pagination configuration
   const [page, setPage] = useState(1); //Current page
@@ -38,34 +57,35 @@ const UserTable = () => {
   const startIndex = (page - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
 
-  const paginatedItems = usersData.slice(startIndex, endIndex) || [];
+  const paginatedItems = filterUser.slice(startIndex, endIndex) || [];
 
   // Handle page change
   const handlePageChange = (e, value) => setPage(value);
 
-  // Call API
-  useEffect(() => {
-    const getUserList = async () => {
-      try {
-        const response = await fetch(`http://localhost:8080/api/admin/user`, {
-          method: "GET",
-          headers: {
-            accept: "*/*",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+  // Logic call API
+  const getUserList = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/admin/user`, {
+        method: "GET",
+        headers: {
+          accept: "*/*",
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-        if (response?.ok) {
-          const data = await response.json();
-          setUserData(data);
-        } else {
-          toast.error("Lỗi tải danh sách người dùng: ");
-        }
-      } catch (err) {
-        toast.error("Lỗi tải danh sách người dùng: ", err);
+      if (response?.ok) {
+        const data = await response.json();
+        setUserData(data);
+      } else {
+        toast.error("Lỗi tải danh sách người dùng: ");
       }
-    };
+    } catch (err) {
+      toast.error("Lỗi tải danh sách người dùng: ", err);
+    }
+  };
 
+  // Call API when load and page
+  useEffect(() => {
     getUserList();
   }, []);
 
@@ -75,11 +95,34 @@ const UserTable = () => {
     setOpenModal(true);
   };
 
-  const handleCloseModal = () => {
-    setOpenModal(false);
-  };
+  // Handle delete user
+  const handleDeleteUser = async (e) => {
+    const userId = selectedUserDelete.id;
 
-  console.log(usersData);
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/admin/user/${userId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        toast.success("Xoá thành công");
+        setOpenDeleteModal(false);
+        setSelectedUserDelete(null);
+        getUserList();
+      } else {
+        toast.error("Xoá người dùng thất bại");
+      }
+    } catch (error) {
+      toast.error("Xoá thất bại");
+    }
+  };
 
   return (
     <Box
@@ -118,19 +161,44 @@ const UserTable = () => {
             Danh sách người dùng
           </Typography>
 
-          {/* Search */}
-          <TextField
-            sx={{ mr: 2 }}
-            size="small"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-            placeholder="Tìm kiếm người dùng"
-          />
+          {/* Search & Filter */}
+          <Box>
+            <TextField
+              sx={{ mr: 2 }}
+              size="small"
+              value={searchKeyword}
+              onChange={(e) => {
+                setSearchKeyword(e.target.value);
+                setPage(1);
+              }}
+              placeholder="Tìm theo tên"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+
+            <TextField
+              select
+              size="small"
+              value={roleFilter}
+              onChange={(e) => {
+                setRoleFilter(e.target.value);
+                setPage(1); // reset về trang đầu
+              }}
+              SelectProps={{
+                native: true,
+              }}
+            >
+              <option value="">Tất cả quyền</option>
+              <option value="ADMIN">ADMIN</option>
+              <option value="STAFF">STAFF</option>
+              <option value="CUSTOMER">CUSTOMER</option>
+            </TextField>
+          </Box>
         </Box>
 
         <TableContainer component={Paper} sx={{ maxHeight: 440 }}>
@@ -146,11 +214,22 @@ const UserTable = () => {
             {/* Head */}
             <TableHead>
               <TableRow>
-                <TableCell>Tên</TableCell>
-                <TableCell>Email</TableCell>
+                <TableCell sx={{ minWidth: 200 }}>Tên</TableCell>
+                <TableCell
+                  sx={{
+                    minWidth: 250,
+                    maxWidth: 300,
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  Email
+                </TableCell>
                 <TableCell>Số điện thoại</TableCell>
                 <TableCell>Quyền hạn</TableCell>
                 <TableCell>Trạng thái</TableCell>
+                <TableCell>Hành động</TableCell>
               </TableRow>
             </TableHead>
 
@@ -168,7 +247,17 @@ const UserTable = () => {
                   onClick={() => handleRowClick(user)}
                 >
                   <TableCell>{user.fullName}</TableCell>
-                  <TableCell>{user.username}</TableCell>
+                  <TableCell
+                    sx={{
+                      minWidth: 250,
+                      maxWidth: 300,
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {user.username}
+                  </TableCell>
                   <TableCell>{user.phone}</TableCell>
                   <TableCell>
                     <Chip
@@ -205,11 +294,25 @@ const UserTable = () => {
                   <TableCell>
                     <Chip
                       label={user.status ? "Đang hoạt động" : "Ngưng hoạt động"}
-                      color={user.status ? "success" : "default"}
+                      color={user.status ? "success" : "error"}
                       variant="outlined"
                       size="small"
                     />
                   </TableCell>
+                  {userRole === "ADMIN" ? (
+                    <TableCell>
+                      <DeleteIcon
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent open modal
+                          setSelectedUserDelete(user);
+                          setOpenDeleteModal(true);
+                        }}
+                        sx={{ color: "red", cursor: "pointer" }}
+                      />
+                    </TableCell>
+                  ) : (
+                    <></>
+                  )}
                 </TableRow>
               ))}
             </TableBody>
@@ -217,7 +320,7 @@ const UserTable = () => {
             {/* Footer */}
             <TableFooter>
               <TableRow>
-                <TableCell colSpan={5}>
+                <TableCell colSpan={6}>
                   <Box
                     display="flex"
                     justifyContent="space-between"
@@ -234,7 +337,7 @@ const UserTable = () => {
                     />
 
                     <Typography color="text.secondary">
-                      Tổng số người dùng: {usersData.length}
+                      Tổng số người: {filterUser.length}
                     </Typography>
                   </Box>
                 </TableCell>
@@ -244,78 +347,71 @@ const UserTable = () => {
         </TableContainer>
 
         {/* Modal for user detail */}
-        <Modal open={openModal}>
+        <UpdateUser
+          open={openModal}
+          user={selectedUser}
+          handleClose={() => setOpenModal(false)}
+          refreshUsers={getUserList}
+        />
+
+        {/* Modal confirm delete */}
+        <Modal open={openDeleteModal} onClose={() => setOpenDeleteModal(false)}>
           <Box
             sx={{
               position: "absolute",
               top: "50%",
               left: "50%",
               transform: "translate(-50%, -50%)",
-              width: 600,
+              width: 420,
               bgcolor: "background.paper",
-              border: "2px solid #000",
+              borderRadius: 3,
               boxShadow: 24,
-              borderRadius: 2,
+              p: 4,
               display: "flex",
               flexDirection: "column",
+              gap: 2,
             }}
           >
-            {/* Btn close */}
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                p: 1,
-                borderBottom: "1px solid #ddd",
-              }}
-            >
-              <Typography variant="h6" sx={{ ml: 1 }}>
-                Chi tiết người dùng
-              </Typography>
+            <Typography variant="h6" fontWeight="bold" color="error.main">
+              Xác nhận xoá
+            </Typography>
 
+            <Typography color="text.secondary">
+              Bạn có chắc chắn muốn xoá người dùng này?
+            </Typography>
+
+            <Box display="flex" justifyContent="flex-end" gap={2} mt={2}>
               <Button
+                variant="outlined"
+                color="primary"
+                onClick={() => setOpenDeleteModal(false)}
+                sx={{
+                  borderRadius: 2,
+                  px: 3,
+                  fontWeight: 600,
+                }}
+              >
+                HỦY
+              </Button>
+              <Button
+                onClick={handleDeleteUser}
                 variant="text"
                 sx={{
-                  color: "red",
+                  color: "#f44336",
+                  border: "2px solid #f44336",
+                  borderColor: "#f44336",
+                  backgroundColor: "#ffffff",
                   textTransform: "none",
+                  borderRadius: 2,
                   "&:hover": {
-                    backgroundColor: "#f0f0f0",
+                    backgroundColor: "#f44336",
+                    color: "#ffffff",
+                    borderColor: "#f44336",
                   },
                 }}
-                onClick={handleCloseModal}
               >
-                <CloseIcon />
-                Đóng
+                XÁC NHẬN
               </Button>
-            </Box>
-
-            {/* User detail */}
-            <Box>
-              {selectedUser && (
-                <>
-                  <TextField
-                    fullWidth
-                    label="Tên"
-                    value={selectedUser.fullName}
-                    margin="normal"
-                    InputProps={{ readOnly: true }}
-                  />
-                  <TextField
-                    fullWidth
-                    label="Email"
-                    value={selectedUser.username}
-                    margin="normal"
-                    InputProps={{ readOnly: true }}
-                  />
-                  <TextField
-                    fullWidth
-                    label="Số điện thoại"
-                    value={selectedUser.phone}
-                    margin="normal"
-                    InputProps={{ readOnly: true }}
-                  />
-                </>
-              )}
             </Box>
           </Box>
         </Modal>
