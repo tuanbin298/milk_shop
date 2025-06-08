@@ -62,7 +62,7 @@ function MainLayout() {
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
-            <Route path="/gioi-thieu" element={<IntroPage />} />
+            <Route path="/intro-page" element={<IntroPage />} />
           </Routes>
         </LayoutPage>
       )}
