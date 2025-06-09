@@ -2,10 +2,14 @@ import {
   Box,
   Button,
   CircularProgress,
+  MenuItem,
   Modal,
+  TextField,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const style = {
   position: "absolute",
@@ -20,18 +24,170 @@ const style = {
 };
 
 const AddProduct = ({ open, handleClose }) => {
+  const token = localStorage.getItem("sessionToken");
+  const navigate = useNavigate();
+
   // State
+  const [errors, setErrors] = useState({});
+  const [brandsdata, setBrandsData] = useState(null);
+  const [categorydata, setCategorydata] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [productData, setProductData] = useState({
+    name: "",
+    image: "",
+    price: "",
+    description: "",
+    categoryId: "",
+    brandId: "",
+    quantity: "",
+  });
+
+  // Function change state of input
+  const handleInputChange = (e) => {
+    // Name of input, value of input
+    const { name, value } = e.target;
+
+    setProductData({ ...productData, [name]: value });
+  };
+
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    try {
+      const imgUrl = await uploadToCloudinary(file);
+      setProductData({ ...productData, image: imgUrl });
+    } catch (error) {
+      toast.error("Tải ảnh lên thất bại");
+    }
+  };
+
+  // Logic upload img into cloudinary to get the URL return
+  const uploadToCloudinary = async (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "milk_shop_cloudinary"); //Upload into server without API Key
+    formData.append("cloud_name", "tuanbin");
+    formData.append("folder", "milk_shop");
+
+    const response = await fetch(
+      `https://api.cloudinary.com/v1_1/tuanbin/image/upload`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+
+    const data = await response.json();
+    toast.success("Ảnh đã được lưu trên Cloudinary");
+    return data.secure_url;
+  };
 
   //Reset all input when cancel and clods modal
   const handleCancel = () => {
+    setProductData({
+      name: "",
+      image: "",
+      price: "",
+      description: "",
+      categoryId: "",
+      brandId: "",
+      quantity: "",
+    });
+
     handleClose();
+    setLoading(false);
   };
+
+  // Logic submit
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    setLoading(true);
+
+    try {
+      const response = await fetch("http://localhost:8080/api/products", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(productData),
+      });
+
+      if (response.ok) {
+        toast.success("Tạo sản phẩm thành công!");
+
+        // Navigate to view users
+        setTimeout(() => {
+          handleCancel();
+          navigate("productlist");
+        }, 1000);
+      } else {
+        toast.error("Lỗi tạo sản phẩm thất bại");
+        setLoading(false);
+      }
+    } catch (error) {
+      toast.error("Tạo sản phẩm thất bại");
+      setLoading(false);
+      console.error("Xảy ra lỗi khi tạo sản phẩm: ", err);
+    }
+  };
+
+  // Call API brand
+  const getBrandsList = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/brands`, {
+        method: "GET",
+        headers: {
+          accept: "*/*",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response?.ok) {
+        const brands = await response.json();
+        setBrandsData(brands);
+      } else {
+        toast.error("Lỗi tải danh sách nhãn hiệu: ");
+      }
+    } catch (error) {
+      toast.error("Lỗi tải danh sách nhãn hiệu: ", error);
+    }
+  };
+
+  const getCategoryList = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/categories`, {
+        method: "GET",
+        headers: {
+          accept: "*/*",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response?.ok) {
+        const categories = await response.json();
+        setCategorydata(categories);
+      } else {
+        toast.error("Lỗi tải danh sách loại: ");
+      }
+    } catch (error) {
+      toast.error("Lỗi tải danh sách loại: ", error);
+    }
+  };
+
+  // Call API when load and page
+  useEffect(() => {
+    getBrandsList();
+    getCategoryList();
+  }, []);
 
   return (
     <>
       <Modal open={open} onClose={handleClose}>
-        <form>
+        <form onSubmit={handleSubmit}>
           <Box sx={style}>
             <Typography
               sx={{ fontWeight: "bold" }}
@@ -41,6 +197,116 @@ const AddProduct = ({ open, handleClose }) => {
             >
               Thêm sản phẩm
             </Typography>
+
+            {/* Input fields */}
+            <Box maxWidth={400} mx="auto">
+              {/* Product Name */}
+              <TextField
+                fullWidth
+                margin="normal"
+                required
+                label="Tên sản phẩm"
+                name="name"
+                value={productData.name}
+                onChange={handleInputChange}
+                // error={errors.name}
+                // helperText={errors.name}
+              />
+
+              {/* Product Image */}
+              <Button
+                variant="contained"
+                component="label"
+                sx={{ mb: 1, mt: 1 }}
+              >
+                Upload Hình Ảnh
+                <input
+                  type="file"
+                  hidden
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                />
+              </Button>
+
+              {/* Product Price */}
+              <TextField
+                fullWidth
+                margin="normal"
+                required
+                label="Giá sản phẩm"
+                name="price"
+                value={productData.price}
+                onChange={handleInputChange}
+                // error={errors.price}
+                // helperText={errors.price}
+              />
+
+              {/* Product Description */}
+              <TextField
+                fullWidth
+                margin="normal"
+                required
+                label="Mô tả sản phẩm"
+                name="description"
+                value={productData.description}
+                onChange={handleInputChange}
+                // error={errors.description}
+                // helperText={errors.description}
+              />
+
+              {/* Product Category */}
+              <TextField
+                fullWidth
+                margin="normal"
+                required
+                select
+                label="Loại sản phẩm"
+                name="categoryId"
+                value={productData.categoryId}
+                onChange={handleInputChange}
+              >
+                {categorydata?.map((category) => {
+                  return (
+                    <MenuItem key={category.id} value={category.id}>
+                      {category.name}
+                    </MenuItem>
+                  );
+                })}
+              </TextField>
+
+              {/* Product Brand */}
+              <TextField
+                fullWidth
+                margin="normal"
+                required
+                select
+                label="Nhãn hiệu sản phẩm"
+                name="brandId"
+                value={productData.brandId}
+                onChange={handleInputChange}
+              >
+                {brandsdata?.map((brand) => {
+                  return (
+                    <MenuItem key={brand.id} value={brand.id}>
+                      {brand.name}
+                    </MenuItem>
+                  );
+                })}
+              </TextField>
+
+              {/* Product Quantity */}
+              <TextField
+                fullWidth
+                margin="normal"
+                required
+                label="Số lượng sản phẩm"
+                name="quantity"
+                value={productData.quantity}
+                onChange={handleInputChange}
+                // error={errors.quantity}
+                // helperText={errors.quantity}
+              />
+            </Box>
 
             <Box display="flex" justifyContent="flex-end" mt={3}>
               <Button onClick={handleCancel} variant="outlined" sx={{ mr: 2 }}>
@@ -69,10 +335,10 @@ const AddProduct = ({ open, handleClose }) => {
                       size={16}
                       sx={{ color: "white", mr: 1 }}
                     />
-                    <span>Đang tạo người dùng...</span>
+                    <span>Đang tạo sản phẩm...</span>
                   </>
                 ) : (
-                  "Tạo người dùng"
+                  "Tạo sản phẩm"
                 )}
               </Button>
             </Box>

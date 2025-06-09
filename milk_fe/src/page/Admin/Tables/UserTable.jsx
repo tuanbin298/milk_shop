@@ -187,7 +187,7 @@ const UserTable = () => {
               value={roleFilter}
               onChange={(e) => {
                 setRoleFilter(e.target.value);
-                setPage(1); // reset về trang đầu
+                setPage(1); // reset to first page
               }}
               SelectProps={{
                 native: true,

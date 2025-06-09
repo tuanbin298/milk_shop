@@ -171,6 +171,7 @@ const AdminSidebar = () => {
                       <ListItemButton
                         onClick={() => {
                           setSelectedSection("addUser");
+                          navigate("/dashboard");
                           setOpenAddModal(true);
                         }}
                       >
@@ -218,6 +219,7 @@ const AdminSidebar = () => {
                       <ListItemButton
                         onClick={() => {
                           setSelectedSection("addProduct");
+                          navigate("/dashboard");
                           setOpenAddModal(true);
                         }}
                       >
@@ -264,7 +266,11 @@ const AdminSidebar = () => {
 
                   <ListItem disablePadding>
                     <ListItemButton
-                      onClick={() => setSelectedSection("addCategory")}
+                      onClick={() => {
+                        setSelectedSection("addCategory");
+                        navigate("/dashboard");
+                        setOpenAddModal(true);
+                      }}
                     >
                       <LibraryAddOutlinedIcon className="mr-5" />
                       <ListItemText primary="Thêm loại" />

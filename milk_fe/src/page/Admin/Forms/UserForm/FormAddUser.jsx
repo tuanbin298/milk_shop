@@ -98,6 +98,7 @@ const AddUser = ({ open, handleClose }) => {
     });
 
     handleClose();
+    setLoading(false);
   };
 
   // Logic submit
