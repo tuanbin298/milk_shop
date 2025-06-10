@@ -16,7 +16,7 @@ import ResetPasswordPage from "./page/ResetPasswordPage/ResetPasswordPage";
 import UserTable from "./page/Admin/Tables/UserTable";
 import LayoutAdmin from "./component/Layout/LayoutAdmin";
 import ProductTable from "./page/Admin/Tables/ProductTable";
-
+import ProfileUser from "./page/Profile/ProfileUser";
 function MainLayout() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -63,6 +63,7 @@ function MainLayout() {
             <Route path="/cart" element={<CartPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/intro-page" element={<IntroPage />} />
+            <Route path="/profile-user" element={<ProfileUser />} />
           </Routes>
         </LayoutPage>
       )}

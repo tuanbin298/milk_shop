@@ -13,6 +13,7 @@ import "./Header.css";
 import { useEffect, useState } from "react";
 import { Avatar, Menu, MenuItem } from "@mui/material";
 import { toast } from "react-toastify";
+import ProfileUser from "../../page/Profile/ProfileUser";
 
 export default function Header() {
   const role = localStorage.getItem("roles");
@@ -116,12 +117,13 @@ export default function Header() {
                   open={Boolean(anchorEl)}
                   onClose={handleMenuClose}
                 >
-                  <MenuItem onClick={() => navigate("/profile")}>
-                    <div className="flex items-center">
-                      <AssignmentIndIcon className="mr-2" />
-                      Thông tin cá nhân
+                  <MenuItem onClick={() => navigate("/profile-user")}>
+                    <div className="flex items-center gap-2">
+                      <AssignmentIndIcon />
+                      <span>Thông tin cá nhân</span>
                     </div>
                   </MenuItem>
+
                   {(role === "ADMIN" || role === "STAFF") && (
                     <MenuItem onClick={() => navigate("/dashboard")}>
                       <div className="flex items-center">
@@ -226,7 +228,7 @@ export default function Header() {
           </div>
 
           <div className="flex items-center space-x-1">
-            <Link to="/gioi-thieu" className="text-base font-semibold">
+            <Link to="/intro-page" className="text-base font-semibold">
               GIỚI THIỆU
             </Link>
           </div>
