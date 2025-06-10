@@ -2,9 +2,9 @@ import {
   EnvironmentOutlined,
   SearchOutlined,
   PhoneOutlined,
-  ShoppingCartOutlined,
 } from "@ant-design/icons";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
+import "@fontsource/luckiest-guy";
 import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
 import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -13,7 +13,7 @@ import "./Header.css";
 import { useEffect, useState } from "react";
 import { Avatar, Menu, MenuItem } from "@mui/material";
 import { toast } from "react-toastify";
-import ListAltIcon from "@mui/icons-material/ListAlt";
+import ProfileUser from "../../page/Profile/ProfileUser";
 
 export default function Header() {
   const role = localStorage.getItem("roles");
@@ -117,12 +117,13 @@ export default function Header() {
                   open={Boolean(anchorEl)}
                   onClose={handleMenuClose}
                 >
-                  <MenuItem onClick={() => navigate("/profile")}>
-                    <div className="flex items-center">
-                      <AssignmentIndIcon className="mr-2" />
-                      Thông tin cá nhân
+                  <MenuItem onClick={() => navigate("/profile-user")}>
+                    <div className="flex items-center gap-2">
+                      <AssignmentIndIcon />
+                      <span>Thông tin cá nhân</span>
                     </div>
                   </MenuItem>
+
                   {(role === "ADMIN" || role === "STAFF") && (
                     <MenuItem onClick={() => navigate("/dashboard")}>
                       <div className="flex items-center">
@@ -157,21 +158,34 @@ export default function Header() {
         </div>
 
         {/* Main header */}
-        <div className="flex items-center justify-between px-16 py-2 bg-white shadow">
+        <div className="flex items-center justify-between px-40 py-3 bg-white shadow">
           {/* Header Logo */}
-          <div className="flex items-center header_mid-logo">
+          <div className="flex items-center space-x-2">
             <Link to="/">
-              <img src="./src/assets/logo/web logo.png" alt="Milk Logo" />
+              <img
+                src="./src/assets/logo/logoluna.png"
+                alt="Milk Logo"
+                className="h-30 w-auto object-contain"
+              />
             </Link>
-
-            <h2 className="header_mid-logo-title">LunaMilk</h2>
+            <h2 className="text-[40px] font-fredoka font-bold ml-4 leading-none flex">
+              <span className="text-white [text-shadow:-2px_-2px_0_#9F3C60,2px_-2px_0_#9F3C60,-2px_2px_0_#9F3C60,2px_2px_0_#9F3C60]">
+                Luna
+              </span>
+              <span className="text-[#F5D6D6] [text-shadow:-2px_-2px_0_#9F3C60,2px_-2px_0_#9F3C60,-2px_2px_0_#9F3C60,2px_2px_0_#9F3C60]">
+                Milk
+              </span>
+            </h2>
           </div>
 
           {/* Search bar */}
-          <div className="header_seach-container">
-            <input type="text" placeholder="Ba mẹ muốn tìm mua gì hôm nay ?" />
-
-            <button>
+          <div className="flex items-center border border-gray-300 rounded-full overflow-hidden w-[400px] h-[42px]">
+            <input
+              type="text"
+              placeholder="Tìm sản phẩm ..."
+              className="flex-grow px-4 py-2 text-sm outline-none"
+            />
+            <button className="bg-[#F5D1DE] text-[#EF608C] px-4 h-full flex items-center justify-center">
               <SearchOutlined />
             </button>
           </div>
@@ -209,31 +223,31 @@ export default function Header() {
         <div className="bg-[#EF608C] text-white text-sm flex justify-between px-40 py-3">
           <div className="flex items-center space-x-1">
             <Link href="/">
-              <span className="text-base">TRANG CHỦ</span>
+              <span className="text-base font-semibold">TRANG CHỦ</span>
+            </Link>
+          </div>
+
+          <div className="flex items-center space-x-1">
+            <Link to="/intro-page" className="text-base font-semibold">
+              GIỚI THIỆU
             </Link>
           </div>
 
           <div className="flex items-center space-x-1">
             <Link href="/">
-              <span className="text-base">GIỚI THIỆU</span>
+              <span className="text-base font-semibold">SỮA CHO BÉ</span>
             </Link>
           </div>
 
           <div className="flex items-center space-x-1">
             <Link href="/">
-              <span className="text-base">SỮA CHO TRẺ NHỎ</span>
+              <span className="text-base font-semibold">SỮA CHO MẸ</span>
             </Link>
           </div>
 
           <div className="flex items-center space-x-1">
             <Link href="/">
-              <span className="text-base">SỮA CHO MẸ BẦU & SAU SINH</span>
-            </Link>
-          </div>
-
-          <div className="flex items-center space-x-1">
-            <Link href="/">
-              <span className="text-base">LIÊN HỆ</span>
+              <span className="text-base font-semibold">LIÊN HỆ</span>
             </Link>
           </div>
         </div>

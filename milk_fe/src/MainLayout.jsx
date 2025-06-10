@@ -10,12 +10,13 @@ import Footer from "./component/Footer/Footer";
 import Homepage from "./page/HomePage/HomePage";
 import LayoutPage from "./component/Layout/LayoutPage";
 import AdminDashboard from "./page/Admin/AdminDashboard";
+import IntroPage from "./page/IntroPage/IntroPage";
 import CartPage from "./page/CartPage/CartPage";
 import ResetPasswordPage from "./page/ResetPasswordPage/ResetPasswordPage";
 import UserTable from "./page/Admin/Tables/UserTable";
 import LayoutAdmin from "./component/Layout/LayoutAdmin";
 import ProductTable from "./page/Admin/Tables/ProductTable";
-
+import ProfileUser from "./page/Profile/ProfileUser";
 function MainLayout() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -38,9 +39,8 @@ function MainLayout() {
 
   return (
     <>
+    {!isDashboard && <Header />}
       {/* Dashboard will not have header, footer and layout */}
-      {!isDashboard && <Header />}
-
       {isDashboard ? (
         hasDashboardAccess ? (
           <LayoutAdmin>
@@ -62,6 +62,8 @@ function MainLayout() {
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
+            <Route path="/intro-page" element={<IntroPage />} />
+            <Route path="/profile-user" element={<ProfileUser />} />
           </Routes>
         </LayoutPage>
       )}

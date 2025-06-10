@@ -1,38 +1,26 @@
 .header_mid-logo img {
-  width: 86px;
-  height: 118px;
-  margin-left: 84px;
-}
-
-.header_mid-logo-title {
-  font-family: "Titan One", sans-serif;
-  font-weight: normal; /* Không quá đậm */
-  font-size: 40px; /* Điều chỉnh kích thước theo ảnh */
-  color: white;
-  text-shadow: -2px -2px 0 #ef608c, 2px -2px 0 #ef608c, -2px 2px 0 #ef608c,
-    2px 2px 0 #ef608c; /* Độ đậm của bóng chữ */
-  text-align: center;
-  line-height: auto;
-  letter-spacing: 0px;
-  margin-left: 0px; /* Điều chỉnh nếu cần */
+    width: 86px;
+    height: 118px;
+    margin-left: 84px;
 }
 
 .header_seach-container {
-  display: flex;
-  align-items: center;
-  border: 2px solid #ef608c;
-  border-radius: 999px;
-  padding: 5px 10px;
-  width: 35%;
-  max-width: 600px;
-  background: white;
-  overflow: hidden;
+    display: flex;
+    align-items: center;
+    border: 2px solid #0077a3;
+    border-radius: 999px;
+    padding: 5px 10px;
+    width: 35%;
+    max-width: 600px;
+    background: white;
+    margin-right: 110px;
+    overflow: hidden;
 }
 
 .header_seach-container input {
-  flex: 1;
-  border: none;
-  outline: none;
-  font-size: 13px;
-  padding: 3px;
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 13px;
+    padding: 3px;
 }
