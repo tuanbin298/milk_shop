@@ -103,7 +103,7 @@ const AdminSidebar = () => {
           width: 260,
           flexShrink: 0,
           [`& .MuiDrawer-paper`]: {
-            backgroundColor: "#0284c7",
+            backgroundColor: "#EF608C",
             color: "white",
             width: 260,
             boxSizing: "border-box",
@@ -119,7 +119,7 @@ const AdminSidebar = () => {
                   height: "40px",
                   marginRight: "10px",
                 }}
-                src="../../src/assets/logo/admin logo.png"
+                src="../../src/assets/logo/logoluna.png"
               />
               Admin Dashboard
             </div>

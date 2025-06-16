@@ -33,6 +33,7 @@ const UpdateUser = ({ open, user, handleClose, refreshUsers }) => {
   }, [user]);
 
   const handleCloseModal = () => {
+    setErrors({});
     handleClose();
     setIsEditing(false);
   };
@@ -116,6 +117,7 @@ const UpdateUser = ({ open, user, handleClose, refreshUsers }) => {
         if (response.ok) {
           toast.success("Cập nhật thành công");
           handleCloseModal();
+          setSelectedUser(user);
           refreshUsers?.();
         }
       } catch (err) {

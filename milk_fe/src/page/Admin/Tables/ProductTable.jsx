@@ -1,6 +1,9 @@
 import {
   Box,
+  Button,
+  Chip,
   InputAdornment,
+  Modal,
   Pagination,
   Paper,
   TableBody,
@@ -19,6 +22,8 @@ import { toast } from "react-toastify";
 import { Sheet, Table } from "@mui/joy";
 import BackToDashboardButton from "../../../utils/backToDashboardBtn";
 import { Image } from "antd";
+import { formatMoney } from "../../../utils/formatMoney";
+import UpdateProduct from "../Forms/ProductForm/FormUpdateProduct";
 
 const ProductTable = () => {
   const token = localStorage.getItem("sessionToken");
@@ -26,7 +31,31 @@ const ProductTable = () => {
 
   // State
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [productData, setProductData] = useState([]);
+  const [brandsdata, setBrandsData] = useState([]);
+  const [categorydata, setCategorydata] = useState([]);
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [brandFilter, setBrandFilter] = useState("");
+
+  // Search and filter product
+  const filterProduct = productData.filter((product) => {
+    const matchesKeyword = product.name
+      .toLowerCase()
+      .includes(searchKeyword.toLowerCase());
+
+    const matchesCategory = categoryFilter
+      ? product.categoryName.toLowerCase() === categoryFilter.toLowerCase()
+      : true;
+
+    const matchesBrand = brandFilter
+      ? product.brandName.toLowerCase() === brandFilter.toLowerCase()
+      : true;
+
+    return matchesKeyword && matchesCategory && matchesBrand;
+  });
 
   // Pagination configuration
   const [page, setPage] = useState(1); //Current page
@@ -36,7 +65,7 @@ const ProductTable = () => {
   const startIndex = (page - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
 
-  const paginatedItems = productData.slice(startIndex, endIndex) || [];
+  const paginatedItems = filterProduct.slice(startIndex, endIndex) || [];
 
   // Logic call API
   const getProductList = async () => {
@@ -65,6 +94,89 @@ const ProductTable = () => {
     getProductList();
   }, []);
 
+  // Handle row click
+  const handleRowClick = (product) => {
+    setSelectedProduct(product);
+    setOpenModal(true);
+  };
+
+  const handleDeleteProduct = async (e) => {
+    const productId = selectedProduct.id;
+
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/products/${productId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        toast.success("Xoá thành công");
+        setOpenDeleteModal(false);
+        setSelectedProduct(null);
+        getProductList();
+      } else {
+        toast.error("Xoá sản phẩm thất bại");
+      }
+    } catch (error) {
+      toast.error("Xoá thất bại");
+    }
+  };
+
+  // Call API brand
+  const getBrandsList = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/brands`, {
+        method: "GET",
+        headers: {
+          accept: "*/*",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response?.ok) {
+        const brands = await response.json();
+        setBrandsData(brands);
+      } else {
+        toast.error("Lỗi tải danh sách nhãn hiệu: ");
+      }
+    } catch (error) {
+      toast.error("Lỗi tải danh sách nhãn hiệu: ", error);
+    }
+  };
+
+  const getCategoryList = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/categories`, {
+        method: "GET",
+        headers: {
+          accept: "*/*",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response?.ok) {
+        const categories = await response.json();
+        setCategorydata(categories);
+      } else {
+        toast.error("Lỗi tải danh sách loại: ");
+      }
+    } catch (error) {
+      toast.error("Lỗi tải danh sách loại: ", error);
+    }
+  };
+
+  // Call API when load and page
+  useEffect(() => {
+    getBrandsList();
+    getCategoryList();
+  }, []);
+
   return (
     <Box
       sx={{
@@ -83,7 +195,7 @@ const ProductTable = () => {
           border: "1px",
           borderRadius: 10,
           p: 2,
-          mb: 2,
+          mb: 5,
         }}
       >
         {/* Title & Filter */}
@@ -108,10 +220,10 @@ const ProductTable = () => {
               sx={{ mr: 2 }}
               size="small"
               value={searchKeyword}
-              //   onChange={(e) => {
-              //     setSearchKeyword(e.target.value);
-              //     setPage(1);
-              //   }}
+              onChange={(e) => {
+                setSearchKeyword(e.target.value);
+                setPage(1);
+              }}
               placeholder="Tìm theo tên"
               InputProps={{
                 startAdornment: (
@@ -122,27 +234,46 @@ const ProductTable = () => {
               }}
             />
 
-            {/* <TextField
+            <TextField
               select
               size="small"
-              // value={roleFilter}
+              value={categoryFilter}
               onChange={(e) => {
-                // setRoleFilter(e.target.value);
+                setCategoryFilter(e.target.value);
                 setPage(1); // reset to first page
               }}
-              SelectProps={{
-                native: true,
-              }}
+              SelectProps={{ native: true }}
+              sx={{ mr: 2 }}
             >
-              <option value="">Tất cả nhãn hàng</option>
-              <option value="ADMIN">ADMIN</option>
-              <option value="STAFF">STAFF</option>
-              <option value="CUSTOMER">CUSTOMER</option>
-            </TextField> */}
+              <option value="">Tất cả loại</option>
+              {categorydata?.map((category) => (
+                <option key={category.id} value={category.categoryName}>
+                  {category.name}
+                </option>
+              ))}
+            </TextField>
+
+            <TextField
+              select
+              size="small"
+              value={brandFilter}
+              onChange={(e) => {
+                setBrandFilter(e.target.value);
+                setPage(1); // reset to first page
+              }}
+              SelectProps={{ native: true }}
+            >
+              <option value="">Tất cả nhãn hiệu</option>
+              {brandsdata?.map((brand) => (
+                <option key={brand.id} value={brand.brandName}>
+                  {brand.name}
+                </option>
+              ))}
+            </TextField>
           </Box>
         </Box>
 
-        <TableContainer component={Paper} sx={{ maxHeight: 440 }}>
+        <TableContainer component={Paper} sx={{ maxHeight: 540 }}>
           <Table
             size="md"
             variant="outlined"
@@ -168,37 +299,91 @@ const ProductTable = () => {
 
             {/* Body */}
             <TableBody>
-              {paginatedItems.map((product) => (
-                <TableRow
-                  key={product.id}
-                  sx={{
-                    cursor: "pointer",
-                    "&:hover": {
-                      backgroundColor: "#f0f0f0",
-                    },
-                  }}
-                >
-                  <TableCell>
-                    <Image width={100} preview={true} src={product.image} />
-                  </TableCell>
-                  <TableCell>{product.name}</TableCell>
-                  <TableCell>{product.price}</TableCell>
-                  <TableCell>{product.description}</TableCell>
-                  <TableCell>{product.category}</TableCell>
-                  <TableCell>{product.brand}</TableCell>
-                  <TableCell>{product.quantity}</TableCell>
-                  <TableCell>{product.status}</TableCell>
-                  <TableCell>
-                    <DeleteIcon color="error" />
-                  </TableCell>
-                </TableRow>
-              ))}
+              {paginatedItems.length > 0 ? (
+                paginatedItems?.map((product) => (
+                  <TableRow
+                    key={product.id}
+                    sx={{
+                      cursor: "pointer",
+                      "&:hover": {
+                        backgroundColor: "#f0f0f0",
+                      },
+                    }}
+                    style={{ cursor: "pointer" }}
+                    onClick={() => handleRowClick(product)}
+                  >
+                    <TableCell>
+                      <Image
+                        width={100}
+                        height={100}
+                        style={{ objectFit: "cover", borderRadius: 4 }}
+                        preview={true}
+                        src={product.image}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                      />
+                    </TableCell>
+                    <TableCell>{product.name}</TableCell>
+                    <TableCell>{formatMoney(product.price)}</TableCell>
+                    <TableCell
+                      sx={{
+                        maxWidth: 200,
+                        overflow: "hidden",
+                        whiteSpace: "nowrap",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {product.description}
+                    </TableCell>
+                    <TableCell>{product.categoryName}</TableCell>
+                    <TableCell>{product.brandName}</TableCell>
+                    <TableCell>{product.quantity}</TableCell>
+                    <TableCell>
+                      {" "}
+                      <Chip
+                        label={product?.status ? "Còn hàng" : "Hết hàng"}
+                        color={product?.status ? "success" : "error"}
+                        variant="outlined"
+                        size="small"
+                      />
+                    </TableCell>
+                    {userRole === "ADMIN" ? (
+                      <>
+                        <TableCell>
+                          <DeleteIcon
+                            onClick={(e) => {
+                              e.stopPropagation(); // Prevent open modal
+                              setSelectedProduct(product);
+                              setOpenDeleteModal(true);
+                            }}
+                            sx={{ color: "red", cursor: "pointer" }}
+                          />
+                        </TableCell>
+                      </>
+                    ) : (
+                      <>
+                        {" "}
+                        <TableCell></TableCell>
+                      </>
+                    )}
+                  </TableRow>
+                ))
+              ) : (
+                <>
+                  <TableRow>
+                    <TableCell colSpan={9} align="center">
+                      Không có sản phẩm nào
+                    </TableCell>
+                  </TableRow>
+                </>
+              )}
             </TableBody>
 
             {/* Footer */}
             <TableFooter>
               <TableRow>
-                <TableCell colSpan={6}>
+                <TableCell colSpan={9}>
                   <Box
                     display="flex"
                     justifyContent="space-between"
@@ -223,6 +408,76 @@ const ProductTable = () => {
             </TableFooter>
           </Table>
         </TableContainer>
+
+        {/* Modal for product detail */}
+        <UpdateProduct
+          open={openModal}
+          product={selectedProduct}
+          handleClose={() => setOpenModal(false)}
+          refreshProducts={getProductList}
+        />
+
+        {/* Modal confirm delete */}
+        <Modal open={openDeleteModal} onClose={() => setOpenDeleteModal(false)}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: 420,
+              bgcolor: "background.paper",
+              borderRadius: 3,
+              boxShadow: 24,
+              p: 4,
+              display: "flex",
+              flexDirection: "column",
+              gap: 2,
+            }}
+          >
+            <Typography variant="h6" fontWeight="bold" color="error.main">
+              Xác nhận xoá
+            </Typography>
+
+            <Typography color="text.secondary">
+              Bạn có chắc chắn muốn xoá sản phẩm này?
+            </Typography>
+
+            <Box display="flex" justifyContent="flex-end" gap={2} mt={2}>
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={() => setOpenDeleteModal(false)}
+                sx={{
+                  borderRadius: 2,
+                  px: 3,
+                  fontWeight: 600,
+                }}
+              >
+                HỦY
+              </Button>
+              <Button
+                onClick={handleDeleteProduct}
+                variant="text"
+                sx={{
+                  color: "#f44336",
+                  border: "2px solid #f44336",
+                  borderColor: "#f44336",
+                  backgroundColor: "#ffffff",
+                  textTransform: "none",
+                  borderRadius: 2,
+                  "&:hover": {
+                    backgroundColor: "#f44336",
+                    color: "#ffffff",
+                    borderColor: "#f44336",
+                  },
+                }}
+              >
+                XÁC NHẬN
+              </Button>
+            </Box>
+          </Box>
+        </Modal>
       </Sheet>
     </Box>
   );

@@ -7,6 +7,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { Image } from "antd";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -17,6 +18,8 @@ const style = {
   left: "50%",
   transform: "translate(-50%, -50%)",
   width: 900,
+  maxHeight: "90vh",
+  overflowY: "auto",
   bgcolor: "background.paper",
   border: "2px solid #000",
   boxShadow: 24,
@@ -29,8 +32,8 @@ const AddProduct = ({ open, handleClose }) => {
 
   // State
   const [errors, setErrors] = useState({});
-  const [brandsdata, setBrandsData] = useState(null);
-  const [categorydata, setCategorydata] = useState(null);
+  const [brandsdata, setBrandsData] = useState([]);
+  const [categorydata, setCategorydata] = useState([]);
   const [loading, setLoading] = useState(false);
   const [productData, setProductData] = useState({
     name: "",
@@ -40,6 +43,7 @@ const AddProduct = ({ open, handleClose }) => {
     categoryId: "",
     brandId: "",
     quantity: "",
+    status: true,
   });
 
   // Function change state of input
@@ -48,6 +52,32 @@ const AddProduct = ({ open, handleClose }) => {
     const { name, value } = e.target;
 
     setProductData({ ...productData, [name]: value });
+
+    let newErrors = { ...errors };
+    if (name === "name") {
+      newErrors.name = value.trim() ? "" : "Tên sản phẩm không được để trống";
+    }
+    if (name === "image") {
+      newErrors.image = value ? "" : "Hình ảnh không được để trống";
+    }
+    if (name === "price") {
+      const priceRegex = /^\d+(\.\d{1,2})?$/;
+      newErrors.price =
+        value && priceRegex.test(value) ? "" : "Giá phải là số và lớn hơn 0!";
+    }
+    if (name === "description") {
+      newErrors.description =
+        value.trim() !== "" ? "" : "Mô tả không được để trống";
+    }
+    if (name === "quantity") {
+      const quantityNumber = Number(value);
+      newErrors.quantity =
+        !isNaN(quantityNumber) && quantityNumber > 0
+          ? ""
+          : "Số lượng phải là số và lớn hơn 0";
+    }
+
+    setErrors(newErrors);
   };
 
   const handleImageUpload = async (e) => {
@@ -57,6 +87,8 @@ const AddProduct = ({ open, handleClose }) => {
 
     try {
       const imgUrl = await uploadToCloudinary(file);
+      toast.success("Ảnh đã được lưu trên Cloudinary");
+
       setProductData({ ...productData, image: imgUrl });
     } catch (error) {
       toast.error("Tải ảnh lên thất bại");
@@ -80,7 +112,6 @@ const AddProduct = ({ open, handleClose }) => {
     );
 
     const data = await response.json();
-    toast.success("Ảnh đã được lưu trên Cloudinary");
     return data.secure_url;
   };
 
@@ -96,6 +127,7 @@ const AddProduct = ({ open, handleClose }) => {
       quantity: "",
     });
 
+    setErrors({});
     handleClose();
     setLoading(false);
   };
@@ -103,6 +135,12 @@ const AddProduct = ({ open, handleClose }) => {
   // Logic submit
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Check for validation errors
+    if (Object.values(errors).some((error) => error)) {
+      toast.error("Vui lòng kiểm tra lại thông tin!");
+      return;
+    }
 
     setLoading(true);
 
@@ -209,9 +247,23 @@ const AddProduct = ({ open, handleClose }) => {
                 name="name"
                 value={productData.name}
                 onChange={handleInputChange}
-                // error={errors.name}
-                // helperText={errors.name}
+                error={errors.name}
+                helperText={errors.name}
               />
+
+              {productData.image && (
+                <Box mt={2}>
+                  <Image
+                    src={productData.image}
+                    width={120}
+                    height={120}
+                    style={{ borderRadius: 8, objectFit: "cover" }}
+                    preview={{
+                      zIndex: 2000,
+                    }}
+                  />{" "}
+                </Box>
+              )}
 
               {/* Product Image */}
               <Button
@@ -237,8 +289,8 @@ const AddProduct = ({ open, handleClose }) => {
                 name="price"
                 value={productData.price}
                 onChange={handleInputChange}
-                // error={errors.price}
-                // helperText={errors.price}
+                error={errors.price}
+                helperText={errors.price}
               />
 
               {/* Product Description */}
@@ -250,8 +302,8 @@ const AddProduct = ({ open, handleClose }) => {
                 name="description"
                 value={productData.description}
                 onChange={handleInputChange}
-                // error={errors.description}
-                // helperText={errors.description}
+                error={errors.description}
+                helperText={errors.description}
               />
 
               {/* Product Category */}
@@ -303,8 +355,8 @@ const AddProduct = ({ open, handleClose }) => {
                 name="quantity"
                 value={productData.quantity}
                 onChange={handleInputChange}
-                // error={errors.quantity}
-                // helperText={errors.quantity}
+                error={errors.quantity}
+                helperText={errors.quantity}
               />
             </Box>
 

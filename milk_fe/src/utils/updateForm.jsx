@@ -1,6 +1,7 @@
-import { Box, MenuItem, TextField } from "@mui/material";
+import { Box, Button, MenuItem, TextField } from "@mui/material";
+import { Image } from "antd";
 
-export const InfoRow = ({ icon, label, value }) => (
+export const InfoRow = ({ icon, label, value, isImage = false }) => (
   <Box
     sx={{
       display: "flex",
@@ -13,7 +14,22 @@ export const InfoRow = ({ icon, label, value }) => (
     <Box sx={{ width: 150, color: "#555", fontWeight: 500, mb: 1.5 }}>
       {label}
     </Box>
-    <Box sx={{ mb: 1.5 }}>{value}</Box>
+    <Box sx={{ mb: 1.5 }}>
+      {isImage ? (
+        <Image
+          src={value}
+          alt={label}
+          width={120}
+          height={120}
+          style={{ borderRadius: 8, objectFit: "cover" }}
+          preview={{
+            zIndex: 2000,
+          }}
+        />
+      ) : (
+        value
+      )}
+    </Box>
   </Box>
 );
 
@@ -86,5 +102,39 @@ export const InputSelectRow = ({
         </MenuItem>
       ))}
     </TextField>
+  </Box>
+);
+
+export const InputImageRow = ({ label, imageUrl, onUpload }) => (
+  <Box
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      py: 1,
+      borderBottom: "1px solid #eee",
+    }}
+  >
+    <Box sx={{ width: 150, color: "#555", fontWeight: 500, mb: 1.5 }}>
+      {label}
+    </Box>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+      {imageUrl && (
+        <Image
+          src={imageUrl}
+          alt={label}
+          width={120}
+          height={120}
+          style={{ borderRadius: 8, objectFit: "cover" }}
+          preview={{
+            zIndex: 2000,
+          }}
+        />
+      )}
+
+      <Button variant="outlined" component="label" size="small">
+        Chọn ảnh mới
+        <input type="file" accept="image/*" hidden onChange={onUpload} />
+      </Button>
+    </Box>
   </Box>
 );

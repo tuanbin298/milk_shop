@@ -112,7 +112,7 @@ const LoginPage = () => {
 
   return (
     <div className="flex items-center justify-center bg-white">
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-md mb-10">
         <h2 className="text-2xl font-bold text-center mb-4 mt-10">
           {showForgotPassword ? "Quên mật khẩu" : "Đăng nhập tài khoản"}
         </h2>

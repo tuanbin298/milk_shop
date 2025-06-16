@@ -89,7 +89,7 @@ const RegisterPage = () => {
 
   return (
     <div className="flex items-center justify-center bg-white">
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-md mb-10">
         <h2 className="text-2xl font-bold text-center mb-8 mt-10">
           Đăng ký tài khoản
         </h2>

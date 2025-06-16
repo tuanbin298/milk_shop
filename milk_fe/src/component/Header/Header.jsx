@@ -13,7 +13,6 @@ import "./Header.css";
 import { useEffect, useState } from "react";
 import { Avatar, Menu, MenuItem } from "@mui/material";
 import { toast } from "react-toastify";
-import ProfileUser from "../../page/Profile/ProfileUser";
 
 export default function Header() {
   const role = localStorage.getItem("roles");
@@ -190,7 +189,7 @@ export default function Header() {
             </button>
           </div>
 
-          {/* Cart and login */}
+          {/* Cart */}
           <div className="flex items-center text-[20px]">
             <button>
               <Link to="/cart">
@@ -204,8 +203,8 @@ export default function Header() {
             </button>
           </div>
 
-          {/* Cart and login */}
-          <div className="flex items-center  text-[20px] mr-[98px]">
+          {/* Order */}
+          <div className="flex items-center  text-[20px] ">
             <button>
               <Link to="/">
                 <img
@@ -222,7 +221,7 @@ export default function Header() {
         {/* Bottom bar header */}
         <div className="bg-[#EF608C] text-white text-sm flex justify-between px-40 py-3">
           <div className="flex items-center space-x-1">
-            <Link href="/">
+            <Link to="/">
               <span className="text-base font-semibold">TRANG CHỦ</span>
             </Link>
           </div>
@@ -234,19 +233,19 @@ export default function Header() {
           </div>
 
           <div className="flex items-center space-x-1">
-            <Link href="/">
+            <Link to="/">
               <span className="text-base font-semibold">SỮA CHO BÉ</span>
             </Link>
           </div>
 
           <div className="flex items-center space-x-1">
-            <Link href="/">
+            <Link to="/">
               <span className="text-base font-semibold">SỮA CHO MẸ</span>
             </Link>
           </div>
 
           <div className="flex items-center space-x-1">
-            <Link href="/">
+            <Link to="/">
               <span className="text-base font-semibold">LIÊN HỆ</span>
             </Link>
           </div>
