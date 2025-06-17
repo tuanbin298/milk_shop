@@ -8,6 +8,8 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
+import BrandingWatermarkIcon from "@mui/icons-material/BrandingWatermark";
+import FeaturedPlayListIcon from "@mui/icons-material/FeaturedPlayList";
 import StoreOutlinedIcon from "@mui/icons-material/StoreOutlined";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
@@ -356,7 +358,7 @@ const AdminSidebar = () => {
               <ListItem disablePadding>
                 <ListItemButton onClick={() => toggleDropdown("brands")}>
                   <ListItemIcon>
-                    <BrandingWatermarkOutlinedIcon
+                    <BrandingWatermarkIcon
                       style={{ marginRight: "20px", color: "white" }}
                     />
                   </ListItemIcon>
@@ -374,7 +376,7 @@ const AdminSidebar = () => {
                 <List component="div" disablePadding sx={{ pl: 2 }}>
                   <ListItem disablePadding>
                     <ListItemButton onClick={() => navigate("brandlist")}>
-                      <QuestionAnswerOutlinedIcon className="mr-5" />
+                      <FeaturedPlayListIcon className="mr-5" />
                       <ListItemText primary="Danh sách thương hiệu" />
                     </ListItemButton>
                   </ListItem>
