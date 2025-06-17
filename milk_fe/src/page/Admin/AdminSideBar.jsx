@@ -28,6 +28,8 @@ import QuestionAnswerOutlinedIcon from "@mui/icons-material/QuestionAnswerOutlin
 import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
 import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
 import LogoutIcon from "@mui/icons-material/Logout";
+import BrandingWatermarkOutlinedIcon from "@mui/icons-material/BrandingWatermarkOutlined";
+
 import { toast } from "react-toastify";
 
 import AddUser from "./Forms/UserForm/FormAddUser";
@@ -35,6 +37,8 @@ import AddUser from "./Forms/UserForm/FormAddUser";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AddProduct from "./Forms/ProductForm/FormAddProduct";
+import AddCategory from "./Forms/CategoryForm/FormAddCategory";
+import AddBrand from "./Forms/BrandForm/FormAddBrand";
 
 const AdminSidebar = () => {
   const navigate = useNavigate();
@@ -50,6 +54,7 @@ const AdminSidebar = () => {
     categories: false,
     articles: false,
     feedbacks: false,
+    brands: false,
   });
 
   // Change state of section
@@ -88,6 +93,20 @@ const AdminSidebar = () => {
       case "addProduct":
         return (
           <AddProduct
+            open={openAddModal}
+            handleClose={() => setOpenAddModal(false)}
+          />
+        );
+      case "addCategory":
+        return (
+          <AddCategory
+            open={openAddModal}
+            handleClose={() => setOpenAddModal(false)}
+          />
+        );
+      case "addBrand":
+        return (
+          <AddBrand
             open={openAddModal}
             handleClose={() => setOpenAddModal(false)}
           />
@@ -254,9 +273,7 @@ const AdminSidebar = () => {
               >
                 <List component="div" disablePadding sx={{ pl: 2 }}>
                   <ListItem disablePadding>
-                    <ListItemButton
-                      onClick={() => setSelectedSection("categories")}
-                    >
+                    <ListItemButton onClick={() => navigate("categorylist")}>
                       <FormatListBulletedOutlinedIcon className="mr-5" />
                       <ListItemText primary="Danh sách phân loại" />
                     </ListItemButton>
@@ -264,7 +281,10 @@ const AdminSidebar = () => {
 
                   <ListItem disablePadding>
                     <ListItemButton
-                      onClick={() => setSelectedSection("addCategory")}
+                      onClick={() => {
+                        setSelectedSection("addCategory");
+                        setOpenAddModal(true);
+                      }}
                     >
                       <LibraryAddOutlinedIcon className="mr-5" />
                       <ListItemText primary="Thêm loại" />
@@ -313,6 +333,47 @@ const AdminSidebar = () => {
                     >
                       <AddCommentOutlinedIcon className="mr-5" />
                       <ListItemText primary="Thêm bài viết" />
+                    </ListItemButton>
+                  </ListItem>
+                </List>
+              </Collapse>
+
+              {/* Brand and dropdown */}
+              <ListItem disablePadding>
+                <ListItemButton onClick={() => toggleDropdown("brands")}>
+                  <ListItemIcon>
+                    <BrandingWatermarkOutlinedIcon
+                      style={{ marginRight: "20px", color: "white" }}
+                    />
+                  </ListItemIcon>
+
+                  <ListItemText primary="Thương hiệu" sx={{ color: "white" }} />
+                  {/* Icon arrow */}
+                  {openDropdowns.brands ? (
+                    <ArrowDropDownOutlinedIcon />
+                  ) : (
+                    <ArrowRightOutlinedIcon />
+                  )}
+                </ListItemButton>
+              </ListItem>
+              <Collapse in={openDropdowns.brands} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding sx={{ pl: 2 }}>
+                  <ListItem disablePadding>
+                    <ListItemButton onClick={() => navigate("brandlist")}>
+                      <QuestionAnswerOutlinedIcon className="mr-5" />
+                      <ListItemText primary="Danh sách thương hiệu" />
+                    </ListItemButton>
+                  </ListItem>
+
+                  <ListItem disablePadding>
+                    <ListItemButton
+                      onClick={() => {
+                        setSelectedSection("addBrand");
+                        setOpenAddModal(true);
+                      }}
+                    >
+                      <LibraryAddOutlinedIcon className="mr-5" />
+                      <ListItemText primary="Thêm thương hiệu" />
                     </ListItemButton>
                   </ListItem>
                 </List>

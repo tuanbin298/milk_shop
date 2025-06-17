@@ -208,7 +208,7 @@ export default function Header() {
         {/* Bottom bar header */}
         <div className="bg-[#EF608C] text-white text-sm flex justify-between px-40 py-3">
           <div className="flex items-center space-x-1">
-            <Link href="/">
+            <Link to="/">
               <span className="text-base">TRANG CHỦ</span>
             </Link>
           </div>

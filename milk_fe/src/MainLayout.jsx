@@ -15,6 +15,8 @@ import ResetPasswordPage from "./page/ResetPasswordPage/ResetPasswordPage";
 import UserTable from "./page/Admin/Tables/UserTable";
 import LayoutAdmin from "./component/Layout/LayoutAdmin";
 import ProductTable from "./page/Admin/Tables/ProductTable";
+import CategoryTable from "./page/Admin/Tables/CategoryTable";
+import BrandTable from "./page/Admin/Tables/BrandTable";
 
 function MainLayout() {
   const location = useLocation();
@@ -48,6 +50,8 @@ function MainLayout() {
               <Route path="/dashboard" element={<AdminDashboard />}>
                 <Route path="userlist" element={<UserTable />} />
                 <Route path="productlist" element={<ProductTable />} />
+                <Route path="categorylist" element={<CategoryTable />} />
+                <Route path="brandlist" element={<BrandTable />} />
               </Route>
             </Routes>
           </LayoutAdmin>
