@@ -125,7 +125,7 @@ const UpdateUser = ({ open, user, handleClose, refreshUsers }) => {
       }
     } else {
       toast.info("Không có gì thay đổi");
-      handleCloseModal;
+      handleCloseModal();
     }
   };
 

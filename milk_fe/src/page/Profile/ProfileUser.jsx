@@ -1,61 +1,112 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Button, Typography } from "@mui/material";
 
 const ProfileUser = () => {
+  const token = localStorage.getItem("sessionToken");
+  const fullName = localStorage.getItem("fullName");
+  const username = localStorage.getItem("username");
+  const phone = localStorage.getItem("phone");
+  const customerId = localStorage.getItem("id");
+  const userRole = localStorage.getItem("roles");
+
   const navigate = useNavigate();
   const [selectedTab, setSelectedTab] = useState("account");
   const [isEditing, setIsEditing] = useState(false);
-  const [editedAddress, setEditedAddress] = useState("");
-  const [editedPhone, setEditedPhone] = useState("");
-  const [userInfo, setUserInfo] = useState({
-    fullName: "",
-    username: "",
-    phone: "",
-    address: "",
-    roles: "",
-  });
+  const [originalUser, setOriginalUser] = useState({});
+  const [errors, setErrors] = useState({});
+  const [userInfo, setUserInfo] = useState({});
 
   useEffect(() => {
-    const token = localStorage.getItem("sessionToken");
-
     if (!token) {
       toast.error("Vui lòng đăng nhập để xem thông tin!");
       navigate("/login");
       return;
     }
 
-    const fullName = localStorage.getItem("fullName") || "";
-    const username = localStorage.getItem("username") || "";
-    const phone = localStorage.getItem("phone") || "";
-    const address = localStorage.getItem("address") || "";
-    const roles = localStorage.getItem("roles") || "";
-
-    setUserInfo({ fullName, username, phone, address, roles });
-    setEditedAddress(address);
-    setEditedPhone(phone);
+    setUserInfo({ fullName, username, phone, userRole });
   }, [navigate]);
 
-  const handleLogout = () => {
-    localStorage.clear();
-    toast.success("Đăng xuất thành công!");
-    navigate("/login");
+  // Handle input change
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setUserInfo((prevUser) => ({
+      ...prevUser,
+      [name]: value,
+    }));
+
+    let newErrors = { ...errors };
+    if (name === "phone") {
+      const phoneRegex = /^(84|0[3|5|7|8|9])\d{8}$/;
+      newErrors.phone = phoneRegex.test(value)
+        ? ""
+        : "Số điện thoại không hợp lệ!";
+    }
+
+    setErrors(newErrors);
   };
 
-  const handleSave = () => {
-    const updatedUserInfo = {
-      ...userInfo,
-      address: editedAddress,
-      phone: editedPhone,
-    };
+  // Handle btn edit
+  const handleEditToggle = () => {
+    //First time click btn: If click in update go into edit mode (save data berfore changes)
+    if (!isEditing) {
+      setOriginalUser({ fullName, phone });
+    } else {
+      // Second time click btn:
+      handleSaveUpdate();
+    }
 
-    localStorage.setItem("address", editedAddress);
-    localStorage.setItem("phone", editedPhone);
+    setIsEditing(!isEditing);
+  };
 
-    setUserInfo(updatedUserInfo);
-    setIsEditing(false);
-    toast.success("Cập nhật thông tin thành công!");
+  const handleSaveUpdate = async (e) => {
+    const updates = {};
+
+    // Check user data change or not
+    if (userInfo.fullName !== originalUser.fullName) {
+      updates.fullName = userInfo.fullName;
+    }
+    if (userInfo.phone !== originalUser.phone) {
+      updates.fullName = userInfo.phone;
+    }
+
+    if (Object.keys(updates).length > 0) {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/api/customer/${customerId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              fullName: userInfo.fullName,
+              roles: "CUSTOMER",
+              phone: userInfo.phone,
+              status: true,
+            }),
+          }
+        );
+
+        if (response.ok) {
+          toast.success("Cập nhật thành công");
+          localStorage.setItem("fullName", userInfo.fullName);
+          localStorage.setItem("phone", userInfo.phone);
+
+          setOriginalUser({
+            fullName: userInfo.fullName,
+            phone: userInfo.phone,
+          });
+        }
+      } catch (err) {
+        toast.error("Lỗi cập nhật người dùng: ", err);
+      }
+    } else {
+      toast.info("Không có gì thay đổi");
+    }
   };
 
   return (
@@ -68,7 +119,7 @@ const ProfileUser = () => {
           </Typography>
           <p className="font-semibold text-sm">
             Xin chào,{" "}
-            <span className="text-pink-600 font-bold">{userInfo.fullName}</span>!
+            <span className="text-pink-600 font-bold">{fullName}</span>!
           </p>
           <div className="mt-4 space-y-2 text-sm">
             <button
@@ -101,40 +152,77 @@ const ProfileUser = () => {
               {!isEditing ? (
                 <>
                   <div className="space-y-2 text-sm">
-                    <p>👤 <strong>Tên tài khoản:</strong> {userInfo.fullName}</p>
-                    <p>📧 <strong>Gmail:</strong> {userInfo.username || "Chưa cập nhật"}</p>
-                    <p>📴 <strong>Điện thoại:</strong> {userInfo.phone || "Chưa cập nhật"}</p>
+                    <p>
+                      👤 <strong>Tên tài khoản:</strong> {fullName}
+                    </p>
+                    <p>
+                      📧 <strong>Gmail:</strong> {username}
+                    </p>
+                    <p>
+                      📴 <strong>Điện thoại:</strong> {phone}
+                    </p>
                   </div>
-                  <Button variant="contained" size="small" onClick={() => setIsEditing(true)}>
-                    Sửa số điện thoại
-                  </Button>
                 </>
               ) : (
                 <>
                   <div className="space-y-3 text-sm">
-                    <p>👤 <strong>Tên tài khoản:</strong> {userInfo.fullName}</p>
-                    <p>📧 <strong>Gmail:</strong> {userInfo.username || "Chưa cập nhật"}</p>
-                    <div>
-                      <label className="block mb-1">📴 <strong>Điện thoại:</strong></label>
+                    <p>
+                      👤 <strong>Tên tài khoản:</strong>
                       <input
                         type="text"
-                        value={editedPhone}
-                        onChange={(e) => setEditedPhone(e.target.value)}
+                        value={userInfo.fullName}
+                        name="fullName"
+                        onChange={handleChange}
                         className="border p-2 w-full rounded"
                       />
-                    </div>
-                  </div>
+                    </p>
 
-                  <div className="flex gap-2 mt-3">
-                    <Button variant="contained" color="primary" size="small" onClick={handleSave}>
-                      Lưu
-                    </Button>
-                    <Button variant="outlined" color="secondary" size="small" onClick={() => setIsEditing(false)}>
-                      Hủy
-                    </Button>
+                    <p>
+                      📧 <strong>Gmail:</strong>{" "}
+                      {userInfo.username || "Chưa cập nhật"}
+                    </p>
+                    <div>
+                      <label className="block mb-1">
+                        📴 <strong>Điện thoại:</strong>
+                      </label>
+                      <input
+                        type="text"
+                        value={userInfo.phone}
+                        name="phone"
+                        onChange={handleChange}
+                        className={`border p-2 w-full rounded ${
+                          errors.phone ? "border-red-500" : ""
+                        }`}
+                      />
+                      {errors.phone && (
+                        <p className="text-red-500 text-xs mt-1">
+                          {errors.phone}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </>
               )}
+
+              <div className="flex gap-2 mt-3">
+                <Button
+                  variant="contained"
+                  size="small"
+                  onClick={handleEditToggle}
+                >
+                  {isEditing ? "Lưu" : " Cập nhật thông tin"}
+                </Button>
+                {isEditing && (
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    size="small"
+                    onClick={() => setIsEditing(false)}
+                  >
+                    Hủy
+                  </Button>
+                )}
+              </div>
             </div>
           )}
 

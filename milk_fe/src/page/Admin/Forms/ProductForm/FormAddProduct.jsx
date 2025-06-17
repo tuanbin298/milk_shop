@@ -251,6 +251,7 @@ const AddProduct = ({ open, handleClose }) => {
                 helperText={errors.name}
               />
 
+              {/* Product Image */}
               {productData.image && (
                 <Box mt={2}>
                   <Image
@@ -265,7 +266,6 @@ const AddProduct = ({ open, handleClose }) => {
                 </Box>
               )}
 
-              {/* Product Image */}
               <Button
                 variant="contained"
                 component="label"

@@ -35,6 +35,7 @@ import AddUser from "./Forms/UserForm/FormAddUser";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AddProduct from "./Forms/ProductForm/FormAddProduct";
+import AddArticle from "./Forms/ArticleForm/FormAddArticle";
 
 const AdminSidebar = () => {
   const navigate = useNavigate();
@@ -88,6 +89,13 @@ const AdminSidebar = () => {
       case "addProduct":
         return (
           <AddProduct
+            open={openAddModal}
+            handleClose={() => setOpenAddModal(false)}
+          />
+        );
+      case "addArticle":
+        return (
+          <AddArticle
             open={openAddModal}
             handleClose={() => setOpenAddModal(false)}
           />
@@ -305,9 +313,7 @@ const AdminSidebar = () => {
               >
                 <List component="div" disablePadding sx={{ pl: 2 }}>
                   <ListItem disablePadding>
-                    <ListItemButton
-                      onClick={() => setSelectedSection("articles")}
-                    >
+                    <ListItemButton onClick={() => navigate("articlelist")}>
                       <ArticleOutlinedIcon className="mr-5" />
                       <ListItemText primary="Danh sách bài viết" />
                     </ListItemButton>
@@ -315,7 +321,11 @@ const AdminSidebar = () => {
 
                   <ListItem disablePadding>
                     <ListItemButton
-                      onClick={() => setSelectedSection("addArticle")}
+                      onClick={() => {
+                        setSelectedSection("addArticle");
+                        navigate("/dashboard");
+                        setOpenAddModal(true);
+                      }}
                     >
                       <AddCommentOutlinedIcon className="mr-5" />
                       <ListItemText primary="Thêm bài viết" />
@@ -389,7 +399,7 @@ const AdminSidebar = () => {
                     />
                   </ListItemIcon>
                   <ListItemText
-                    onClick={() => navigate("/profileManager")}
+                    onClick={() => navigate("admin-profile")}
                     primary="Thông tin cá nhân"
                     sx={{ color: "white" }}
                   />

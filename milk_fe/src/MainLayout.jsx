@@ -17,6 +17,8 @@ import UserTable from "./page/Admin/Tables/UserTable";
 import LayoutAdmin from "./component/Layout/LayoutAdmin";
 import ProductTable from "./page/Admin/Tables/ProductTable";
 import ProfileUser from "./page/Profile/ProfileUser";
+import ArticleTable from "./page/Admin/Tables/ArticleTable";
+import AdminProfile from "./page/Admin/AdminProfile";
 function MainLayout() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -39,7 +41,7 @@ function MainLayout() {
 
   return (
     <>
-    {!isDashboard && <Header />}
+      {!isDashboard && <Header />}
       {/* Dashboard will not have header, footer and layout */}
       {isDashboard ? (
         hasDashboardAccess ? (
@@ -48,6 +50,8 @@ function MainLayout() {
               <Route path="/dashboard" element={<AdminDashboard />}>
                 <Route path="userlist" element={<UserTable />} />
                 <Route path="productlist" element={<ProductTable />} />
+                <Route path="articlelist" element={<ArticleTable />} />
+                <Route path="admin-profile" element={<AdminProfile />} />
               </Route>
             </Routes>
           </LayoutAdmin>
