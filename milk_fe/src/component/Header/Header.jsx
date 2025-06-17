@@ -222,6 +222,8 @@ export default function Header() {
         <div className="bg-[#EF608C] text-white text-sm flex justify-between px-40 py-3">
           <div className="flex items-center space-x-1">
             <Link to="/">
+              <span className="text-base">TRANG CHỦ</span>
+            <Link to="/">
               <span className="text-base font-semibold">TRANG CHỦ</span>
             </Link>
           </div>

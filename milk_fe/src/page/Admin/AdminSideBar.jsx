@@ -35,6 +35,8 @@ import AddUser from "./Forms/UserForm/FormAddUser";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AddProduct from "./Forms/ProductForm/FormAddProduct";
+import AddCategory from "./Forms/CategoryForm/FormAddCategory";
+import AddBrand from "./Forms/BrandForm/FormAddBrand";
 import AddArticle from "./Forms/ArticleForm/FormAddArticle";
 
 const AdminSidebar = () => {
@@ -51,6 +53,7 @@ const AdminSidebar = () => {
     categories: false,
     articles: false,
     feedbacks: false,
+    brands: false,
   });
 
   // Change state of section
@@ -89,6 +92,20 @@ const AdminSidebar = () => {
       case "addProduct":
         return (
           <AddProduct
+            open={openAddModal}
+            handleClose={() => setOpenAddModal(false)}
+          />
+        );
+      case "addCategory":
+        return (
+          <AddCategory
+            open={openAddModal}
+            handleClose={() => setOpenAddModal(false)}
+          />
+        );
+      case "addBrand":
+        return (
+          <AddBrand
             open={openAddModal}
             handleClose={() => setOpenAddModal(false)}
           />
@@ -275,7 +292,10 @@ const AdminSidebar = () => {
                   <ListItem disablePadding>
                     <ListItemButton
                       onClick={() => {
-                        setSelectedSection("addCategory");
+                        {
+                          setSelectedSection("addCategory");
+                          setOpenAddModal(true);
+                        }
                         navigate("/dashboard");
                         setOpenAddModal(true);
                       }}
@@ -313,7 +333,9 @@ const AdminSidebar = () => {
               >
                 <List component="div" disablePadding sx={{ pl: 2 }}>
                   <ListItem disablePadding>
-                    <ListItemButton onClick={() => navigate("articlelist")}>
+                    <ListItemButton
+                      onClick={() => setSelectedSection("articles")}
+                    >
                       <ArticleOutlinedIcon className="mr-5" />
                       <ListItemText primary="Danh sách bài viết" />
                     </ListItemButton>
@@ -321,14 +343,51 @@ const AdminSidebar = () => {
 
                   <ListItem disablePadding>
                     <ListItemButton
-                      onClick={() => {
-                        setSelectedSection("addArticle");
-                        navigate("/dashboard");
-                        setOpenAddModal(true);
-                      }}
+                      onClick={() => setSelectedSection("addArticle")}
                     >
                       <AddCommentOutlinedIcon className="mr-5" />
                       <ListItemText primary="Thêm bài viết" />
+                    </ListItemButton>
+                  </ListItem>
+                </List>
+              </Collapse>
+
+              {/* Brand and dropdown */}
+              <ListItem disablePadding>
+                <ListItemButton onClick={() => toggleDropdown("brands")}>
+                  <ListItemIcon>
+                    <BrandingWatermarkOutlinedIcon
+                      style={{ marginRight: "20px", color: "white" }}
+                    />
+                  </ListItemIcon>
+
+                  <ListItemText primary="Thương hiệu" sx={{ color: "white" }} />
+                  {/* Icon arrow */}
+                  {openDropdowns.brands ? (
+                    <ArrowDropDownOutlinedIcon />
+                  ) : (
+                    <ArrowRightOutlinedIcon />
+                  )}
+                </ListItemButton>
+              </ListItem>
+              <Collapse in={openDropdowns.brands} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding sx={{ pl: 2 }}>
+                  <ListItem disablePadding>
+                    <ListItemButton onClick={() => navigate("brandlist")}>
+                      <QuestionAnswerOutlinedIcon className="mr-5" />
+                      <ListItemText primary="Danh sách thương hiệu" />
+                    </ListItemButton>
+                  </ListItem>
+
+                  <ListItem disablePadding>
+                    <ListItemButton
+                      onClick={() => {
+                        setSelectedSection("addBrand");
+                        setOpenAddModal(true);
+                      }}
+                    >
+                      <LibraryAddOutlinedIcon className="mr-5" />
+                      <ListItemText primary="Thêm thương hiệu" />
                     </ListItemButton>
                   </ListItem>
                 </List>
