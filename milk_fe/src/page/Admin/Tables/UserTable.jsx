@@ -16,6 +16,7 @@ import {
   Typography,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import DeleteIcon from "@mui/icons-material/Delete";
 import BackToDashboardButton from "../../../utils/backToDashboardBtn";
 import { useEffect, useState } from "react";
@@ -244,7 +245,6 @@ const UserTable = () => {
                       backgroundColor: "#f0f0f0",
                     },
                   }}
-                  onClick={() => handleRowClick(user)}
                 >
                   <TableCell>{user.fullName}</TableCell>
                   <TableCell
@@ -307,7 +307,11 @@ const UserTable = () => {
                           setSelectedUserDelete(user);
                           setOpenDeleteModal(true);
                         }}
-                        sx={{ color: "red", cursor: "pointer" }}
+                        sx={{ color: "red", cursor: "pointer", mr: 2 }}
+                      />
+                      <VisibilityIcon
+                        onClick={() => handleRowClick(user)}
+                        sx={{ color: "green", cursor: "pointer" }}
                       />
                     </TableCell>
                   ) : (

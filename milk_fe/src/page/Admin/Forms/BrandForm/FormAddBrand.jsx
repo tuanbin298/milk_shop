@@ -7,7 +7,10 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
-
+import { toast } from "react-toastify";
+import { handleImageUpload } from "../../../../utils/uploadImage";
+import { Image } from "antd";
+import { useNavigate } from "react-router-dom";
 const style = {
   position: "absolute",
   top: "50%",
@@ -22,23 +25,58 @@ const style = {
 };
 
 const AddBrand = ({ open, handleClose }) => {
-  const [loading, setLoading] = useState(false);
-  const [name, setName] = useState("");
-  const [image, setImage] = useState("");
-  const [description, setDescription] = useState("");
+  const token = localStorage.getItem("sessionToken");
+  const navigate = useNavigate();
 
-  const handleCancel = () => {
-    setName("");
-    setImage("");
-    setDescription("");
-    handleClose();
+  // State
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [brandData, setBrandData] = useState({
+    name: "",
+    image: "",
+    description: "",
+    status: true,
+  });
+
+  // Function change state of input
+  const handleInputChange = (e) => {
+    // Name of input, value of input
+    const { name, value } = e.target;
+
+    setBrandData({ ...brandData, [name]: value });
+
+    let newErrors = { ...errors };
+    if (name === "name") {
+      newErrors.name = value.trim() ? "" : "Tên sản phẩm không được để trống";
+    }
+    if (name === "image") {
+      newErrors.image = value ? "" : "Hình ảnh không được để trống";
+    }
+    if (name === "description") {
+      newErrors.description =
+        value.trim() !== "" ? "" : "Mô tả không được để trống";
+    }
+
+    setErrors(newErrors);
   };
 
+  //Reset all input when cancel and clode modal
+  const handleCancel = () => {
+    setBrandData({
+      name: "",
+      image: "",
+      description: "",
+    });
+
+    setErrors({});
+    handleClose();
+    setLoading(false);
+  };
+
+  // Logic submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
-    const token = localStorage.getItem("sessionToken");
 
     try {
       const res = await fetch("http://localhost:8080/api/brands", {
@@ -48,26 +86,25 @@ const AddBrand = ({ open, handleClose }) => {
           accept: "*/*",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          name,
-          image,
-          description,
-        }),
+        body: JSON.stringify(brandData),
       });
 
       if (res.ok) {
-        console.log("Thêm thương hiệu thành công");
-        handleCancel();
+        toast.success("Tạo nhãn hiệu thành công!");
+
+        // Navigate to view brand
+        setTimeout(() => {
+          handleCancel();
+          navigate("brandlist");
+        }, 1000);
       } else {
         const errData = await res.json();
         console.error("Lỗi từ API:", errData);
-        alert("Thêm thất bại: " + (errData.message || "Có lỗi xảy ra"));
       }
     } catch (error) {
-      console.error("Lỗi kết nối API:", error);
-      alert("Không thể kết nối đến máy chủ.");
-    } finally {
+      toast.error("Tạo nhãn hiệu thất bại");
       setLoading(false);
+      console.error("Xảy ra lỗi khi tạo nhãn hiệu: ", err);
     }
   };
 
@@ -85,26 +122,53 @@ const AddBrand = ({ open, handleClose }) => {
           </Typography>
 
           <Box mt={3}>
+            {/* Brand name */}
             <TextField
               fullWidth
               label="Tên thương hiệu"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={brandData.name}
+              name="name"
+              onChange={handleInputChange}
               required
               sx={{ mb: 2 }}
             />
-            <TextField
-              fullWidth
-              label="URL hình ảnh (logo)"
-              value={image}
-              onChange={(e) => setImage(e.target.value)}
-              sx={{ mb: 2 }}
-            />
+
+            {/* Brand Image */}
+            {brandData.image && (
+              <Box mt={2}>
+                <Image
+                  src={brandData.image}
+                  width={120}
+                  height={120}
+                  style={{ borderRadius: 8, objectFit: "cover" }}
+                  preview={{
+                    zIndex: 2000,
+                  }}
+                />{" "}
+              </Box>
+            )}
+
+            <Button variant="contained" component="label" sx={{ mb: 1, mt: 1 }}>
+              Upload Hình Ảnh
+              <input
+                type="file"
+                hidden
+                accept="image/*"
+                onChange={(e) =>
+                  handleImageUpload(e, (imgUrl) => {
+                    setBrandData((prev) => ({ ...prev, image: imgUrl }));
+                  })
+                }
+              />
+            </Button>
+
+            {/* Brand description */}
             <TextField
               fullWidth
               label="Mô tả"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              value={brandData.description}
+              name="description"
+              onChange={handleInputChange}
               multiline
               rows={3}
             />

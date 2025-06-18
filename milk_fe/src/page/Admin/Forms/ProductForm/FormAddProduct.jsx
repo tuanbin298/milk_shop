@@ -11,6 +11,7 @@ import { Image } from "antd";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { handleImageUpload } from "../../../../utils/uploadImage";
 
 const style = {
   position: "absolute",
@@ -80,42 +81,7 @@ const AddProduct = ({ open, handleClose }) => {
     setErrors(newErrors);
   };
 
-  const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-
-    if (!file) return;
-
-    try {
-      const imgUrl = await uploadToCloudinary(file);
-      toast.success("Ảnh đã được lưu trên Cloudinary");
-
-      setProductData({ ...productData, image: imgUrl });
-    } catch (error) {
-      toast.error("Tải ảnh lên thất bại");
-    }
-  };
-
-  // Logic upload img into cloudinary to get the URL return
-  const uploadToCloudinary = async (file) => {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", "milk_shop_cloudinary"); //Upload into server without API Key
-    formData.append("cloud_name", "tuanbin");
-    formData.append("folder", "milk_shop");
-
-    const response = await fetch(
-      `https://api.cloudinary.com/v1_1/tuanbin/image/upload`,
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
-
-    const data = await response.json();
-    return data.secure_url;
-  };
-
-  //Reset all input when cancel and clods modal
+  //Reset all input when cancel and clode modal
   const handleCancel = () => {
     setProductData({
       name: "",
@@ -169,7 +135,6 @@ const AddProduct = ({ open, handleClose }) => {
     } catch (error) {
       toast.error("Tạo sản phẩm thất bại");
       setLoading(false);
-      console.error("Xảy ra lỗi khi tạo sản phẩm: ", err);
     }
   };
 
@@ -276,7 +241,11 @@ const AddProduct = ({ open, handleClose }) => {
                   type="file"
                   hidden
                   accept="image/*"
-                  onChange={handleImageUpload}
+                  onChange={(e) =>
+                    handleImageUpload(e, (imgUrl) => {
+                      setProductData((prev) => ({ ...prev, image: imgUrl }));
+                    })
+                  }
                 />
               </Button>
 

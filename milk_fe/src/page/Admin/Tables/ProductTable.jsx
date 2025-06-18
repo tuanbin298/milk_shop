@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import DeleteIcon from "@mui/icons-material/Delete";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Sheet, Table } from "@mui/joy";
@@ -59,13 +60,16 @@ const ProductTable = () => {
 
   // Pagination configuration
   const [page, setPage] = useState(1); //Current page
-  const itemsPerPage = 8; //Items per page
+  const itemsPerPage = 6; //Items per page
 
   // Start and End index to cut userData into paginatedItems
   const startIndex = (page - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
 
   const paginatedItems = filterProduct.slice(startIndex, endIndex) || [];
+
+  // Handle page change
+  const handlePageChange = (e, value) => setPage(value);
 
   // Logic call API
   const getProductList = async () => {
@@ -309,8 +313,6 @@ const ProductTable = () => {
                         backgroundColor: "#f0f0f0",
                       },
                     }}
-                    style={{ cursor: "pointer" }}
-                    onClick={() => handleRowClick(product)}
                   >
                     <TableCell>
                       <Image
@@ -357,7 +359,11 @@ const ProductTable = () => {
                               setSelectedProduct(product);
                               setOpenDeleteModal(true);
                             }}
-                            sx={{ color: "red", cursor: "pointer" }}
+                            sx={{ color: "red", cursor: "pointer", mr: 2 }}
+                          />
+                          <VisibilityIcon
+                            onClick={() => handleRowClick(product)}
+                            sx={{ color: "green", cursor: "pointer" }}
                           />
                         </TableCell>
                       </>
@@ -394,13 +400,13 @@ const ProductTable = () => {
                       size="small"
                       shape="rounded"
                       color="primary"
-                      count={Math.ceil(paginatedItems.length / itemsPerPage)} //Calculate total of how many page need to display
+                      count={Math.ceil(filterProduct.length / itemsPerPage)} //Calculate total of how many page need to display
                       page={page}
-                      // onChange={handlePageChange}
+                      onChange={handlePageChange}
                     />
 
                     <Typography color="text.secondary">
-                      Tổng số sản phẩm: {paginatedItems.length}
+                      Tổng số sản phẩm: {filterProduct.length}
                     </Typography>
                   </Box>
                 </TableCell>

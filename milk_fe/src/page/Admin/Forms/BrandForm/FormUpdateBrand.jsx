@@ -4,11 +4,14 @@ import UpdateIcon from "@mui/icons-material/Update";
 import BrandingWatermarkIcon from "@mui/icons-material/BrandingWatermark";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { InputRow } from "../../../../utils/updateForm";
+import { InfoRow, InputImageRow, InputRow } from "../../../../utils/updateForm";
+import { handleImageUpload } from "../../../../utils/uploadImage";
 
 const UpdateBrand = ({ open, brand, handleClose, refreshBrands }) => {
   const token = localStorage.getItem("sessionToken");
+  const userRole = localStorage.getItem("roles");
 
+  //State
   const [errors, setErrors] = useState({});
   const [isEditing, setIsEditing] = useState(false);
   const [selectedBrand, setSelectedBrand] = useState(brand);
@@ -23,6 +26,7 @@ const UpdateBrand = ({ open, brand, handleClose, refreshBrands }) => {
   const handleCloseModal = () => {
     handleClose();
     setIsEditing(false);
+    setSelectedBrand(brand);
     setErrors({});
   };
 
@@ -38,9 +42,14 @@ const UpdateBrand = ({ open, brand, handleClose, refreshBrands }) => {
     if (name === "name") {
       newErrors.name =
         value.trim() === "" ? "Tên thương hiệu không được để trống" : "";
-    } else if (name === "image") {
+    }
+    if (name === "image") {
       newErrors.image =
         value.trim() === "" ? "Link ảnh không được để trống" : "";
+    }
+    if (name === "description") {
+      newErrors.description =
+        value.trim() !== "" ? "" : "Mô tả không được để trống";
     }
 
     setErrors(newErrors);
@@ -55,6 +64,7 @@ const UpdateBrand = ({ open, brand, handleClose, refreshBrands }) => {
     setIsEditing(!isEditing);
   };
 
+  // Handle logic update brand
   const handleSaveUpdate = async () => {
     const currentId = selectedBrand.id;
     const updates = {};
@@ -82,7 +92,11 @@ const UpdateBrand = ({ open, brand, handleClose, refreshBrands }) => {
               Authorization: `Bearer ${token}`,
               Accept: "*/*",
             },
-            body: JSON.stringify(updates),
+            body: JSON.stringify({
+              name: selectedBrand.name,
+              image: selectedBrand.image,
+              description: selectedBrand.description,
+            }),
           }
         );
 
@@ -114,12 +128,13 @@ const UpdateBrand = ({ open, brand, handleClose, refreshBrands }) => {
           bgcolor: "background.paper",
           borderRadius: 3,
           boxShadow: 24,
+          overflow: "hidden",
         }}
       >
         {/* Header */}
         <Box
           sx={{
-            bgcolor: "#f3f3f3",
+            bgcolor: "#e3f2fd",
             px: 3,
             py: 2,
             display: "flex",
@@ -132,6 +147,7 @@ const UpdateBrand = ({ open, brand, handleClose, refreshBrands }) => {
             <BrandingWatermarkIcon sx={{ mr: 1 }} />
             Thông tin thương hiệu
           </Typography>
+
           <Button
             onClick={handleCloseModal}
             variant="text"
@@ -158,8 +174,8 @@ const UpdateBrand = ({ open, brand, handleClose, refreshBrands }) => {
             <>
               {isEditing ? (
                 <>
+                  {/* Edit mode */}
                   <InputRow
-                    icon={<BrandingWatermarkIcon sx={{ mr: 1 }} />}
                     label="Tên thương hiệu"
                     name="name"
                     value={selectedBrand.name}
@@ -167,24 +183,19 @@ const UpdateBrand = ({ open, brand, handleClose, refreshBrands }) => {
                     error={errors.name}
                     helperText={errors.name}
                   />
-                  <InputRow
-                    icon={
-                      <img
-                        src={selectedBrand.image}
-                        alt="img"
-                        width={24}
-                        style={{ marginRight: 8 }}
-                      />
+                  <InputImageRow
+                    label="Hình ảnh"
+                    imageUrl={selectedBrand.image}
+                    onUpload={(e) =>
+                      handleImageUpload(e, (imgUrl) => {
+                        setSelectedBrand((prev) => ({
+                          ...prev,
+                          image: imgUrl,
+                        }));
+                      })
                     }
-                    label="Link ảnh"
-                    name="image"
-                    value={selectedBrand.image}
-                    onChange={handleChange}
-                    error={errors.image}
-                    helperText={errors.image}
                   />
                   <InputRow
-                    icon={<></>}
                     label="Mô tả"
                     name="description"
                     value={selectedBrand.description || ""}
@@ -195,46 +206,48 @@ const UpdateBrand = ({ open, brand, handleClose, refreshBrands }) => {
                 </>
               ) : (
                 <>
-                  <Typography sx={{ pl: 4, pt: 2 }}>
-                    <BrandingWatermarkIcon sx={{ mr: 1 }} />
-                    {selectedBrand.name}
-                  </Typography>
-                  <Typography sx={{ pl: 4, pt: 1 }}>
-                    <b>Link ảnh:</b> {selectedBrand.image}
-                  </Typography>
-                  <Typography sx={{ pl: 4, pt: 1 }}>
-                    <b>Mô tả:</b> {selectedBrand.description || "(Không có)"}
-                  </Typography>
+                  {/* Display mode */}
+                  <InfoRow label="Tên nhãn hiệu" value={selectedBrand.name} />
+                  <InfoRow
+                    label="Hình ảnh"
+                    value={selectedBrand.image}
+                    isImage
+                  />
+                  <InfoRow label="Mô tả" value={selectedBrand.description} />
                 </>
               )}
 
               {/* Footer */}
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "flex-end",
-                  mt: 3,
-                }}
-              >
-                <Button
-                  variant="contained"
+              {userRole === "ADMIN" ? (
+                <Box
                   sx={{
-                    border: "2px solid #1976d2",
-                    color: "#1976d2",
-                    backgroundColor: "#ffffff",
-                    textTransform: "none",
-                    borderRadius: 2,
-                    "&:hover": {
-                      backgroundColor: "#1976d2",
-                      color: "#ffffff",
-                    },
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    mt: 3,
                   }}
-                  onClick={handleEditToggle}
                 >
-                  <UpdateIcon sx={{ mr: 1 }} />
-                  {isEditing ? "Lưu" : "Cập Nhật"}
-                </Button>
-              </Box>
+                  <Button
+                    variant="contained"
+                    sx={{
+                      border: "2px solid #1976d2",
+                      color: "#1976d2",
+                      backgroundColor: "#ffffff",
+                      textTransform: "none",
+                      borderRadius: 2,
+                      "&:hover": {
+                        backgroundColor: "#1976d2",
+                        color: "#ffffff",
+                      },
+                    }}
+                    onClick={handleEditToggle}
+                  >
+                    <UpdateIcon sx={{ mr: 1 }} />
+                    {isEditing ? "Lưu" : "Cập Nhật"}
+                  </Button>
+                </Box>
+              ) : (
+                <></>
+              )}
             </>
           )}
         </Box>

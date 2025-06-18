@@ -1,8 +1,6 @@
 import {
   Box,
   Button,
-  Chip,
-  InputAdornment,
   Modal,
   Pagination,
   Paper,
@@ -15,27 +13,43 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useEffect, useState } from "react";
 import { Sheet, Table } from "@mui/joy";
 import BackToDashboardButton from "../../../utils/backToDashboardBtn";
-import UpdateBrand from "../Forms/BrandForm/FormUpdateBrand"; // Tạo component này tương tự FormUpdateCategory
+import UpdateBrand from "../Forms/BrandForm/FormUpdateBrand";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import { Image } from "antd";
+import { toast } from "react-toastify";
 
 const BrandTable = () => {
   const token = localStorage.getItem("sessionToken");
   const userRole = localStorage.getItem("roles");
 
-  const [brands, setBrands] = useState([]);
-  const [searchKeyword, setSearchKeyword] = useState("");
-  const [page, setPage] = useState(1);
-  const itemsPerPage = 12;
-
+  // State
   const [openModal, setOpenModal] = useState(false);
   const [selectedBrand, setSelectedBrand] = useState(null);
-
+  const [brandsdata, setBrandsdata] = useState([]);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [selectedBrandDelete, setSelectedBrandDelete] = useState(null);
+  const [brandFilter, setBrandFilter] = useState("");
+
+  // Filter brands by search
+  const filteredBrands = brandsdata.filter((brand) => {
+    const matchesBrand = brandFilter
+      ? brand.name.toLowerCase() === brandFilter.toLowerCase()
+      : true;
+
+    return matchesBrand;
+  });
+
+  // Pagination configuration
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 4;
+  const startIndex = (page - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedItems = filteredBrands.slice(startIndex, endIndex);
+
+  const handlePageChange = (e, value) => setPage(value);
 
   // Fetch brands
   const getBrandList = async () => {
@@ -50,7 +64,7 @@ const BrandTable = () => {
 
       if (response?.ok) {
         const data = await response.json();
-        setBrands(data);
+        setBrandsdata(data);
       } else {
         console.error("Lỗi tải thương hiệu");
       }
@@ -63,18 +77,6 @@ const BrandTable = () => {
     getBrandList();
   }, []);
 
-  // Filter brands by search
-  const filteredBrands = brands.filter((brand) =>
-    brand.name.toLowerCase().includes(searchKeyword.toLowerCase())
-  );
-
-  // Pagination
-  const startIndex = (page - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedItems = filteredBrands.slice(startIndex, endIndex);
-
-  const handlePageChange = (e, value) => setPage(value);
-
   // Handle row click (open update modal)
   const handleRowClick = (brand) => {
     setSelectedBrand(brand);
@@ -83,7 +85,7 @@ const BrandTable = () => {
 
   // Handle delete brand
   const handleDeleteBrand = async () => {
-    const brandId = selectedBrandDelete.id;
+    const brandId = selectedBrand.id;
 
     try {
       const response = await fetch(
@@ -98,15 +100,15 @@ const BrandTable = () => {
       );
 
       if (response.ok) {
-        alert("Xoá thành công");
+        toast.success("Xoá thành công");
         setOpenDeleteModal(false);
-        setSelectedBrandDelete(null);
+        setSelectedBrand(null);
         getBrandList();
       } else {
-        alert("Xoá thương hiệu thất bại");
+        toast.error("Xoá sản phẩm thất bại");
       }
     } catch (error) {
-      alert("Xoá thất bại");
+      toast.error("Xoá sản phẩm thất bại");
     }
   };
 
@@ -114,6 +116,7 @@ const BrandTable = () => {
     <Box
       sx={{ px: 3, width: "100%", height: "100%", backgroundColor: "#f4f4f4" }}
     >
+      {/* Icon back to dashboard */}
       <BackToDashboardButton />
 
       <Sheet
@@ -140,22 +143,22 @@ const BrandTable = () => {
           </Typography>
 
           <TextField
-            sx={{ mr: 2 }}
+            select
             size="small"
-            value={searchKeyword}
+            value={brandFilter}
             onChange={(e) => {
-              setSearchKeyword(e.target.value);
+              setBrandFilter(e.target.value);
               setPage(1);
             }}
-            placeholder="Tìm theo tên thương hiệu"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
+            SelectProps={{ native: true }}
+          >
+            <option value="">Tất cả nhãn hiệu</option>
+            {brandsdata?.map((brand) => (
+              <option key={brand.id} value={brand.brandName}>
+                {brand.name}
+              </option>
+            ))}
+          </TextField>
         </Box>
 
         <TableContainer component={Paper} sx={{ maxHeight: 440 }}>
@@ -169,9 +172,9 @@ const BrandTable = () => {
           >
             <TableHead>
               <TableRow>
+                <TableCell sx={{ minWidth: 200 }}>Hình ảnh</TableCell>
                 <TableCell sx={{ minWidth: 200 }}>Tên thương hiệu</TableCell>
                 <TableCell sx={{ minWidth: 300 }}>Mô tả</TableCell>
-                <TableCell>Trạng thái</TableCell>
                 {userRole === "ADMIN" && <TableCell>Hành động</TableCell>}
               </TableRow>
             </TableHead>
@@ -186,11 +189,23 @@ const BrandTable = () => {
                       backgroundColor: "#f0f0f0",
                     },
                   }}
-                  onClick={() => handleRowClick(brand)}
                 >
+                  <TableCell>
+                    <Image
+                      width={100}
+                      height={100}
+                      style={{ objectFit: "cover", borderRadius: 4 }}
+                      preview={true}
+                      src={brand.image}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                      }}
+                    />
+                  </TableCell>
                   <TableCell>{brand.name}</TableCell>
                   <TableCell
                     sx={{
+                      maxWidth: 200,
                       whiteSpace: "nowrap",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
@@ -198,25 +213,19 @@ const BrandTable = () => {
                   >
                     {brand.description || "-"}
                   </TableCell>
-                  <TableCell>
-                    <Chip
-                      label={
-                        brand.active ? "Đang hoạt động" : "Ngưng hoạt động"
-                      }
-                      color={brand.active ? "success" : "error"}
-                      variant="outlined"
-                      size="small"
-                    />
-                  </TableCell>
                   {userRole === "ADMIN" && (
                     <TableCell>
                       <DeleteIcon
                         onClick={(e) => {
                           e.stopPropagation();
-                          setSelectedBrandDelete(brand);
+                          setSelectedBrand(brand);
                           setOpenDeleteModal(true);
                         }}
-                        sx={{ color: "red", cursor: "pointer" }}
+                        sx={{ color: "red", cursor: "pointer", mr: 2 }}
+                      />
+                      <VisibilityIcon
+                        onClick={() => handleRowClick(brand)}
+                        sx={{ color: "green", cursor: "pointer" }}
                       />
                     </TableCell>
                   )}

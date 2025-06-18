@@ -299,7 +299,6 @@ const AdminSidebar = () => {
                           setOpenAddModal(true);
                         }
                         navigate("/dashboard");
-                        setOpenAddModal(true);
                       }}
                     >
                       <LibraryAddOutlinedIcon className="mr-5" />
@@ -384,8 +383,11 @@ const AdminSidebar = () => {
                   <ListItem disablePadding>
                     <ListItemButton
                       onClick={() => {
-                        setSelectedSection("addBrand");
-                        setOpenAddModal(true);
+                        {
+                          setSelectedSection("addBrand");
+                          setOpenAddModal(true);
+                        }
+                        navigate("/dashboard");
                       }}
                     >
                       <LibraryAddOutlinedIcon className="mr-5" />

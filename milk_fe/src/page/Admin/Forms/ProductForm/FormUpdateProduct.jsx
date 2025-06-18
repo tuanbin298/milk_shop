@@ -1,12 +1,4 @@
-import {
-  Box,
-  Button,
-  Chip,
-  MenuItem,
-  Modal,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Chip, Modal, Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import {
   InfoRow,
@@ -18,6 +10,7 @@ import { useEffect, useState } from "react";
 import UpdateIcon from "@mui/icons-material/Update";
 import { formatMoney } from "../../../../utils/formatMoney";
 import { toast } from "react-toastify";
+import { handleImageUpload } from "../../../../utils/uploadImage";
 
 const UpdateProduct = ({ open, product, handleClose, refreshProducts }) => {
   const userRole = localStorage.getItem("roles");
@@ -77,41 +70,6 @@ const UpdateProduct = ({ open, product, handleClose, refreshProducts }) => {
     }
 
     setErrors(newErrors);
-  };
-
-  const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-
-    if (!file) return;
-
-    try {
-      const imgUrl = await uploadToCloudinary(file);
-      toast.success("Ảnh đã được lưu trên Cloudinary");
-
-      setSelectedProduct((prev) => ({ ...prev, image: imgUrl }));
-    } catch (error) {
-      toast.error("Tải ảnh lên thất bại");
-    }
-  };
-
-  // Logic upload img into cloudinary to get the URL return
-  const uploadToCloudinary = async (file) => {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", "milk_shop_cloudinary"); //Upload into server without API Key
-    formData.append("cloud_name", "tuanbin");
-    formData.append("folder", "milk_shop");
-
-    const response = await fetch(
-      `https://api.cloudinary.com/v1_1/tuanbin/image/upload`,
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
-
-    const data = await response.json();
-    return data.secure_url;
   };
 
   // Handle btn edit
@@ -276,7 +234,14 @@ const UpdateProduct = ({ open, product, handleClose, refreshProducts }) => {
                   <InputImageRow
                     label="Hình ảnh"
                     imageUrl={selectedProduct.image}
-                    onUpload={handleImageUpload}
+                    onUpload={(e) =>
+                      handleImageUpload(e, (imgUrl) => {
+                        setSelectedProduct((prev) => ({
+                          ...prev,
+                          image: imgUrl,
+                        }));
+                      })
+                    }
                   />
                   <InputRow
                     label="Mô tả"

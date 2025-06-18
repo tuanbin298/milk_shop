@@ -1,20 +1,22 @@
-import { Box, Button, MenuItem, TextField } from "@mui/material";
+import { Box, Button, MenuItem, TextField, Typography } from "@mui/material";
 import { Image } from "antd";
 
 export const InfoRow = ({ icon, label, value, isImage = false }) => (
   <Box
     sx={{
       display: "flex",
-      alignItems: "center",
-      py: 1,
+      alignItems: "flex-start",
+      py: 1.5,
       borderBottom: "1px solid #eee",
+      gap: 2,
+      px: 2,
     }}
   >
     <Box sx={{ display: "flex", alignItems: "center", mb: 1.5 }}>{icon}</Box>
     <Box sx={{ width: 150, color: "#555", fontWeight: 500, mb: 1.5 }}>
       {label}
     </Box>
-    <Box sx={{ mb: 1.5 }}>
+    <Box sx={{ flex: 1 }}>
       {isImage ? (
         <Image
           src={value}
@@ -27,7 +29,7 @@ export const InfoRow = ({ icon, label, value, isImage = false }) => (
           }}
         />
       ) : (
-        value
+        <Typography sx={{ whiteSpace: "pre-line" }}>{value}</Typography>
       )}
     </Box>
   </Box>
@@ -45,9 +47,11 @@ export const InputRow = ({
   <Box
     sx={{
       display: "flex",
-      alignItems: "center",
-      py: 1,
+      alignItems: "flex-start",
+      py: 1.5,
       borderBottom: "1px solid #eee",
+      gap: 2,
+      px: 2,
     }}
   >
     <Box sx={{ display: "flex", alignItems: "center", mb: 1.5 }}>{icon}</Box>
@@ -78,9 +82,11 @@ export const InputSelectRow = ({
   <Box
     sx={{
       display: "flex",
-      alignItems: "center",
-      py: 1,
+      alignItems: "flex-start",
+      py: 1.5,
       borderBottom: "1px solid #eee",
+      gap: 2,
+      px: 2,
     }}
   >
     <Box sx={{ display: "flex", alignItems: "center", mb: 1.5 }}>{icon}</Box>
@@ -109,9 +115,11 @@ export const InputImageRow = ({ label, imageUrl, onUpload }) => (
   <Box
     sx={{
       display: "flex",
-      alignItems: "center",
-      py: 1,
+      alignItems: "flex-start",
+      py: 1.5,
       borderBottom: "1px solid #eee",
+      gap: 2,
+      px: 2,
     }}
   >
     <Box sx={{ width: 150, color: "#555", fontWeight: 500, mb: 1.5 }}>
