@@ -15,11 +15,12 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { InfoRow, InputRow } from "../../../../utils/updateForm";
 
 const UpdateCategory = ({ open, category, handleClose, refreshCategories }) => {
   const token = localStorage.getItem("sessionToken");
-  console.log("TOKEN:", token);
 
+  //State
   const [errors, setErrors] = useState({});
   const [isEditing, setIsEditing] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -27,18 +28,14 @@ const UpdateCategory = ({ open, category, handleClose, refreshCategories }) => {
 
   useEffect(() => {
     if (category) {
-      setSelectedCategory({
-        ...category,
-        description: category.description || "",
-        status: category.status ?? true,
-        isDeleted: category.delete ?? false, // ✅ đổi tên tại đây
-      });
+      setSelectedCategory(category);
     }
   }, [category]);
 
   const handleCloseModal = () => {
     handleClose();
     setIsEditing(false);
+    setSelectedCategory(category);
     setErrors({});
   };
 
@@ -56,24 +53,34 @@ const UpdateCategory = ({ open, category, handleClose, refreshCategories }) => {
         value.trim() === "" ? "Tên danh mục không được để trống" : "";
     }
     if (name === "description") {
-      newErrors.description =
-        value.trim() === "" ? "Mô tả không được để trống" : "";
+      if (value.trim() === "") {
+        newErrors.description = "Mô tả không được để trống";
+      } else if (value.trim().length > 100) {
+        newErrors.description = "Mô tả không được vượt quá 100 ký tự";
+      } else {
+        newErrors.description = "";
+      }
     }
 
     setErrors(newErrors);
   };
 
+  // Handle btn edit
   const handleEditToggle = () => {
+    //First time click btn: If click in update go into edit mode (save data berfore changes)
     if (!isEditing) {
       setOriginalCategory({ ...selectedCategory });
     } else {
+      // Second time click btn:
       handleSaveUpdate();
     }
     setIsEditing(!isEditing);
   };
 
+  // Handle logic update category
   const handleSaveUpdate = async () => {
     const updates = {};
+
     if (selectedCategory.name !== originalCategory.name) {
       updates.name = selectedCategory.name;
     }
@@ -99,7 +106,10 @@ const UpdateCategory = ({ open, category, handleClose, refreshCategories }) => {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify(updates),
+            body: JSON.stringify({
+              name: selectedCategory.name,
+              description: selectedCategory.description,
+            }),
           }
         );
 
@@ -118,69 +128,6 @@ const UpdateCategory = ({ open, category, handleClose, refreshCategories }) => {
       handleCloseModal();
     }
   };
-
-  const InfoRow = ({ icon, label, value }) => (
-    <Stack
-      direction="row"
-      alignItems="center"
-      spacing={2}
-      sx={{ py: 1, px: 3 }}
-    >
-      <Box sx={{ width: 30 }}>{icon}</Box>
-      <Typography sx={{ width: 120, fontWeight: 500 }}>{label}</Typography>
-      <Box>{value}</Box>
-    </Stack>
-  );
-
-  const InputRow = ({ icon, label, name, value, error, helperText }) => (
-    <Stack
-      direction="row"
-      alignItems="center"
-      spacing={2}
-      sx={{ py: 1, px: 3 }}
-    >
-      <Box sx={{ width: 30 }}>{icon}</Box>
-      <Typography sx={{ width: 120, fontWeight: 500 }}>{label}</Typography>
-      <TextField
-        name={name}
-        value={value}
-        onChange={handleChange}
-        size="small"
-        fullWidth
-        error={!!error}
-        helperText={helperText}
-      />
-    </Stack>
-  );
-
-  const InputSelectRow = ({ icon, label, name, value, options }) => (
-    <Stack
-      direction="row"
-      alignItems="center"
-      spacing={2}
-      sx={{ py: 1, px: 3 }}
-    >
-      <Box sx={{ width: 30 }}>{icon}</Box>
-      <Typography sx={{ width: 120, fontWeight: 500 }}>{label}</Typography>
-      <TextField
-        select
-        name={name}
-        value={String(value)}
-        onChange={handleChange}
-        size="small"
-        fullWidth
-      >
-        {options.map((option) => (
-          <MenuItem key={option.value} value={option.value}>
-            {option.label}
-          </MenuItem>
-        ))}
-      </TextField>
-    </Stack>
-  );
-
-  // Ngăn lỗi nếu selectedCategory chưa sẵn sàng
-  if (!selectedCategory) return null;
 
   return (
     <Modal open={open} onClose={handleCloseModal}>
@@ -212,6 +159,7 @@ const UpdateCategory = ({ open, category, handleClose, refreshCategories }) => {
             <CategoryIcon sx={{ mr: 1 }} />
             Thông tin danh mục
           </Typography>
+
           <Button
             onClick={handleCloseModal}
             variant="outlined"
@@ -226,10 +174,12 @@ const UpdateCategory = ({ open, category, handleClose, refreshCategories }) => {
         <Box component="dl" sx={{ p: 2 }}>
           {isEditing ? (
             <>
+              {/* Edit mode */}
               <InputRow
                 icon={<CategoryIcon />}
                 label="Tên danh mục"
                 name="name"
+                onChange={handleChange}
                 value={selectedCategory.name}
                 error={errors.name}
                 helperText={errors.name}
@@ -239,58 +189,23 @@ const UpdateCategory = ({ open, category, handleClose, refreshCategories }) => {
                 label="Mô tả"
                 name="description"
                 value={selectedCategory.description}
+                onChange={handleChange}
                 error={errors.description}
                 helperText={errors.description}
-              />
-              <InputSelectRow
-                icon={<VerifiedUserIcon />}
-                label="Trạng thái"
-                name="delete"
-                value={selectedCategory.delete}
-                options={[
-                  { label: "Đang hoạt động", value: "false" },
-                  { label: "Ngưng hoạt động", value: "true" },
-                ]}
               />
             </>
           ) : (
             <>
+              {/* Display mode */}
               <InfoRow
                 icon={<CategoryIcon />}
                 label="Tên danh mục"
-                value={selectedCategory.name}
+                value={selectedCategory?.name}
               />
               <InfoRow
                 icon={<DescriptionIcon />}
                 label="Mô tả"
-                value={selectedCategory.description}
-              />
-              <InfoRow
-                icon={<VerifiedUserIcon />}
-                label="Trạng thái"
-                value={
-                  <Chip
-                    label={
-                      selectedCategory.delete
-                        ? "Đang hoạt động"
-                        : "Ngưng hoạt động"
-                    }
-                    sx={{
-                      backgroundColor: selectedCategory.delete
-                        ? "rgba(76, 175, 80, 0.1)"
-                        : "rgba(244, 67, 54, 0.1)",
-                      color: selectedCategory.delete ? "#4caf50" : "#f44336",
-                      border: `1px solid ${
-                        selectedCategory.delete ? "#4caf50" : "#f44336"
-                      }`,
-                      fontWeight: 500,
-                      minWidth: "90px",
-                      textAlign: "center",
-                    }}
-                    size="small"
-                    variant="outlined"
-                  />
-                }
+                value={selectedCategory?.description}
               />
             </>
           )}

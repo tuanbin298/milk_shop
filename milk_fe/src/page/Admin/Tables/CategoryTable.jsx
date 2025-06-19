@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Chip,
   InputAdornment,
   Modal,
   Pagination,
@@ -17,25 +16,37 @@ import {
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import DeleteIcon from "@mui/icons-material/Delete";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useEffect, useState } from "react";
 import { Sheet, Table } from "@mui/joy";
 import BackToDashboardButton from "../../../utils/backToDashboardBtn";
 import UpdateCategory from "../Forms/CategoryForm/FormUpdateCategory";
+import { toast } from "react-toastify";
 
 const CategoryTable = () => {
   const token = localStorage.getItem("sessionToken");
-  const userRole = localStorage.getItem("roles");
 
-  const [categories, setCategories] = useState([]);
+  // State
+  const [categorieData, setCategorieData] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");
-  const [page, setPage] = useState(1);
-  const itemsPerPage = 12;
-
   const [openModal, setOpenModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
-
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [selectedCategoryDelete, setSelectedCategoryDelete] = useState(null);
+
+  // Filter categories by search
+  const filteredCategories = categorieData.filter((category) =>
+    category.name.toLowerCase().includes(searchKeyword.toLowerCase())
+  );
+
+  // Pagination configuration
+  const [page, setPage] = useState(1);
+  const itemsPerPage = 4;
+
+  const startIndex = (page - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedItems = filteredCategories.slice(startIndex, endIndex);
+
+  const handlePageChange = (e, value) => setPage(value);
 
   // Fetch categories
   const getCategoryList = async () => {
@@ -50,30 +61,18 @@ const CategoryTable = () => {
 
       if (response?.ok) {
         const data = await response.json();
-        setCategories(data);
+        setCategorieData(data);
       } else {
-        console.error("Lỗi tải danh mục");
+        toast.error("Lỗi tải danh mục");
       }
     } catch (err) {
-      console.error("Lỗi tải danh mục:", err);
+      toast.error("Lỗi tải danh mục:", err);
     }
   };
 
   useEffect(() => {
     getCategoryList();
   }, []);
-
-  // Filter categories by search
-  const filteredCategories = categories.filter((category) =>
-    category.name.toLowerCase().includes(searchKeyword.toLowerCase())
-  );
-
-  // Pagination
-  const startIndex = (page - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedItems = filteredCategories.slice(startIndex, endIndex);
-
-  const handlePageChange = (e, value) => setPage(value);
 
   // Handle row click (open update modal)
   const handleRowClick = (category) => {
@@ -83,7 +82,7 @@ const CategoryTable = () => {
 
   // Handle delete category
   const handleDeleteCategory = async () => {
-    const categoryId = selectedCategoryDelete.id;
+    const categoryId = selectedCategory.id;
 
     try {
       const response = await fetch(
@@ -98,15 +97,14 @@ const CategoryTable = () => {
       );
 
       if (response.ok) {
-        alert("Xoá thành công");
+        toast.success("Xoá thành công");
         setOpenDeleteModal(false);
-        setSelectedCategoryDelete(null);
         getCategoryList();
       } else {
-        alert("Xoá danh mục thất bại");
+        toast.error("Xoá loại thất bại");
       }
     } catch (error) {
-      alert("Xoá thất bại");
+      toast.error("Xoá loại thất bại");
     }
   };
 
@@ -119,6 +117,7 @@ const CategoryTable = () => {
         backgroundColor: "#f4f4f4",
       }}
     >
+      {/* Icon back to dashboard */}
       <BackToDashboardButton />
 
       <Sheet
@@ -178,8 +177,7 @@ const CategoryTable = () => {
               <TableRow>
                 <TableCell sx={{ minWidth: 200 }}>Tên danh mục</TableCell>
                 <TableCell sx={{ minWidth: 300 }}>Mô tả</TableCell>
-                <TableCell>Trạng thái</TableCell>
-                {userRole === "ADMIN" && <TableCell>Hành động</TableCell>}
+                <TableCell>Hành động</TableCell>
               </TableRow>
             </TableHead>
 
@@ -193,7 +191,6 @@ const CategoryTable = () => {
                       backgroundColor: "#f0f0f0",
                     },
                   }}
-                  onClick={() => handleRowClick(category)}
                 >
                   <TableCell>{category.name}</TableCell>
                   <TableCell
@@ -206,34 +203,26 @@ const CategoryTable = () => {
                     {category.description || "-"}
                   </TableCell>
                   <TableCell>
-                    <Chip
-                      label={
-                        category.delete ? "Đang hoạt động" : "Ngưng hoạt động"
-                      }
-                      color={category.delete ? "success" : "error"}
-                      variant="outlined"
-                      size="small"
+                    <DeleteIcon
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedCategory(category);
+                        setOpenDeleteModal(true);
+                      }}
+                      sx={{ color: "red", cursor: "pointer" }}
+                    />
+                    <VisibilityIcon
+                      onClick={() => handleRowClick(category)}
+                      sx={{ color: "green", cursor: "pointer" }}
                     />
                   </TableCell>
-                  {userRole === "ADMIN" && (
-                    <TableCell>
-                      <DeleteIcon
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedCategoryDelete(category);
-                          setOpenDeleteModal(true);
-                        }}
-                        sx={{ color: "red", cursor: "pointer" }}
-                      />
-                    </TableCell>
-                  )}
                 </TableRow>
               ))}
             </TableBody>
 
             <TableFooter>
               <TableRow>
-                <TableCell colSpan={userRole === "ADMIN" ? 4 : 3}>
+                <TableCell colSpan={3}>
                   <Box
                     display="flex"
                     justifyContent="space-between"

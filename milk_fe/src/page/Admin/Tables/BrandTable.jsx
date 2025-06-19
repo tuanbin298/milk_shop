@@ -24,7 +24,6 @@ import { toast } from "react-toastify";
 
 const BrandTable = () => {
   const token = localStorage.getItem("sessionToken");
-  const userRole = localStorage.getItem("roles");
 
   // State
   const [openModal, setOpenModal] = useState(false);
@@ -66,10 +65,10 @@ const BrandTable = () => {
         const data = await response.json();
         setBrandsdata(data);
       } else {
-        console.error("Lỗi tải thương hiệu");
+        toast.error("Lỗi tải thương hiệu");
       }
     } catch (err) {
-      console.error("Lỗi tải thương hiệu:", err);
+      toast.error("Lỗi tải thương hiệu:", err);
     }
   };
 
@@ -175,7 +174,7 @@ const BrandTable = () => {
                 <TableCell sx={{ minWidth: 200 }}>Hình ảnh</TableCell>
                 <TableCell sx={{ minWidth: 200 }}>Tên thương hiệu</TableCell>
                 <TableCell sx={{ minWidth: 300 }}>Mô tả</TableCell>
-                {userRole === "ADMIN" && <TableCell>Hành động</TableCell>}
+                <TableCell>Hành động</TableCell>
               </TableRow>
             </TableHead>
 
@@ -213,29 +212,27 @@ const BrandTable = () => {
                   >
                     {brand.description || "-"}
                   </TableCell>
-                  {userRole === "ADMIN" && (
-                    <TableCell>
-                      <DeleteIcon
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedBrand(brand);
-                          setOpenDeleteModal(true);
-                        }}
-                        sx={{ color: "red", cursor: "pointer", mr: 2 }}
-                      />
-                      <VisibilityIcon
-                        onClick={() => handleRowClick(brand)}
-                        sx={{ color: "green", cursor: "pointer" }}
-                      />
-                    </TableCell>
-                  )}
+                  <TableCell>
+                    <DeleteIcon
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedBrand(brand);
+                        setOpenDeleteModal(true);
+                      }}
+                      sx={{ color: "red", cursor: "pointer", mr: 2 }}
+                    />
+                    <VisibilityIcon
+                      onClick={() => handleRowClick(brand)}
+                      sx={{ color: "green", cursor: "pointer" }}
+                    />
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
 
             <TableFooter>
               <TableRow>
-                <TableCell colSpan={userRole === "ADMIN" ? 4 : 3}>
+                <TableCell colSpan={4}>
                   <Box
                     display="flex"
                     justifyContent="space-between"

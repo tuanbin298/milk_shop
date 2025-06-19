@@ -35,7 +35,6 @@ const AddBrand = ({ open, handleClose }) => {
     name: "",
     image: "",
     description: "",
-    status: true,
   });
 
   // Function change state of input
@@ -53,8 +52,13 @@ const AddBrand = ({ open, handleClose }) => {
       newErrors.image = value ? "" : "Hình ảnh không được để trống";
     }
     if (name === "description") {
-      newErrors.description =
-        value.trim() !== "" ? "" : "Mô tả không được để trống";
+      if (value.trim() === "") {
+        newErrors.description = "Mô tả không được để trống";
+      } else if (value.trim().length > 100) {
+        newErrors.description = "Mô tả không được vượt quá 100 ký tự";
+      } else {
+        newErrors.description = "";
+      }
     }
 
     setErrors(newErrors);
@@ -71,6 +75,7 @@ const AddBrand = ({ open, handleClose }) => {
     setErrors({});
     handleClose();
     setLoading(false);
+    navigate("brandlist");
   };
 
   // Logic submit
@@ -169,6 +174,8 @@ const AddBrand = ({ open, handleClose }) => {
               value={brandData.description}
               name="description"
               onChange={handleInputChange}
+              error={errors.description}
+              helperText={errors.description}
               multiline
               rows={3}
             />

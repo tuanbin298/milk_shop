@@ -48,8 +48,13 @@ const UpdateBrand = ({ open, brand, handleClose, refreshBrands }) => {
         value.trim() === "" ? "Link ảnh không được để trống" : "";
     }
     if (name === "description") {
-      newErrors.description =
-        value.trim() !== "" ? "" : "Mô tả không được để trống";
+      if (value.trim() === "") {
+        newErrors.description = "Mô tả không được để trống";
+      } else if (value.trim().length > 100) {
+        newErrors.description = "Mô tả không được vượt quá 100 ký tự";
+      } else {
+        newErrors.description = "";
+      }
     }
 
     setErrors(newErrors);
@@ -218,36 +223,32 @@ const UpdateBrand = ({ open, brand, handleClose, refreshBrands }) => {
               )}
 
               {/* Footer */}
-              {userRole === "ADMIN" ? (
-                <Box
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  mt: 3,
+                }}
+              >
+                <Button
+                  variant="contained"
                   sx={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    mt: 3,
+                    border: "2px solid #1976d2",
+                    color: "#1976d2",
+                    backgroundColor: "#ffffff",
+                    textTransform: "none",
+                    borderRadius: 2,
+                    "&:hover": {
+                      backgroundColor: "#1976d2",
+                      color: "#ffffff",
+                    },
                   }}
+                  onClick={handleEditToggle}
                 >
-                  <Button
-                    variant="contained"
-                    sx={{
-                      border: "2px solid #1976d2",
-                      color: "#1976d2",
-                      backgroundColor: "#ffffff",
-                      textTransform: "none",
-                      borderRadius: 2,
-                      "&:hover": {
-                        backgroundColor: "#1976d2",
-                        color: "#ffffff",
-                      },
-                    }}
-                    onClick={handleEditToggle}
-                  >
-                    <UpdateIcon sx={{ mr: 1 }} />
-                    {isEditing ? "Lưu" : "Cập Nhật"}
-                  </Button>
-                </Box>
-              ) : (
-                <></>
-              )}
+                  <UpdateIcon sx={{ mr: 1 }} />
+                  {isEditing ? "Lưu" : "Cập Nhật"}
+                </Button>
+              </Box>
             </>
           )}
         </Box>

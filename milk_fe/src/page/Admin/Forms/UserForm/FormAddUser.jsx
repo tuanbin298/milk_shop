@@ -102,6 +102,7 @@ const AddUser = ({ open, handleClose }) => {
     setErrors({});
     handleClose();
     setLoading(false);
+    navigate("userlist");
   };
 
   // Logic submit

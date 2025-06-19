@@ -350,29 +350,26 @@ const ProductTable = () => {
                         size="small"
                       />
                     </TableCell>
-                    {userRole === "ADMIN" ? (
-                      <>
-                        <TableCell>
+                    <TableCell>
+                      {userRole === "ADMIN" && (
+                        <>
                           <DeleteIcon
                             onClick={(e) => {
-                              e.stopPropagation(); // Prevent open modal
+                              e.stopPropagation();
                               setSelectedProduct(product);
                               setOpenDeleteModal(true);
                             }}
-                            sx={{ color: "red", cursor: "pointer", mr: 2 }}
+                            sx={{ color: "red", cursor: "pointer", mr: 1 }}
                           />
-                          <VisibilityIcon
-                            onClick={() => handleRowClick(product)}
-                            sx={{ color: "green", cursor: "pointer" }}
-                          />
-                        </TableCell>
-                      </>
-                    ) : (
-                      <>
-                        {" "}
-                        <TableCell></TableCell>
-                      </>
-                    )}
+                        </>
+                      )}
+                      {(userRole === "ADMIN" || userRole === "STAFF") && (
+                        <VisibilityIcon
+                          onClick={() => handleRowClick(product)}
+                          sx={{ color: "green", cursor: "pointer" }}
+                        />
+                      )}
+                    </TableCell>
                   </TableRow>
                 ))
               ) : (

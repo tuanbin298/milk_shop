@@ -67,8 +67,13 @@ const AddProduct = ({ open, handleClose }) => {
         value && priceRegex.test(value) ? "" : "Giá phải là số và lớn hơn 0!";
     }
     if (name === "description") {
-      newErrors.description =
-        value.trim() !== "" ? "" : "Mô tả không được để trống";
+      if (value.trim() === "") {
+        newErrors.description = "Mô tả không được để trống";
+      } else if (value.trim().length > 100) {
+        newErrors.description = "Mô tả không được vượt quá 100 ký tự";
+      } else {
+        newErrors.description = "";
+      }
     }
     if (name === "quantity") {
       const quantityNumber = Number(value);
@@ -96,6 +101,7 @@ const AddProduct = ({ open, handleClose }) => {
     setErrors({});
     handleClose();
     setLoading(false);
+    navigate("productlist");
   };
 
   // Logic submit

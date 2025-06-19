@@ -7,6 +7,8 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const style = {
   position: "absolute",
@@ -22,21 +24,63 @@ const style = {
 };
 
 const AddCategory = ({ open, handleClose }) => {
-  // State
-  const [loading, setLoading] = useState(false);
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
   const token = localStorage.getItem("sessionToken");
+  const navigate = useNavigate();
+
+  // State
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [categoryData, setCategoryData] = useState({
+    name: "",
+    description: "",
+  });
+
+  // Function change state of input
+  const handleInputChange = (e) => {
+    // Name of input, value of input
+    const { name, value } = e.target;
+
+    setCategoryData({ ...categoryData, [name]: value });
+
+    let newErrors = { ...errors };
+    if (name === "name") {
+      newErrors.name = value.trim() ? "" : "Tên sản phẩm không được để trống";
+    }
+    if (name === "description") {
+      if (value.trim() === "") {
+        newErrors.description = "Mô tả không được để trống";
+      } else if (value.trim().length > 100) {
+        newErrors.description = "Mô tả không được vượt quá 100 ký tự";
+      } else {
+        newErrors.description = "";
+      }
+    }
+
+    setErrors(newErrors);
+  };
+
   // Reset inputs and close modal
   const handleCancel = () => {
-    setName("");
-    setDescription("");
+    setCategoryData({
+      name: "",
+      description: "",
+    });
+
+    setErrors({});
+    setLoading(false);
     handleClose();
+    navigate("categorylist");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
+    // Check for validation errors
+    if (Object.values(errors).some((error) => error)) {
+      toast.error("Vui lòng kiểm tra lại thông tin!");
+      return;
+    }
 
     try {
       const response = await fetch("http://localhost:8080/api/categories", {
@@ -45,27 +89,24 @@ const AddCategory = ({ open, handleClose }) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          name,
-          description,
-        }),
+        body: JSON.stringify(categoryData),
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      if (response.ok) {
+        toast.success("Tạo loại thành công!");
+
+        // Navigate to view brand
+        setTimeout(() => {
+          handleCancel();
+          navigate("categoryList");
+        }, 1000);
+      } else {
+        const errData = await response.json();
+        console.error("Lỗi từ API:", errData);
       }
-
-      const data = await response.json();
-      console.log("Category added:", data);
-
-      // Reset sau khi gửi
-      setName("");
-      setDescription("");
-      handleClose();
     } catch (error) {
-      console.error("Lỗi khi thêm danh mục:", error);
-      alert("Có lỗi xảy ra khi thêm danh mục!");
-    } finally {
+      toast.error("Tạo loại thất bại");
+      console.error("Lỗi khi thêm loại:", error);
       setLoading(false);
     }
   };
@@ -84,19 +125,28 @@ const AddCategory = ({ open, handleClose }) => {
           </Typography>
 
           <Box mt={3}>
+            {/* Category name */}
             <TextField
               fullWidth
               label="Tên danh mục"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={categoryData.name}
+              name="name"
+              onChange={handleInputChange}
               required
               sx={{ mb: 2 }}
+              error={errors.name}
+              helperText={errors.name}
             />
+
+            {/* Category description */}
             <TextField
               fullWidth
               label="Mô tả"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
+              name="description"
+              value={categoryData.description}
+              onChange={handleInputChange}
+              error={errors.description}
+              helperText={errors.description}
               multiline
               rows={3}
             />
@@ -129,7 +179,7 @@ const AddCategory = ({ open, handleClose }) => {
                   <span>Đang thêm...</span>
                 </>
               ) : (
-                "Thêm danh mục"
+                "Thêm loại"
               )}
             </Button>
           </Box>

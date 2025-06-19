@@ -283,9 +283,7 @@ const AdminSidebar = () => {
               >
                 <List component="div" disablePadding sx={{ pl: 2 }}>
                   <ListItem disablePadding>
-                    <ListItemButton
-                      onClick={() => setSelectedSection("categories")}
-                    >
+                    <ListItemButton onClick={() => navigate("categorylist")}>
                       <FormatListBulletedOutlinedIcon className="mr-5" />
                       <ListItemText primary="Danh sách phân loại" />
                     </ListItemButton>
