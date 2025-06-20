@@ -8,6 +8,9 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { handleImageUpload } from "../../../../utils/uploadImage";
+import { Image } from "antd";
 
 const style = {
   position: "absolute",
@@ -24,71 +27,111 @@ const style = {
 };
 
 const AddArticle = ({ open, handleClose }) => {
+  const token = localStorage.getItem("sessionToken");
+  const user = localStorage.getItem("fullName");
   const navigate = useNavigate();
 
-  //State
+//State
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
-  const [input, setInput] = useState({
+  const [articleData, setArticleData] = useState({
     title: "",
     image: "",
     content: "",
+    authorName: user,
+    link: "",
   });
 
-  //Reset all input when cancel and clods modal
+   //Reset all input when cancel and clods modal
   const handleCancel = () => {
-    setInput({
+    setArticleData({
       title: "",
       image: "",
       content: "",
+      authorName: "",
+      link: "",
     });
 
     setErrors({});
     handleClose();
     setLoading(false);
+    navigate("articlelist");
   };
 
-  const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
+  // Function change state of input
+  const handleInputChange = (e) => {
+    // Name of input, value of input
+    const { name, value } = e.target;
 
-    if (!file) return;
+    setArticleData({ ...articleData, [name]: value });
+
+    let newErrors = { ...errors };
+    if (name === "title") {
+      newErrors.title = value.trim() ? "" : "Tiêu đề không được để trống";
+    }
+    if (name === "image") {
+      newErrors.image = value ? "" : "Hình ảnh không được để trống";
+    }
+    if (name === "content") {
+      if (value.trim() === "") {
+        newErrors.content = "Nội dung không được để trống";
+      } else if (value.trim().length > 100) {
+        newErrors.content = "Nội dung không được vượt quá 100 ký tự";
+      } else {
+        newErrors.content = "";
+      }
+    }
+    if (name === "link") {
+      newErrors.link = value.trim() ? "" : "Đường dẫn không được để trống";
+    }
+
+    setErrors(newErrors);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    // Check for validation errors
+    if (Object.values(errors).some((error) => error)) {
+      toast.error("Vui lòng kiểm tra lại thông tin!");
+      return;
+    }
 
     try {
-      const imgUrl = await uploadToCloudinary(file);
-      toast.success("Ảnh đã được lưu trên Cloudinary");
+      const res = await fetch("http://localhost:8080/api/articles", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          accept: "/",
+          Authorization: Bearer ${token},
+        },
+        body: JSON.stringify(articleData),
+      });
 
-      setProductData({ ...productData, image: imgUrl });
+      if (res.ok) {
+        toast.success("Tạo bài viết thành công!");
+
+        // Navigate to view brand
+        setTimeout(() => {
+          handleCancel();
+          navigate("articlelist");
+        }, 1000);
+      } else {
+        const errData = await res.json();
+        console.error("Lỗi từ API:", errData);
+      }
     } catch (error) {
-      toast.error("Tải ảnh lên thất bại");
+      toast.error("Tạo bài viết thất bại");
+      setLoading(false);
+      console.error("Xảy ra lỗi khi tạo bài viết: ", err);
     }
   };
-
-  // Logic upload img into cloudinary to get the URL return
-  const uploadToCloudinary = async (file) => {
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("upload_preset", "milk_shop_cloudinary"); //Upload into server without API Key
-    formData.append("cloud_name", "tuanbin");
-    formData.append("folder", "milk_shop");
-
-    const response = await fetch(
-      `https://api.cloudinary.com/v1_1/tuanbin/image/upload`,
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
-
-    const data = await response.json();
-    return data.secure_url;
-  };
-
-  // const handleSubmit = async (e) = {}
 
   return (
     <>
       <Modal open={open} onClose={handleClose}>
-        <form>
+        <form onSubmit={handleSubmit}>
           <Box sx={style}>
             <Typography
               sx={{ fontWeight: "bold" }}
@@ -105,16 +148,29 @@ const AddArticle = ({ open, handleClose }) => {
               <TextField
                 fullWidth
                 margin="normal"
-                required
                 label="Tiêu đề"
                 name="title"
-                value={input.title}
-                // onChange={handleInputChange}
+                value={articleData.title}
+                onChange={handleInputChange}
                 error={errors.title}
                 helperText={errors.title}
               />
 
-              {/* Product Image */}
+              {/* Article Image */}
+              {articleData.image && (
+                <Box mt={2}>
+                  <Image
+                    src={articleData.image}
+                    width={120}
+                    height={120}
+                    style={{ borderRadius: 8, objectFit: "cover" }}
+                    preview={{
+                      zIndex: 2000,
+                    }}
+                  />{" "}
+                </Box>
+              )}
+
               <Button
                 variant="contained"
                 component="label"
@@ -125,7 +181,11 @@ const AddArticle = ({ open, handleClose }) => {
                   type="file"
                   hidden
                   accept="image/*"
-                  onChange={handleImageUpload}
+                  onChange={(e) =>
+                    handleImageUpload(e, (imgUrl) => {
+                      setArticleData((prev) => ({ ...prev, image: imgUrl }));
+                    })
+                  }
                 />
               </Button>
 
@@ -133,13 +193,24 @@ const AddArticle = ({ open, handleClose }) => {
               <TextField
                 fullWidth
                 margin="normal"
-                required
                 label="Nội dung"
                 name="content"
-                value={input.content}
-                // onChange={handleInputChange}
+                value={articleData.content}
+                onChange={handleInputChange}
                 error={errors.content}
                 helperText={errors.content}
+              />
+
+              {/* Link */}
+              <TextField
+                fullWidth
+                margin="normal"
+                label="Đường dẫn"
+                name="link"
+                value={articleData.link}
+                onChange={handleInputChange}
+                error={errors.link}
+                helperText={errors.link}
               />
             </Box>
 
