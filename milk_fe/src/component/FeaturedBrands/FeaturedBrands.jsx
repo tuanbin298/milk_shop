@@ -9,11 +9,11 @@ export default function FeaturedBrands() {
   // Fetch brands
   const getBrandList = async () => {
     try {
-      const response = await fetch (http://localhost:8080/api/brands, {
+      const response = await fetch (`http://localhost:8080/api/brands`, {
         method: "GET",
         headers: {
           accept: "/",
-          Authorization: Bearer ${token},
+          Authorization: `Bearer ${token}`,
         },
       });
 
