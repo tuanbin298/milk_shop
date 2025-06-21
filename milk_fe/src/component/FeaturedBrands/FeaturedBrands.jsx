@@ -1,19 +1,36 @@
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+
 export default function FeaturedBrands() {
-  const brands = [
-    { name: "Abbott", image: "src/assets/img/brand/Abbott.jpg" },
-    { name: "BiomilPlus", image: "src/assets/img/brand/BiomilPlus.jpg" },
-    { name: "BlemilPlus", image: "src/assets/img/brand/BlemilPlus.jpg" },
-    { name: "DutchLady", image: "src/assets/img/brand/DutchLady.jpg" },
-    { name: "Ensure", image: "src/assets/img/brand/Ensure.jpg" },
-    { name: "Nestle NAN", image: "src/assets/img/brand/NestleNAN.jpg" },
-    { name: "Optimum GOLD", image: "src/assets/img/brand/OptimumGOLD.jpg" },
-    { name: "PediaSure", image: "src/assets/img/brand/PediaSure.jpg" },
-    { name: "Rontamil", image: "src/assets/img/brand/rontamil.jpg" },
-    {
-      name: "Optimum Mama GOLD",
-      image: "src/assets/img/brand/OptimumMamaGOLD.jpg",
-    },
-  ];
+  const [brandsdata, setBrandsdata] = useState([]);
+
+  const token = localStorage.getItem("sessionToken");
+
+  // Fetch brands
+  const getBrandList = async () => {
+    try {
+      const response = await fetch (http://localhost:8080/api/brands, {
+        method: "GET",
+        headers: {
+          accept: "/",
+          Authorization: Bearer ${token},
+        },
+      });
+
+      if (response?.ok) {
+        const data = await response.json();
+        setBrandsdata(data);
+      } else {
+        toast.error("Lỗi tải thương hiệu");
+      }
+    } catch (err) {
+      toast.error("Lỗi tải thương hiệu:", err);
+    }
+  };
+
+  useEffect(() => {
+    getBrandList();
+  }, []);
 
   return (
     <div className="px-5 py-5 bg-white">
@@ -24,7 +41,7 @@ export default function FeaturedBrands() {
 
       {/* Brand Logos Grid */}
       <div className="grid grid-cols-5 gap-6 mt-6">
-        {brands.map((brand, index) => (
+        {brandsdata.map((brand, index) => (
           <div
             key={index}
             className="flex justify-center items-center p-2 hover:scale-105 transition-transform"
