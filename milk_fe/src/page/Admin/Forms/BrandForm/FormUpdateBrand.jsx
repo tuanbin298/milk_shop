@@ -9,7 +9,6 @@ import { handleImageUpload } from "../../../../utils/uploadImage";
 
 const UpdateBrand = ({ open, brand, handleClose, refreshBrands }) => {
   const token = localStorage.getItem("sessionToken");
-  const userRole = localStorage.getItem("roles");
 
   //State
   const [errors, setErrors] = useState({});
@@ -174,7 +173,7 @@ const UpdateBrand = ({ open, brand, handleClose, refreshBrands }) => {
         </Box>
 
         {/* Body */}
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ p: 3, overflowY: "auto", maxHeight: "70vh" }}>
           {selectedBrand && (
             <>
               {isEditing ? (

@@ -31,7 +31,7 @@ const AddArticle = ({ open, handleClose }) => {
   const user = localStorage.getItem("fullName");
   const navigate = useNavigate();
 
-//State
+  //State
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [articleData, setArticleData] = useState({
@@ -42,7 +42,7 @@ const AddArticle = ({ open, handleClose }) => {
     link: "",
   });
 
-   //Reset all input when cancel and clods modal
+  //Reset all input when cancel and clods modal
   const handleCancel = () => {
     setArticleData({
       title: "",
@@ -103,13 +103,12 @@ const AddArticle = ({ open, handleClose }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          accept: "/",
-          Authorization: Bearer ${token},
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(articleData),
       });
 
-      if (res.ok) {
+      if (res?.ok) {
         toast.success("Tạo bài viết thành công!");
 
         // Navigate to view brand
@@ -118,13 +117,12 @@ const AddArticle = ({ open, handleClose }) => {
           navigate("articlelist");
         }, 1000);
       } else {
-        const errData = await res.json();
-        console.error("Lỗi từ API:", errData);
+        toast.error("Tạo bài viết thất bại");
       }
     } catch (error) {
       toast.error("Tạo bài viết thất bại");
       setLoading(false);
-      console.error("Xảy ra lỗi khi tạo bài viết: ", err);
+      console.error("Xảy ra lỗi khi tạo bài viết: ", error);
     }
   };
 

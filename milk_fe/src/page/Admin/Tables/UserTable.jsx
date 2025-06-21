@@ -236,89 +236,101 @@ const UserTable = () => {
 
             {/* Body */}
             <TableBody>
-              {paginatedItems.map((user) => (
-                <TableRow
-                  key={user.id}
-                  sx={{
-                    cursor: "pointer",
-                    "&:hover": {
-                      backgroundColor: "#f0f0f0",
-                    },
-                  }}
-                >
-                  <TableCell>{user.fullName}</TableCell>
-                  <TableCell
+              {paginatedItems.length > 0 ? (
+                paginatedItems.map((user) => (
+                  <TableRow
+                    key={user.id}
                     sx={{
-                      minWidth: 250,
-                      maxWidth: 300,
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
+                      cursor: "pointer",
+                      "&:hover": {
+                        backgroundColor: "#f0f0f0",
+                      },
                     }}
                   >
-                    {user.username}
-                  </TableCell>
-                  <TableCell>{user.phone}</TableCell>
-                  <TableCell>
-                    <Chip
-                      label={user.roles}
+                    <TableCell>{user.fullName}</TableCell>
+                    <TableCell
                       sx={{
-                        backgroundColor:
-                          user.roles === "ADMIN"
-                            ? "rgba(76, 175, 80, 0.1)"
-                            : user.roles === "STAFF"
-                            ? "rgba(255, 152, 0, 0.1)"
-                            : "rgba(244, 67, 54, 0.1)",
-                        color:
-                          user.roles === "ADMIN"
-                            ? "#4caf50"
-                            : user.roles === "STAFF"
-                            ? "#ff9800"
-                            : "#f44336",
-                        border: `1px solid ${
-                          user.roles === "ADMIN"
-                            ? "#4caf50"
-                            : user.roles === "STAFF"
-                            ? "#ff9800"
-                            : "#f44336"
-                        }`,
-                        fontWeight: 500,
-                        display: "inline-block",
-                        minWidth: "90px",
-                        textAlign: "center",
+                        minWidth: 250,
+                        maxWidth: 300,
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
                       }}
-                      size="small"
-                      variant="outlined"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      label={user.status ? "Đang hoạt động" : "Ngưng hoạt động"}
-                      color={user.status ? "success" : "error"}
-                      variant="outlined"
-                      size="small"
-                    />
-                  </TableCell>
-                  {userRole === "ADMIN" ? (
+                    >
+                      {user.username}
+                    </TableCell>
+                    <TableCell>{user.phone}</TableCell>
                     <TableCell>
-                      <DeleteIcon
-                        onClick={(e) => {
-                          e.stopPropagation(); // Prevent open modal
-                          setSelectedUserDelete(user);
-                          setOpenDeleteModal(true);
+                      <Chip
+                        label={user.roles}
+                        sx={{
+                          backgroundColor:
+                            user.roles === "ADMIN"
+                              ? "rgba(76, 175, 80, 0.1)"
+                              : user.roles === "STAFF"
+                              ? "rgba(255, 152, 0, 0.1)"
+                              : "rgba(244, 67, 54, 0.1)",
+                          color:
+                            user.roles === "ADMIN"
+                              ? "#4caf50"
+                              : user.roles === "STAFF"
+                              ? "#ff9800"
+                              : "#f44336",
+                          border: `1px solid ${
+                            user.roles === "ADMIN"
+                              ? "#4caf50"
+                              : user.roles === "STAFF"
+                              ? "#ff9800"
+                              : "#f44336"
+                          }`,
+                          fontWeight: 500,
+                          display: "inline-block",
+                          minWidth: "90px",
+                          textAlign: "center",
                         }}
-                        sx={{ color: "red", cursor: "pointer", mr: 2 }}
-                      />
-                      <VisibilityIcon
-                        onClick={() => handleRowClick(user)}
-                        sx={{ color: "green", cursor: "pointer" }}
+                        size="small"
+                        variant="outlined"
                       />
                     </TableCell>
-                  ) : (
-                    <></>
-                  )}
-                </TableRow>
-              ))}
+                    <TableCell>
+                      <Chip
+                        label={
+                          user.status ? "Đang hoạt động" : "Ngưng hoạt động"
+                        }
+                        color={user.status ? "success" : "error"}
+                        variant="outlined"
+                        size="small"
+                      />
+                    </TableCell>
+                    {userRole === "ADMIN" ? (
+                      <TableCell>
+                        <DeleteIcon
+                          onClick={(e) => {
+                            e.stopPropagation(); // Prevent open modal
+                            setSelectedUserDelete(user);
+                            setOpenDeleteModal(true);
+                          }}
+                          sx={{ color: "red", cursor: "pointer", mr: 2 }}
+                        />
+                        <VisibilityIcon
+                          onClick={() => handleRowClick(user)}
+                          sx={{ color: "green", cursor: "pointer" }}
+                        />
+                      </TableCell>
+                    ) : (
+                      <></>
+                    )}
+                  </TableRow>
+                ))
+              ) : (
+                <>
+                  <TableRow>
+                    <TableCell colSpan={6} align="center">
+                      Không tìm thấy người dùng
+                    </TableCell>
+                  </TableRow>
+                </>
+              )}
             </TableBody>
 
             {/* Footer */}

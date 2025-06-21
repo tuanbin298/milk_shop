@@ -4,6 +4,8 @@ import { InfoRow, InputImageRow, InputRow } from "../../../../utils/updateForm";
 import UpdateIcon from "@mui/icons-material/Update";
 import { toast } from "react-toastify";
 import { useState, useEffect } from "react";
+import { handleImageUpload } from "../../../../utils/uploadImage";
+import { formatDate, formatTime } from "../../../../utils/formatDateTime";
 
 const UpdateArticle = ({ open, article, handleClose, refreshBrands }) => {
   const token = localStorage.getItem("sessionToken");
@@ -11,7 +13,7 @@ const UpdateArticle = ({ open, article, handleClose, refreshBrands }) => {
   //State
   const [errors, setErrors] = useState({});
   const [isEditing, setIsEditing] = useState(false);
-  const [selectedArticle, setSelectedArticle] = useState(brand);
+  const [selectedArticle, setSelectedArticle] = useState(article);
   const [originalArticle, setOriginalArticle] = useState(null);
 
   useEffect(() => {
@@ -92,13 +94,14 @@ const UpdateArticle = ({ open, article, handleClose, refreshBrands }) => {
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
-              Accept: "/",
+              Accept: "*/*",
             },
             body: JSON.stringify({
-              name: selectedArticle.title,
+              title: selectedArticle.title,
               image: selectedArticle.image,
               link: selectedArticle.link,
               content: selectedArticle.content,
+              authorName: localStorage.getItem("fullName"),
             }),
           }
         );
@@ -106,7 +109,7 @@ const UpdateArticle = ({ open, article, handleClose, refreshBrands }) => {
         if (response.ok) {
           toast.success("Cập nhật bài viết thành công!");
           handleCloseModal();
-          refreshBrands?.();
+          refreshArticle?.();
         } else {
           toast.error("Lỗi khi cập nhật bài viết!");
         }
@@ -171,7 +174,7 @@ const UpdateArticle = ({ open, article, handleClose, refreshBrands }) => {
         </Box>
 
         {/* Body */}
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ p: 3, overflowY: "auto", maxHeight: "70vh" }}>
           {selectedArticle && (
             <>
               {isEditing ? (
@@ -219,16 +222,13 @@ const UpdateArticle = ({ open, article, handleClose, refreshBrands }) => {
               ) : (
                 <>
                   {/* Display mode */}
-                  <InfoRow label="Tiêu đề" value={selectedArticle.name} />
+                  <InfoRow label="Tiêu đề" value={selectedArticle.title} />
                   <InfoRow
                     label="Hình ảnh"
                     value={selectedArticle.image}
                     isImage
                   />
-                  <InfoRow
-                    label="Nội dung"
-                    value={selectedArticle.description}
-                  />
+                  <InfoRow label="Nội dung" value={selectedArticle.content} />
                   <InfoRow label="Đường dẫn" value={selectedArticle.link} />
 
                   <InfoRow
@@ -237,7 +237,9 @@ const UpdateArticle = ({ open, article, handleClose, refreshBrands }) => {
                   />
                   <InfoRow
                     label="Ngày thêm"
-                    value={selectedArticle.createdDate}
+                    value={`${formatDate(
+                      selectedArticle.createdDate.split("T")[0]
+                    )} | ${formatTime(selectedArticle.createdDate)}`}
                   />
                 </>
               )}

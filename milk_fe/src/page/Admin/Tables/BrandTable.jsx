@@ -230,6 +230,7 @@ const BrandTable = () => {
               ))}
             </TableBody>
 
+            {/* Footer */}
             <TableFooter>
               <TableRow>
                 <TableCell colSpan={4}>

@@ -317,7 +317,7 @@ const AdminSidebar = () => {
 
                   <ListItemText primary="Bài viết" sx={{ color: "white" }} />
                   {/* Icon arrow */}
-                  {openDropdowns.users ? (
+                  {openDropdowns.articles ? (
                     <ArrowDropDownOutlinedIcon />
                   ) : (
                     <ArrowRightOutlinedIcon />
@@ -332,9 +332,7 @@ const AdminSidebar = () => {
               >
                 <List component="div" disablePadding sx={{ pl: 2 }}>
                   <ListItem disablePadding>
-                    <ListItemButton
-                      onClick={() => setSelectedSection("articles")}
-                    >
+                    <ListItemButton onClick={() => navigate("articlelist")}>
                       <ArticleOutlinedIcon className="mr-5" />
                       <ListItemText primary="Danh sách bài viết" />
                     </ListItemButton>
@@ -342,7 +340,11 @@ const AdminSidebar = () => {
 
                   <ListItem disablePadding>
                     <ListItemButton
-                      onClick={() => setSelectedSection("addArticle")}
+                      onClick={() => {
+                        setSelectedSection("addArticle");
+                        setOpenAddModal(true);
+                        navigate("/dashboard");
+                      }}
                     >
                       <AddCommentOutlinedIcon className="mr-5" />
                       <ListItemText primary="Thêm bài viết" />

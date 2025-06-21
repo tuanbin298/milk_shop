@@ -376,7 +376,7 @@ const ProductTable = () => {
                 <>
                   <TableRow>
                     <TableCell colSpan={9} align="center">
-                      Không có sản phẩm nào
+                      Không tìm thấy sản phẩm nào
                     </TableCell>
                   </TableRow>
                 </>
