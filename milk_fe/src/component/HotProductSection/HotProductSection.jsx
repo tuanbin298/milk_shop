@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { formatMoney } from "../../utils/formatMoney";
 
 export default function HotProductSection() {
   const [products, setProducts] = useState([]);
@@ -57,13 +58,14 @@ export default function HotProductSection() {
               {products.map((product, index) => (
                 <div
                   key={product.id || index}
-                  className="w-[200px] text-center rounded-lg p-3 bg-white hover:scale-105 transition-transform shadow-sm"
+                  className="w-[200px] text-center rounded-lg p-3 bg-white border-2 border-[#D2D2D2] 
+                  hover:scale-105 transition-transform shadow-sm cursor-pointer"
                 >
                   <div className="w-full h-[160px] flex items-center justify-center overflow-hidden mb-3">
                     <img
                       src={product.image}
                       alt={product.name}
-                      className="h-full object-contain"
+                      className="w-full h-full object-cover"
                     />
                   </div>
 
@@ -73,16 +75,12 @@ export default function HotProductSection() {
 
                   <div className="flex justify-between items-center mt-2">
                     <p className="text-red-600 font-bold text-sm">
-                      {product.price && (
-                        <p className="text-red-600 font-bold text-sm">
-                          {new Intl.NumberFormat("vi-VN", {
-                            style: "currency",
-                            currency: "VND",
-                          }).format(product.price)}
-                        </p>
-                      )}
+                      {formatMoney(product.price)}
                     </p>
-                    <button className="text-[#F75385] text-sm font-medium border border-[#F75385] rounded-full px-3 py-1 hover:bg-[#F75385] hover:text-pink-50 transition-colors">
+                    <button
+                      className="text-[#F75385] text-sm font-medium border border-[#F75385] rounded-full px-3 py-1 
+                    hover:bg-[#F75385] hover:text-pink-50 transition-colors"
+                    >
                       Chi tiết
                     </button>
                   </div>
@@ -93,7 +91,10 @@ export default function HotProductSection() {
 
           {/* View All Button */}
           <div className="text-center mt-8">
-            <button className="text-[#F75385] border border-pink-300 rounded-full px-6 py-2 text-base font-medium hover:bg-[#F75385] hover:text-pink-50 transition-colors">
+            <button
+              className="text-[#F75385] border border-pink-300 rounded-full px-6 py-2 text-base 
+            font-medium hover:bg-[#F75385] hover:text-pink-50 transition-colors"
+            >
               Xem tất cả <span className="ml-1">➤</span>
             </button>
           </div>

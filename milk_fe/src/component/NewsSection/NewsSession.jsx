@@ -1,21 +1,35 @@
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+
 export default function NewsSection() {
-  const newsItems = [
-    {
-      id: 1,
-      title: "Top 8 sữa bột tốt nhất hiện nay tại Việt Nam giúp bé khỏe mạnh",
-      image: "src/assets/img/news/news-thumbnail.jpg",
-    },
-    {
-      id: 2,
-      title: "Top 8 sữa bột tốt nhất hiện nay tại Việt Nam giúp bé khỏe mạnh",
-      image: "src/assets/img/news/news-thumbnail.jpg",
-    },
-    {
-      id: 3,
-      title: "Top 8 sữa bột tốt nhất hiện nay tại Việt Nam giúp bé khỏe mạnh",
-      image: "src/assets/img/news/news-thumbnail.jpg",
-    },
-  ];
+  const [articlesdata, setArticlesdata] = useState([]);
+  const token = localStorage.getItem("sessionToken");
+
+  // Fetch article
+  const getArticleList = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/articles`, {
+        method: "GET",
+        headers: {
+          accept: "*/*",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response?.ok) {
+        const data = await response.json();
+        setArticlesdata(data);
+      } else {
+        console.error("Lỗi tải bài viết");
+      }
+    } catch (err) {
+      toast.error("Lỗi tải bài viết:", err);
+    }
+  };
+
+  useEffect(() => {
+    getArticleList();
+  }, []);
 
   return (
     <div className="px-5 py-5 bg-white">
@@ -25,27 +39,59 @@ export default function NewsSection() {
       </h2>
 
       {/* News Grid */}
-      <div className="grid grid-cols-3 gap-8">
-        {newsItems.map((item) => (
-          <div
-            key={item.id}
-            className="space-y-2 hover:scale-105 transition-transform"
-          >
-            <img
-              src={item.image}
-              alt={item.title}
-              className="w-full rounded-lg object-cover"
-            />
-            <p className="text-sm text-black font-medium leading-5">
-              {item.title}
-            </p>
-          </div>
-        ))}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        {articlesdata &&
+          articlesdata.map((article) => {
+            const url = article.link;
+
+            return (
+              <a
+                href={url ? url : "#"}
+                target="_blank"
+                rel="noopner noreferrer"
+                style={{ textDecoration: "none", color: "inherit" }}
+              >
+                <div
+                  key={article.id}
+                  className="bg-white rounded-lg shadow-md overflow-hidden 
+                hover:shadow-lg border border-[#D2D2D2] 
+                transition-shadow duration-300 flex flex-col hover:scale-105 
+                transition-transform shadow-sm cursor-pointer"
+                >
+                  {/* Image */}
+                  <img
+                    src={article.image}
+                    alt={article.title}
+                    className="w-full h-[180px] object-cover"
+                  />
+
+                  {/* Title && Content */}
+                  <div className="p-4 flex flex-col text-center justify-between flex-grow">
+                    <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                      {article.title}
+                    </h3>
+
+                    <p className="text-sm text-gray-600 mb-4 line-clamp-4">
+                      {article.content}
+                    </p>
+
+                    {/* Nút Đọc thêm */}
+                    <button
+                      className="mt-auto bg-red-500 text-white text-sm font-medium 
+                    px-4 py-2 rounded hover:bg-red-600 transition-colors mx-auto cursor-pointer"
+                    >
+                      Đọc thêm
+                    </button>
+                  </div>
+                </div>
+              </a>
+            );
+          })}
       </div>
 
       {/* View All Button */}
       <div className="flex justify-center mt-10">
-        <button className="text-[#F75385] border border-pink-300 rounded-full px-6 py-2 text-base font-medium hover:bg-[#F75385] hover:text-pink-50 transition-colors">
+        <button className="text-[#F75385] border border-pink-300 rounded-full px-6 py-2 text-base font-medium hover:bg-[#F75385] hover:text-white transition-colors">
           Xem tất cả <span className="ml-1">➤</span>
         </button>
       </div>

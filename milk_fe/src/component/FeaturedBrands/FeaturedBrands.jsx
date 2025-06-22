@@ -9,11 +9,11 @@ export default function FeaturedBrands() {
   // Fetch brands
   const getBrandList = async () => {
     try {
-      const response = await fetch (http://localhost:8080/api/brands, {
+      const response = await fetch(`http://localhost:8080/api/brands`, {
         method: "GET",
         headers: {
-          accept: "/",
-          Authorization: Bearer ${token},
+          accept: "*/*",
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -44,7 +44,8 @@ export default function FeaturedBrands() {
         {brandsdata.map((brand, index) => (
           <div
             key={index}
-            className="flex justify-center items-center p-2 hover:scale-105 transition-transform"
+            className="flex justify-center items-center p-4 bg-white border border-[#D2D2D2] 
+            rounded-lg shadow-sm hover:shadow-md hover:scale-105 transition-all cursor-pointer"
           >
             <img
               src={brand.image}
