@@ -21,6 +21,7 @@ import BrandTable from "./page/Admin/Tables/BrandTable";
 import ProfileUser from "./page/Profile/ProfileUser";
 import ArticleTable from "./page/Admin/Tables/ArticleTable";
 import AdminProfile from "./page/Admin/AdminProfile";
+import ProductDetailPage from "./page/ProductPage/ProductDetailPage";
 function MainLayout() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -72,6 +73,7 @@ function MainLayout() {
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/intro-page" element={<IntroPage />} />
             <Route path="/profile-user" element={<ProfileUser />} />
+            <Route path="/product/:id" element={<ProductDetailPage />} />
           </Routes>
         </LayoutPage>
       )}
