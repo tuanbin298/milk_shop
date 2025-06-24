@@ -1,4 +1,3 @@
-// src/page/ProductPage/ProductDetailPage.jsx
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ProductDetailInfo from "../../component/ProductDetail/ProductDetailInfo";
@@ -10,14 +9,17 @@ const ProductDetailPage = () => {
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
 
-  // Lấy chi tiết sản phẩm
+  // fetch product detail
   useEffect(() => {
     const fetchProduct = async () => {
       const token = localStorage.getItem("sessionToken");
       try {
-        const res = await fetch(`http://localhost:8080/api/products/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const res = await fetch(
+          `http://localhost:8080/api/products/get/${id}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
         if (res.ok) {
           const data = await res.json();
@@ -39,24 +41,24 @@ const ProductDetailPage = () => {
     fetchProduct();
   }, [id]);
 
-  // Lấy sản phẩm liên quan
+  // fetch related product
   const fetchRelatedProducts = async (categoryId, productId) => {
     const token = localStorage.getItem("sessionToken");
     try {
-      const res = await fetch("http://localhost:8080/api/products", {
+      const res = await fetch("http://localhost:8080/api/products/getAll", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       if (res.ok) {
         const data = await res.json();
 
-        // Lọc sản phẩm cùng categoryId, khác sản phẩm hiện tại
+        // filter by categoryId
         const related = data.filter(
           (item) => item.id !== productId && item.categoryId === categoryId
         );
 
         const shuffled = related.sort(() => 0.5 - Math.random());
-        setRelatedProducts(shuffled); // không slice ở đây, sẽ slice trong render
+        setRelatedProducts(shuffled);
       } else {
         console.error("Không thể lấy danh sách sản phẩm liên quan");
       }
@@ -74,11 +76,11 @@ const ProductDetailPage = () => {
   }
 
   return (
-    <div className="p-8 max-w-screen-xl mx-auto">
+    <div className="p-8 max-w-screen-xl mx-auto bg-white">
       <ProductDetailInfo product={product} />
 
       <div className="mt-12">
-        <h2 className="text-xl font-semibold mb-4">Các sản phẩm cùng loại</h2>
+        <h2 className="text-4xl font-semibold mb-8">Các sản phẩm cùng loại</h2>
         {relatedProducts.length > 0 ? (
           <>
             <RelatedProducts products={relatedProducts.slice(0, 5)} />
@@ -86,10 +88,20 @@ const ProductDetailPage = () => {
             {relatedProducts.length > 5 && (
               <div className="text-right mt-3">
                 <button
-                  onClick={() =>
-                    navigate(`/products?category=${product.categoryId}`)
-                  }
-                  className="text-sm text-[#F75385] hover:underline"
+                  onClick={() => {
+                    const category = product.categoryName?.toLowerCase() || "";
+                    if (category.includes("baby")) {
+                      navigate("/baby");
+                    } else if (
+                      category.includes("women") ||
+                      category.includes("mom")
+                    ) {
+                      navigate("/mom");
+                    } else {
+                      alert("Không xác định được loại sản phẩm.");
+                    }
+                  }}
+                  className="pt-4 text-sm text-[#F75385] hover:underline"
                 >
                   Xem tất cả sản phẩm cùng loại ➤
                 </button>

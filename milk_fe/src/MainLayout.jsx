@@ -22,8 +22,10 @@ import ProfileUser from "./page/ProfilePage/ProfileUser";
 import ArticleTable from "./page/Admin/Tables/ArticleTable";
 import AdminProfile from "./page/Admin/AdminProfile";
 import BrandList from "./page/BrandListPage/BrandList";
-
+import MomMilkPage from "./page/ProductPage/MomMilkPage";
+import BabyMilkPage from "./page/ProductPage/BabyMilkPage";
 import ProductDetailPage from "./page/ProductPage/ProductDetailPage";
+
 function MainLayout() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -77,6 +79,8 @@ function MainLayout() {
             <Route path="/profile-user" element={<ProfileUser />} />
             <Route path="/branddetail/:name" element={<BrandList />} />
             <Route path="/product/:id" element={<ProductDetailPage />} />
+            <Route path="/mom" element={<MomMilkPage />} />
+            <Route path="/baby" element={<BabyMilkPage />} />
           </Routes>
         </LayoutPage>
       )}

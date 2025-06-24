@@ -4,9 +4,18 @@ import { formatMoney } from "../../utils/formatMoney";
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
 
+  const handleClick = () => {
+    navigate(`/product/${product.id}`);
+  };
+
+  const handleDetailClick = (e) => {
+    e.stopPropagation();
+    navigate(`/product/${product.id}`);
+  };
+
   return (
     <div
-      onClick={() => navigate(`/product/${product.id}`)}
+      onClick={handleClick}
       className="w-[200px] text-center rounded-lg p-3 bg-white border-2 border-[#D2D2D2] 
       hover:scale-105 transition-transform shadow-sm cursor-pointer"
     >
@@ -27,10 +36,7 @@ const ProductCard = ({ product }) => {
           {formatMoney(product.price)}
         </p>
         <button
-          onClick={(e) => {
-            e.stopPropagation();
-            navigate(`/product/${product.id}`);
-          }}
+          onClick={handleDetailClick}
           className="text-[#F75385] text-sm font-medium border border-[#F75385] rounded-full px-3 py-1 
           hover:bg-[#F75385] hover:text-pink-50 transition-colors"
         >
