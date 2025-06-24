@@ -147,7 +147,7 @@ const AddProduct = ({ open, handleClose }) => {
   // Call API brand
   const getBrandsList = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/brands`, {
+      const response = await fetch(`http://localhost:8080/api/brands/getAll`, {
         method: "GET",
         headers: {
           accept: "*/*",
@@ -168,13 +168,16 @@ const AddProduct = ({ open, handleClose }) => {
 
   const getCategoryList = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/categories`, {
-        method: "GET",
-        headers: {
-          accept: "*/*",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `http://localhost:8080/api/categories/getAll`,
+        {
+          method: "GET",
+          headers: {
+            accept: "*/*",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (response?.ok) {
         const categories = await response.json();

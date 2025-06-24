@@ -3,18 +3,19 @@ import { toast } from "react-toastify";
 
 export default function NewsSection() {
   const [articlesdata, setArticlesdata] = useState([]);
-  const token = localStorage.getItem("sessionToken");
 
   // Fetch article
   const getArticleList = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/articles`, {
-        method: "GET",
-        headers: {
-          accept: "*/*",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `http://localhost:8080/api/articles/getAll`,
+        {
+          method: "GET",
+          headers: {
+            accept: "*/*",
+          },
+        }
+      );
 
       if (response?.ok) {
         const data = await response.json();
