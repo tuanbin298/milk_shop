@@ -1,19 +1,17 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
 export default function FeaturedBrands() {
   const [brandsdata, setBrandsdata] = useState([]);
 
-  const token = localStorage.getItem("sessionToken");
-
   // Fetch brands
   const getBrandList = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/brands`, {
+      const response = await fetch(`http://localhost:8080/api/brands/getAll`, {
         method: "GET",
         headers: {
           accept: "*/*",
-          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -42,17 +40,19 @@ export default function FeaturedBrands() {
       {/* Brand Logos Grid */}
       <div className="grid grid-cols-5 gap-6 mt-6">
         {brandsdata.map((brand, index) => (
-          <div
-            key={index}
-            className="flex justify-center items-center p-4 bg-white border border-[#D2D2D2] 
+          <Link to={`/branddetail/${brand.name}`} key={index}>
+            <div
+              key={index}
+              className="flex justify-center items-center p-4 bg-white border border-[#D2D2D2] 
             rounded-lg shadow-sm hover:shadow-md hover:scale-105 transition-all cursor-pointer"
-          >
-            <img
-              src={brand.image}
-              alt={brand.name}
-              className="max-h-14 object-contain"
-            />
-          </div>
+            >
+              <img
+                src={brand.image}
+                alt={brand.name}
+                className="max-h-14 object-contain"
+              />
+            </div>
+          </Link>
         ))}
       </div>
 

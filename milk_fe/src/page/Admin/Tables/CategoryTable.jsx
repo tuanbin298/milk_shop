@@ -51,13 +51,15 @@ const CategoryTable = () => {
   // Fetch categories
   const getCategoryList = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/categories`, {
-        method: "GET",
-        headers: {
-          accept: "*/*",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `http://localhost:8080/api/categories/getAll`,
+        {
+          method: "GET",
+          headers: {
+            accept: "*/*",
+          },
+        }
+      );
 
       if (response?.ok) {
         const data = await response.json();

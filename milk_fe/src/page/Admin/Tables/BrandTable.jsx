@@ -53,11 +53,10 @@ const BrandTable = () => {
   // Fetch brands
   const getBrandList = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/brands`, {
+      const response = await fetch(`http://localhost:8080/api/brands/getAll`, {
         method: "GET",
         headers: {
           accept: "*/*",
-          Authorization: `Bearer ${token}`,
         },
       });
 

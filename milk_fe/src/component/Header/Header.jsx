@@ -27,7 +27,6 @@ export default function Header() {
   const checkLoginStatus = () => {
     const sessionToken = localStorage.getItem("sessionToken");
     const fullname = localStorage.getItem("fullName");
-    console.log(fullName);
 
     if (sessionToken) {
       setLoggedIn(true);
