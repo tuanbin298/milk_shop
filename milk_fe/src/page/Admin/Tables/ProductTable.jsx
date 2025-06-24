@@ -74,13 +74,15 @@ const ProductTable = () => {
   // Logic call API
   const getProductList = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/products`, {
-        method: "GET",
-        headers: {
-          accept: "*/*",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `http://localhost:8080/api/products/getAll`,
+        {
+          method: "GET",
+          headers: {
+            accept: "*/*",
+          },
+        }
+      );
 
       if (response?.ok) {
         const data = await response.json();
@@ -139,7 +141,6 @@ const ProductTable = () => {
         method: "GET",
         headers: {
           accept: "*/*",
-          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -160,7 +161,6 @@ const ProductTable = () => {
         method: "GET",
         headers: {
           accept: "*/*",
-          Authorization: `Bearer ${token}`,
         },
       });
 

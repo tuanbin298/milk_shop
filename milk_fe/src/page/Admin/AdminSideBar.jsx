@@ -166,49 +166,60 @@ const AdminSidebar = () => {
               </ListItem>
 
               {/* User and dropdown */}
-              <ListItem disablePadding>
-                <ListItemButton onClick={() => toggleDropdown("users")}>
-                  <ListItemIcon>
-                    <PersonOutlineOutlinedIcon
-                      style={{ marginRight: "20px", color: "white" }}
-                    />
-                  </ListItemIcon>
-
-                  <ListItemText primary="Người dùng" sx={{ color: "white" }} />
-                  {/* Icon arrow */}
-                  {openDropdowns.users ? (
-                    <ArrowDropDownOutlinedIcon />
-                  ) : (
-                    <ArrowRightOutlinedIcon />
-                  )}
-                </ListItemButton>
-              </ListItem>
-
-              <Collapse in={openDropdowns.users} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding sx={{ pl: 2 }}>
+              {role === "ADMIN" && (
+                <>
                   <ListItem disablePadding>
-                    <ListItemButton onClick={() => navigate("userlist")}>
-                      <PeopleAltOutlinedIcon className="mr-5" />
-                      <ListItemText primary="Danh sách người dùng" />
+                    <ListItemButton onClick={() => toggleDropdown("users")}>
+                      <ListItemIcon>
+                        <PersonOutlineOutlinedIcon
+                          style={{ marginRight: "20px", color: "white" }}
+                        />
+                      </ListItemIcon>
+
+                      <ListItemText
+                        primary="Người dùng"
+                        sx={{ color: "white" }}
+                      />
+                      {/* Icon arrow */}
+                      {openDropdowns.users ? (
+                        <ArrowDropDownOutlinedIcon />
+                      ) : (
+                        <ArrowRightOutlinedIcon />
+                      )}
                     </ListItemButton>
                   </ListItem>
 
-                  {role === "ADMIN" && (
-                    <ListItem disablePadding>
-                      <ListItemButton
-                        onClick={() => {
-                          setSelectedSection("addUser");
-                          navigate("/dashboard");
-                          setOpenAddModal(true);
-                        }}
-                      >
-                        <PersonAddOutlinedIcon className="mr-5" />
-                        <ListItemText primary="Thêm người dùng" />
-                      </ListItemButton>
-                    </ListItem>
-                  )}
-                </List>
-              </Collapse>
+                  <Collapse
+                    in={openDropdowns.users}
+                    timeout="auto"
+                    unmountOnExit
+                  >
+                    <List component="div" disablePadding sx={{ pl: 2 }}>
+                      <ListItem disablePadding>
+                        <ListItemButton onClick={() => navigate("userlist")}>
+                          <PeopleAltOutlinedIcon className="mr-5" />
+                          <ListItemText primary="Danh sách người dùng" />
+                        </ListItemButton>
+                      </ListItem>
+
+                      {role === "ADMIN" && (
+                        <ListItem disablePadding>
+                          <ListItemButton
+                            onClick={() => {
+                              setSelectedSection("addUser");
+                              navigate("/dashboard");
+                              setOpenAddModal(true);
+                            }}
+                          >
+                            <PersonAddOutlinedIcon className="mr-5" />
+                            <ListItemText primary="Thêm người dùng" />
+                          </ListItemButton>
+                        </ListItem>
+                      )}
+                    </List>
+                  </Collapse>
+                </>
+              )}
 
               {/* Product and dropdown */}
               <ListItem disablePadding>

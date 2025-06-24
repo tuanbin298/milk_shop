@@ -18,9 +18,11 @@ import LayoutAdmin from "./component/Layout/LayoutAdmin";
 import ProductTable from "./page/Admin/Tables/ProductTable";
 import CategoryTable from "./page/Admin/Tables/CategoryTable";
 import BrandTable from "./page/Admin/Tables/BrandTable";
-import ProfileUser from "./page/Profile/ProfileUser";
+import ProfileUser from "./page/ProfilePage/ProfileUser";
 import ArticleTable from "./page/Admin/Tables/ArticleTable";
 import AdminProfile from "./page/Admin/AdminProfile";
+import BrandList from "./page/BrandListPage/BrandList";
+
 import ProductDetailPage from "./page/ProductPage/ProductDetailPage";
 function MainLayout() {
   const location = useLocation();
@@ -73,6 +75,7 @@ function MainLayout() {
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/intro-page" element={<IntroPage />} />
             <Route path="/profile-user" element={<ProfileUser />} />
+            <Route path="/branddetail/:name" element={<BrandList />} />
             <Route path="/product/:id" element={<ProductDetailPage />} />
           </Routes>
         </LayoutPage>

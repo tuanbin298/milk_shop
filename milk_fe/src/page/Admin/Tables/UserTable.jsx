@@ -347,7 +347,7 @@ const UserTable = () => {
                       size="small"
                       shape="rounded"
                       color="primary"
-                      count={Math.ceil(usersData.length / itemsPerPage)} //Calculate total of how many page need to display
+                      count={Math.ceil(filterUser.length / itemsPerPage)} //Calculate total of how many page need to display
                       page={page}
                       onChange={handlePageChange}
                     />

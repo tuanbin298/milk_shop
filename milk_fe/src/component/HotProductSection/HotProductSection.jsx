@@ -7,13 +7,11 @@ export default function HotProductSection() {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const token = localStorage.getItem("sessionToken");
       try {
-        const res = await fetch("http://localhost:8080/api/products", {
+        const res = await fetch("http://localhost:8080/api/products/getAll", {
           method: "GET",
           headers: {
             accept: "*/*",
-            Authorization: `Bearer ${token}`,
           },
         });
 
