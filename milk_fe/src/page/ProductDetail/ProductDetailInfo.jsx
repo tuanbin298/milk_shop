@@ -1,6 +1,6 @@
-import React from "react";
-
 const ProductDetailInfo = ({ product }) => {
+  const handleAddToCart = (e) => {};
+
   return (
     <div className="flex gap-10">
       <div className="w-1/2">
@@ -26,7 +26,10 @@ const ProductDetailInfo = ({ product }) => {
         </p>
 
         <div className="flex gap-4">
-          <button className="bg-[#F75385] hover:bg-[#f990cd] text-white px-6 py-2 rounded">
+          <button
+            onClick={handleAddToCart}
+            className="bg-[#F75385] hover:bg-[#f990cd] text-white px-6 py-2 rounded"
+          >
             Thêm vào giỏ hàng
           </button>
         </div>
