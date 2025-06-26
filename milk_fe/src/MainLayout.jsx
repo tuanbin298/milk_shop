@@ -22,6 +22,9 @@ import ProfileUser from "./page/ProfilePage/ProfileUser";
 import ArticleTable from "./page/Admin/Tables/ArticleTable";
 import AdminProfile from "./page/Admin/AdminProfile";
 import BrandList from "./page/BrandListPage/BrandList";
+import MomMilkPage from "./page/ProductPage/MomMilkPage";
+import BabyMilkPage from "./page/ProductPage/BabyMilkPage";
+import ProductDetailPage from "./page/ProductPage/ProductDetailPage";
 import MilkProductsPage from "./page/MilkProductsPage/MilkProductsPage";
 
 function MainLayout() {
@@ -76,6 +79,9 @@ function MainLayout() {
             <Route path="/intro-page" element={<IntroPage />} />
             <Route path="/profile-user" element={<ProfileUser />} />
             <Route path="/branddetail/:name" element={<BrandList />} />
+            <Route path="/product/:id" element={<ProductDetailPage />} />
+            <Route path="/mom" element={<MomMilkPage />} />
+            <Route path="/baby" element={<BabyMilkPage />} />
             <Route path="/milk-products" element={<MilkProductsPage />} />
           </Routes>
         </LayoutPage>

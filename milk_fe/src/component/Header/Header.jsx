@@ -232,13 +232,13 @@ export default function Header() {
           </div>
 
           <div className="flex items-center space-x-1">
-            <Link to="/">
+            <Link to="/baby">
               <span className="text-base font-semibold">SỮA CHO BÉ</span>
             </Link>
           </div>
 
           <div className="flex items-center space-x-1">
-            <Link to="/">
+            <Link to="/mom">
               <span className="text-base font-semibold">SỮA CHO MẸ</span>
             </Link>
           </div>
