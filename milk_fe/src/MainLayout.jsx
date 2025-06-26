@@ -25,7 +25,7 @@ import BrandList from "./page/BrandListPage/BrandList";
 import MomMilkPage from "./page/ProductPage/MomMilkPage";
 import BabyMilkPage from "./page/ProductPage/BabyMilkPage";
 import ProductDetailPage from "./page/ProductPage/ProductDetailPage";
-import MilkProductsPage from "./page/MilkProductsPage/MilkProductsPage";
+
 
 function MainLayout() {
   const location = useLocation();
@@ -82,7 +82,6 @@ function MainLayout() {
             <Route path="/product/:id" element={<ProductDetailPage />} />
             <Route path="/mom" element={<MomMilkPage />} />
             <Route path="/baby" element={<BabyMilkPage />} />
-            <Route path="/milk-products" element={<MilkProductsPage />} />
           </Routes>
         </LayoutPage>
       )}
