@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import ProductCard from "../ProductCard/ProductCard";
+import { Link } from "react-router-dom";
 
 export default function HotProductSection() {
   const [products, setProducts] = useState([]);
@@ -54,13 +55,14 @@ export default function HotProductSection() {
           </div>
 
           <div className="text-center mt-8">
+            <Link to={"/milk-products"}>
             <button
-              onClick={() => navigate("/milk-products")}
               className="text-[#F75385] border border-pink-300 rounded-full px-6 py-2 text-base 
               font-medium hover:bg-[#F75385] hover:text-pink-50 transition-colors"
             >
               Xem tất cả <span className="ml-1">➤</span>
             </button>
+            </Link>
           </div>
         </>
       )}
