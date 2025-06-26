@@ -22,6 +22,7 @@ import ProfileUser from "./page/ProfilePage/ProfileUser";
 import ArticleTable from "./page/Admin/Tables/ArticleTable";
 import AdminProfile from "./page/Admin/AdminProfile";
 import BrandList from "./page/BrandListPage/BrandList";
+import MilkProductsPage from "./page/MilkProductsPage/MilkProductsPage";
 
 function MainLayout() {
   const location = useLocation();
@@ -75,6 +76,7 @@ function MainLayout() {
             <Route path="/intro-page" element={<IntroPage />} />
             <Route path="/profile-user" element={<ProfileUser />} />
             <Route path="/branddetail/:name" element={<BrandList />} />
+            <Route path="/milk-products" element={<MilkProductsPage />} />
           </Routes>
         </LayoutPage>
       )}

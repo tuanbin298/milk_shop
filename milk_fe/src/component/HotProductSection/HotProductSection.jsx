@@ -90,8 +90,9 @@ export default function HotProductSection() {
           {/* View All Button */}
           <div className="text-center mt-8">
             <button
+              onClick={() => navigate("/milk-products")}
               className="text-[#F75385] border border-pink-300 rounded-full px-6 py-2 text-base 
-            font-medium hover:bg-[#F75385] hover:text-pink-50 transition-colors"
+              font-medium hover:bg-[#F75385] hover:text-pink-50 transition-colors"
             >
               Xem tất cả <span className="ml-1">➤</span>
             </button>
