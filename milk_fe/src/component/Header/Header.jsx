@@ -21,6 +21,9 @@ export default function Header() {
   const [anchorEl, setAnchorEl] = useState(null); //State for close menu
   const [loggedIn, setLoggedIn] = useState(false);
   const [fullName, setFullName] = useState("");
+  const [momCategories, setMomCategories] = useState([]);
+  const [babyCategories, setBabyCategories] = useState([]);
+
   const navigate = useNavigate();
 
   // Check status of login
@@ -74,6 +77,30 @@ export default function Header() {
 
     navigate("/login");
   };
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch("http://localhost:8080/api/categories/getAll");
+        if (res.ok) {
+          const data = await res.json();
+          const momCats = data.filter((cat) =>
+            cat.name.toLowerCase().includes("women")
+          );
+          const babyCats = data.filter((cat) =>
+            cat.name.toLowerCase().includes("baby")
+          );
+          setMomCategories(momCats);
+          console.log("Mẹ:", momCats); // để biết có lấy được không
+          setBabyCategories(babyCats);
+        }
+      } catch (error) {
+        console.error("Lỗi gọi API category:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   return (
     <div>
@@ -231,16 +258,40 @@ export default function Header() {
             </Link>
           </div>
 
-          <div className="flex items-center space-x-1">
+          <div className="relative group">
             <Link to="/baby">
-              <span className="text-base font-semibold">SỮA CHO BÉ</span>
+              <span className="text-base font-semibold cursor-pointer">
+                SỮA CHO BÉ
+              </span>
             </Link>
+            <div className="absolute top-full left-0 hidden group-hover:block bg-white shadow-lg rounded z-10 min-w-[200px] py-2">
+              {babyCategories.map((cat) => (
+                <Link
+                  key={cat.id}
+                  to={`/category/${cat.id}`}
+                  className="block px-4 py-2 text-gray-700 hover:bg-pink-100"
+                >
+                  {cat.name}
+                </Link>
+              ))}
+            </div>
           </div>
 
-          <div className="flex items-center space-x-1">
-            <Link to="/mom">
-              <span className="text-base font-semibold">SỮA CHO MẸ</span>
-            </Link>
+          <div className="relative group">
+            <div className="text-base font-semibold cursor-pointer">
+              SỮA CHO MẸ
+            </div>
+            <div className="absolute top-full left-0 hidden group-hover:block bg-white shadow-lg rounded z-10 min-w-[200px] py-2">
+              {momCategories.map((cat) => (
+                <Link
+                  key={cat.id}
+                  to={`/category/${cat.id}`}
+                  className="block px-4 py-2 text-gray-700 hover:bg-pink-100"
+                >
+                  {cat.name}
+                </Link>
+              ))}
+            </div>
           </div>
 
           <div className="flex items-center space-x-1">

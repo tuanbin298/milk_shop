@@ -25,14 +25,12 @@ const ProductCard = ({ product }) => {
             {formatMoney(product.price)}
           </p>
 
-          <Link to={`/product/${product.id}`}>
-            <button
-              className="text-[#F75385] text-sm font-medium border border-[#F75385] rounded-full px-3 py-1 
-          hover:bg-[#F75385] hover:text-pink-50 transition-colors"
-            >
-              Chi tiết
-            </button>
-          </Link>
+          <button
+            className="text-[#F75385] text-sm font-medium border border-[#F75385] rounded-full px-3 py-1 
+            bg-white hover:bg-[#F75385] hover:text-white transition-colors"
+          >
+            Chi tiết
+          </button>
         </div>
       </div>
     </Link>

@@ -29,6 +29,10 @@ import TextsmsOutlinedIcon from "@mui/icons-material/TextsmsOutlined";
 import QuestionAnswerOutlinedIcon from "@mui/icons-material/QuestionAnswerOutlined";
 import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
 import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
+import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
+import ListAltIcon from "@mui/icons-material/ListAlt";
+import BookmarkAddedIcon from "@mui/icons-material/BookmarkAdded";
+
 import LogoutIcon from "@mui/icons-material/Logout";
 import { toast } from "react-toastify";
 
@@ -269,6 +273,51 @@ const AdminSidebar = () => {
                 </List>
               </Collapse>
 
+              {/* Order and dropdown */}
+              <ListItem disablePadding>
+                <ListItemButton onClick={() => toggleDropdown("orders")}>
+                  <ListItemIcon>
+                    <ReceiptLongIcon
+                      style={{ marginRight: "20px", color: "white" }}
+                    />
+                  </ListItemIcon>
+                  <ListItemText primary="Đơn hàng" sx={{ color: "white" }} />
+                  {openDropdowns.orders ? (
+                    <ArrowDropDownOutlinedIcon />
+                  ) : (
+                    <ArrowRightOutlinedIcon />
+                  )}
+                </ListItemButton>
+              </ListItem>
+
+              <Collapse in={openDropdowns.orders} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding sx={{ pl: 2 }}>
+                  <ListItem disablePadding>
+                    <ListItemButton onClick={() => navigate("/orders")}>
+                      <ListItemIcon>
+                        <ListAltIcon style={{ color: "white" }} />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary="Tất cả đơn hàng"
+                        sx={{ color: "white" }}
+                      />
+                    </ListItemButton>
+                  </ListItem>
+
+                  <ListItem disablePadding>
+                    <ListItemButton onClick={() => navigate("/preorders")}>
+                      <ListItemIcon>
+                        <BookmarkAddedIcon style={{ color: "white" }} />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary="Đơn đặt trước"
+                        sx={{ color: "white" }}
+                      />
+                    </ListItemButton>
+                  </ListItem>
+                </List>
+              </Collapse>
+
               {/* Category and dropdown */}
               <ListItem disablePadding>
                 <ListItemButton onClick={() => toggleDropdown("categories")}>
@@ -434,9 +483,7 @@ const AdminSidebar = () => {
               >
                 <List component="div" disablePadding sx={{ pl: 2 }}>
                   <ListItem disablePadding>
-                    <ListItemButton
-                      onClick={() => setSelectedSection("feedbacks")}
-                    >
+                    <ListItemButton onClick={() => navigate("feedbacklist")}>
                       <QuestionAnswerOutlinedIcon className="mr-5" />
                       <ListItemText primary="Danh sách đánh giá" />
                     </ListItemButton>
