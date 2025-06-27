@@ -278,9 +278,11 @@ export default function Header() {
           </div>
 
           <div className="relative group">
-            <div className="text-base font-semibold cursor-pointer">
-              SỮA CHO MẸ
-            </div>
+            <Link to="/mom">
+              <div className="text-base font-semibold cursor-pointer">
+                SỮA CHO MẸ
+              </div>
+            </Link>
             <div className="absolute top-full left-0 hidden group-hover:block bg-white shadow-lg rounded z-10 min-w-[200px] py-2">
               {momCategories.map((cat) => (
                 <Link

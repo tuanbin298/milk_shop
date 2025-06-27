@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { Box, IconButton, TextField, Typography, Button } from "@mui/material";
-import { Add, Remove } from "@mui/icons-material";
 
 const ProductDetailInfo = ({ product }) => {
   const [quantity, setQuantity] = useState(1);
 
   const handleAddToCart = (qty) => {
     console.log("Thêm vào giỏ:", qty);
+  };
+
+  const handlePreOrder = (qty) => {
+    console.log("Đặt trước:", qty);
   };
 
   return (
@@ -23,31 +25,50 @@ const ProductDetailInfo = ({ product }) => {
 
       <div className="w-full md:w-1/2">
         <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
+        <p className="mb-2 text-lg text-gray-500">{product.description}</p>
 
-        <p className="mb-4 mt-4 text-lg text-gray-500">{product.description}</p>
+        <p className="mb-2 text-lg text-gray-500">
+          Thương hiệu: {product.brandName}
+        </p>
+        <p className="mb-2 text-lg text-gray-500">
+          Phân loại: {product.categoryName}
+        </p>
 
         <p className="text-2xl text-red-600 font-semibold mb-2">
           {product.price.toLocaleString()} VND
         </p>
 
-        <p className="text-green-600 mb-4">
-          Trạng Thái: {product.status ? "Còn hàng" : "Hết hàng"}
+        <p className="mb-4 text-base">
+          Trạng Thái:{" "}
+          <span className={product.status ? "text-green-600" : "text-red-600"}>
+            {product.status ? "Còn hàng" : "Hết hàng"}
+          </span>
         </p>
 
         <div className="flex gap-3">
-          <button
-            onClick={() => handleAddToCart(quantity)}
-            className="text-base px-4 py-2 rounded-full font-semibold bg-[#F75385] hover:bg-[#FAA4BD] text-white"
-          >
-            Thêm Vào Giỏ
-          </button>
-
-          <button
-            onClick={() => handleAddToCart(quantity)}
-            className="text-base px-4 py-2 rounded-full font-semibold bg-[#F75385] hover:bg-[#FAA4BD] text-white"
-          >
-            Mua Ngay
-          </button>
+          {product.status ? (
+            <>
+              <button
+                onClick={() => handleAddToCart(quantity)}
+                className="text-base px-4 py-2 rounded-full font-semibold bg-[#F75385] hover:bg-[#FAA4BD] text-white"
+              >
+                Thêm Vào Giỏ
+              </button>
+              <button
+                onClick={() => handleAddToCart(quantity)}
+                className="text-base px-4 py-2 rounded-full font-semibold bg-[#F75385] hover:bg-[#FAA4BD] text-white"
+              >
+                Mua Ngay
+              </button>
+            </>
+          ) : (
+            <button
+              onClick={() => handlePreOrder(quantity)}
+              className="text-base px-4 py-2 rounded-full font-semibold bg-[#F75385] hover:bg-[#FAA4BD] text-white"
+            >
+              Đặt Trước
+            </button>
+          )}
         </div>
       </div>
     </div>

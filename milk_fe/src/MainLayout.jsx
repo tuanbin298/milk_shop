@@ -27,6 +27,7 @@ import BabyMilkPage from "./page/ProductPage/BabyMilkPage";
 import ProductDetailPage from "./page/ProductPage/ProductDetailPage";
 import AllMilkPage from "./page/ProductPage/AllMilkPage";
 import FeedbackTable from "./page/Admin/Tables/FeedbackTable";
+import CategoryProductPage from "./page/ProductPage/CategoryProductPage";
 
 function MainLayout() {
   const location = useLocation();
@@ -85,6 +86,10 @@ function MainLayout() {
             <Route path="/mom" element={<MomMilkPage />} />
             <Route path="/baby" element={<BabyMilkPage />} />
             <Route path="/all" element={<AllMilkPage />} />
+            <Route
+              path="/category/:categoryId"
+              element={<CategoryProductPage />}
+            />
           </Routes>
         </LayoutPage>
       )}
