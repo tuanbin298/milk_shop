@@ -87,6 +87,7 @@ export default function CartPage() {
 
       if (response?.ok) {
         getCart();
+        window.dispatchEvent(new Event("cart-updated"));
       }
     } catch (error) {
       toast.error("Lỗi tăng số lượng:", error);
@@ -116,6 +117,7 @@ export default function CartPage() {
 
       if (response?.ok) {
         getCart();
+        window.dispatchEvent(new Event("cart-updated"));
       }
     } catch (error) {
       toast.error("Lỗi giảm số lượng:", error);
@@ -139,6 +141,7 @@ export default function CartPage() {
       if (response.ok) {
         toast.success("Xoá thành công");
         getCart();
+        window.dispatchEvent(new Event("cart-updated"));
       } else {
         toast.error("Xoá sản phẩm thất bại");
       }
