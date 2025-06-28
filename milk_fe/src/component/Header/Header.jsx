@@ -11,23 +11,33 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { Link, useNavigate } from "react-router";
 import "./Header.css";
 import { useEffect, useState } from "react";
-import { Avatar, Menu, MenuItem } from "@mui/material";
+import { Avatar, Badge, Menu, MenuItem, styled } from "@mui/material";
 import { toast } from "react-toastify";
+
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  "& .MuiBadge-badge": {
+    right: -3,
+    top: 13,
+    border: `2px solid ${(theme.vars ?? theme).palette.background.paper}`,
+    padding: "0 4px",
+  },
+}));
 
 export default function Header() {
   const role = localStorage.getItem("roles");
+  const sessionToken = localStorage.getItem("sessionToken");
+  const fullname = localStorage.getItem("fullName");
 
   // State
+  const navigate = useNavigate();
+
   const [anchorEl, setAnchorEl] = useState(null); //State for close menu
   const [loggedIn, setLoggedIn] = useState(false);
   const [fullName, setFullName] = useState("");
-  const navigate = useNavigate();
+  const [cartItemCount, setCartItemCount] = useState(0);
 
   // Check status of login
   const checkLoginStatus = () => {
-    const sessionToken = localStorage.getItem("sessionToken");
-    const fullname = localStorage.getItem("fullName");
-
     if (sessionToken) {
       setLoggedIn(true);
       setFullName(fullname);
@@ -74,6 +84,36 @@ export default function Header() {
 
     navigate("/login");
   };
+
+  // Get cart
+  const getCart = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/carts`, {
+        method: "GET",
+        headers: {
+          accept: "*/*",
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      });
+
+      if (response?.ok) {
+        const data = await response.json();
+        setCartItemCount(
+          data.cartItems?.reduce((acc, cur) => {
+            return acc + cur.quantity;
+          }, 0)
+        );
+      } else {
+        toast.error("Lỗi tải giỏ hàng người dùng: ");
+      }
+    } catch (error) {
+      console.error("Lỗi tải giỏ hàng người dùng: ", error);
+    }
+  };
+
+  useEffect(() => {
+    getCart();
+  }, []);
 
   return (
     <div>
@@ -191,27 +231,29 @@ export default function Header() {
           {/* Cart */}
           <div className="flex items-center text-[20px]">
             <button>
-              <Link to="/cart">
-                <img
-                  src="src/assets/img/icon/cart-icon.png"
-                  alt="Giỏ hàng"
-                  className="w-[30px] h-[30px] mr-[9px]"
-                />
-                Giỏ hàng
+              <Link to="/cart" className="flex flex-col items-center">
+                <StyledBadge badgeContent={cartItemCount} color="secondary">
+                  <img
+                    src="src/assets/img/icon/cart-icon.png"
+                    alt="Giỏ hàng"
+                    className="w-[30px] h-[30px]"
+                  />
+                </StyledBadge>
+                <span className="text-sm mt-1">Giỏ hàng</span>
               </Link>
             </button>
           </div>
 
           {/* Order */}
-          <div className="flex items-center  text-[20px] ">
+          <div className="flex items-center text-[20px] ">
             <button>
-              <Link to="/">
+              <Link to="/" className="flex flex-col items-center">
                 <img
                   src="src/assets/img/icon/order-icon.png"
                   alt="Giỏ hàng"
                   className="w-[30px] h-[32px] mr-[9px]"
                 />
-                Đơn hàng
+                <span className="text-sm mt-1">Đơn hàng</span>
               </Link>
             </button>
           </div>

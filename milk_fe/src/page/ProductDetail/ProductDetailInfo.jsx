@@ -1,5 +1,32 @@
+import { toast } from "react-toastify";
+
 const ProductDetailInfo = ({ product }) => {
-  const handleAddToCart = (e) => {};
+  const token = localStorage.getItem("sessionToken");
+
+  const handleAddToCart = async (e) => {
+    try {
+      const createCart = await fetch(`http://localhost:8080/api/carts`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          productId: product.id,
+          quantity: 1,
+          note: "",
+        }),
+      });
+
+      if (createCart.ok) {
+        toast.success("Thêm sản phẩm vào giõ hàng thành công!");
+      } else {
+        toast.error("Lỗi khi thêm sản phẩm vào giõ hàng!");
+      }
+    } catch (error) {
+      console.error("Lỗi khi thêm sản phẩm vào giõ hàng", error);
+    }
+  };
 
   return (
     <div className="flex gap-10">

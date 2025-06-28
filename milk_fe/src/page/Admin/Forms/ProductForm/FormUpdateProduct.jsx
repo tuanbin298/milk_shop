@@ -309,8 +309,8 @@ const UpdateProduct = ({ open, product, handleClose, refreshProducts }) => {
                     label="Trạng thái"
                     value={
                       <Chip
-                        label={product.status ? "Còn hàng" : "Hết hàng"}
-                        color={product.status ? "success" : "error"}
+                        label={product?.status ? "Còn hàng" : "Hết hàng"}
+                        color={product?.status ? "success" : "error"}
                         variant="outlined"
                         size="small"
                       />

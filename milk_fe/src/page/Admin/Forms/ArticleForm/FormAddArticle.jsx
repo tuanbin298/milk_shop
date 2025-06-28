@@ -75,8 +75,8 @@ const AddArticle = ({ open, handleClose }) => {
     if (name === "content") {
       if (value.trim() === "") {
         newErrors.content = "Nội dung không được để trống";
-      } else if (value.trim().length > 100) {
-        newErrors.content = "Nội dung không được vượt quá 100 ký tự";
+      } else if (value.trim().length > 200) {
+        newErrors.content = "Nội dung không được vượt quá 200 ký tự";
       } else {
         newErrors.content = "";
       }
