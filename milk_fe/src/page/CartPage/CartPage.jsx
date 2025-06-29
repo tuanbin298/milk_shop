@@ -1,352 +1,385 @@
-import React, { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  IconButton,
+  Pagination,
+  Typography,
+} from "@mui/material";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import { formatMoney } from "../../utils/formatMoney";
+import RemoveIcon from "@mui/icons-material/Remove";
+import AddIcon from "@mui/icons-material/Add";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
-
-import { ConfirmDialog } from "primereact/confirmdialog";
-import { Toast } from "primereact/toast";
-import { Button } from "primereact/button";
-
-const products = [
-  {
-    id: 1,
-    name: "Sữa bột Vinamilk Optimum Gold",
-    price: 420000,
-    image: "src/assets/img/product/product1.png",
-    quantity: 1,
-  },
-  {
-    id: 2,
-    name: "Sữa Nan Supreme Pro HMO",
-    price: 495000,
-    image: "src/assets/img/product/product1.png",
-    quantity: 1,
-  },
-];
+import DeleteIcon from "@mui/icons-material/Delete";
 
 export default function CartPage() {
-  const [cart, setCart] = useState(products);
-  const [showAddressModal, setShowAddressModal] = useState(false);
-  const [provinces, setProvinces] = useState([]);
-  const [districts, setDistricts] = useState([]);
-  const [wards, setWards] = useState([]);
-  const [selectedProvince, setSelectedProvince] = useState("");
-  const [selectedDistrict, setSelectedDistrict] = useState("");
-  const [selectedWard, setSelectedWard] = useState("");
-  const [street, setStreet] = useState("");
-  const [recipientName, setRecipientName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [shippingAddress, setShippingAddress] = useState("");
-  const [errors, setErrors] = useState({});
+  const token = localStorage.getItem("sessionToken");
 
+  // State
   const navigate = useNavigate();
+  const [cartData, setCartData] = useState([]);
+  const [cartItemData, setCartItemData] = useState([]);
 
-  const isLoggedIn = !!localStorage.getItem("sessionToken");
+  // Pagination configuration
+  const itemsPerPage = 3;
+  const [page, setPage] = useState(1);
+  const startIndex = (page - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedItems = cartItemData?.slice(startIndex, endIndex);
 
-  const [visible, setVisible] = useState(false); // ConfirmDialog hiển thị
-  const primeToast = useRef(null);
-
-  const accept = () => {
-    navigate("/login"); // Điều hướng tới login khi xác nhận
+  const handlePageChange = (event, value) => {
+    setPage(value);
   };
 
-  const reject = () => {
-    primeToast.current?.show({
-      severity: "info",
-      summary: "Đã hủy",
-      detail: "Bạn đã chọn không đăng nhập.",
-      life: 3000,
-    });
-  };
-  useEffect(() => {
-    const savedName = localStorage.getItem("fullName");
-    const savedPhone = localStorage.getItem("phone");
+  // Get cart
+  const getCart = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/carts`, {
+        method: "GET",
+        headers: {
+          accept: "*/*",
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    if (savedName) setRecipientName(savedName);
-    if (savedPhone) setPhoneNumber(savedPhone);
-  }, []);
-
-  useEffect(() => {
-    fetch("https://provinces.open-api.vn/api/p/")
-      .then((res) => res.json())
-      .then((data) => setProvinces(data));
-  }, []);
-
-  useEffect(() => {
-    if (selectedProvince) {
-      fetch(`https://provinces.open-api.vn/api/p/${selectedProvince}?depth=2`)
-        .then((res) => res.json())
-        .then((data) => setDistricts(data.districts));
+      if (response?.ok) {
+        const data = await response.json();
+        setCartData(data);
+        setCartItemData(data.cartItems);
+      } else {
+        toast.error("Lỗi tải giỏ hàng người dùng: ");
+      }
+    } catch (error) {
+      console.error("Lỗi tải giỏ hàng người dùng: ", error);
     }
-  }, [selectedProvince]);
-
-  useEffect(() => {
-    if (selectedDistrict) {
-      fetch(`https://provinces.open-api.vn/api/d/${selectedDistrict}?depth=2`)
-        .then((res) => res.json())
-        .then((data) => setWards(data.wards));
-    }
-  }, [selectedDistrict]);
-
-  const updateQuantity = (id, delta) => {
-    setCart((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? { ...item, quantity: Math.max(1, item.quantity + delta) }
-          : item
-      )
-    );
   };
 
-  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  useEffect(() => {
+    if (token) {
+      getCart();
+    }
+  }, [token]);
 
-  const handleConfirmAddress = () => {
-    const newErrors = {};
-    if (!recipientName) newErrors.recipientName = true;
-    if (!phoneNumber) newErrors.phoneNumber = true;
-    if (!street) newErrors.street = true;
-    if (!selectedProvince) newErrors.selectedProvince = true;
-    if (!selectedDistrict) newErrors.selectedDistrict = true;
-    if (!selectedWard) newErrors.selectedWard = true;
+  const handleHomepage = () => {
+    navigate("/");
+  };
 
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
+  // Logic increase and decrease quantity
+  const handleIncrease = async (item) => {
+    const currentQuantity = item.quantity;
+    const newQuantity = currentQuantity + 1;
+
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/carts/${item.productId}?quantity=${newQuantity}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response?.ok) {
+        getCart();
+        window.dispatchEvent(new Event("cart-updated"));
+      }
+    } catch (error) {
+      toast.error("Lỗi tăng số lượng:", error);
+    }
+  };
+
+  const handleDecrease = async (item) => {
+    const currentQuantity = item.quantity;
+    const newQuantity = currentQuantity - 1;
+
+    if (newQuantity <= 0) {
+      await handeDeleteCartItem(item);
       return;
     }
-    // Lưu lại vào localStorage
-    localStorage.setItem("recipientName", recipientName);
-    localStorage.setItem("phone", phoneNumber);
 
-    const provinceName =
-      provinces.find((p) => p.code === parseInt(selectedProvince))?.name || "";
-    const districtName =
-      districts.find((d) => d.code === parseInt(selectedDistrict))?.name || "";
-    const wardName =
-      wards.find((w) => w.code === parseInt(selectedWard))?.name || "";
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/carts/${item.productId}?quantity=${newQuantity}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    setShippingAddress(
-      `${recipientName}\n${phoneNumber}\n${street}, ${wardName}, ${districtName}, ${provinceName}`
-    );
-    setShowAddressModal(false);
+      if (response?.ok) {
+        getCart();
+        window.dispatchEvent(new Event("cart-updated"));
+      }
+    } catch (error) {
+      toast.error("Lỗi giảm số lượng:", error);
+    }
+  };
+
+  // Logic delete cart item
+  const handeDeleteCartItem = async (item) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/carts/${item.productId}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        toast.success("Xoá thành công");
+        getCart();
+        window.dispatchEvent(new Event("cart-updated"));
+      } else {
+        toast.error("Xoá sản phẩm thất bại");
+      }
+    } catch (error) {
+      toast.error("Xoá sản phẩm thất bại");
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <h1 className="text-2xl font-bold mb-4">🛒 Giỏ hàng của bạn</h1>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="md:col-span-2 space-y-4">
-          {cart.map((item) => (
-            <motion.div
-              key={item.id}
-              whileHover={{ scale: 1.01 }}
-              className="grid grid-cols-[auto_1fr_auto] items-center bg-white p-4 rounded-xl shadow gap-4"
-            >
-              <img
-                src={item.image}
-                alt={item.name}
-                className="w-20 h-20 object-cover rounded-lg"
-              />
-              <div className="flex flex-col">
-                <h2 className="text-lg font-semibold line-clamp-2 break-words max-w-[300px]">
-                  {item.name}
-                </h2>
-                <p className="text-sm text-gray-500">
-                  Giá: {item.price.toLocaleString()}₫
-                </p>
-                <div className="mt-2 flex items-center space-x-2">
-                  <button
-                    onClick={() => updateQuantity(item.id, -1)}
-                    className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
-                  >
-                    -
-                  </button>
-                  <span>{item.quantity}</span>
-                  <button
-                    onClick={() => updateQuantity(item.id, 1)}
-                    className="px-2 py-1 bg-gray-200 rounded hover:bg-gray-300"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-              <p className="text-right font-medium text-blue-600">
-                {(item.price * item.quantity).toLocaleString()}₫
-              </p>
-            </motion.div>
-          ))}
-        </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="bg-white p-6 rounded-xl shadow"
+    <Box sx={{ p: 4, display: "flex", gap: 4, alignItems: "stretch" }}>
+      {/* Cart Items */}
+      <Box sx={{ flex: 2 }}>
+        <Button
+          onClick={handleHomepage}
+          startIcon={<ArrowBackIcon />}
+          variant="outlined"
+          sx={{ mb: 2 }}
         >
-          <div className="mb-4">
-            <h4 className="text-lg font-semibold mb-2">Địa chỉ giao hàng</h4>
-            {shippingAddress ? (
-              <p className="text-gray-700 whitespace-pre-line">
-                {shippingAddress}
-              </p>
+          Quay lại trang chủ
+        </Button>
+
+        <Typography variant="h5" sx={{ mb: 2 }}>
+          🛒 Giỏ hàng của bạn
+        </Typography>
+
+        {token ? (
+          <>
+            {/* Token exist */}
+            {cartData && cartItemData && cartItemData?.length > 0 ? (
+              <>
+                {/* Cart Item exist */}
+                {paginatedItems.map((item) => {
+                  return (
+                    <Card
+                      key={item.id}
+                      sx={{
+                        mb: 2,
+                        transition: "all 0.2s ease-in-out",
+                        cursor: "pointer",
+                        "&:hover": {
+                          boxShadow: 4,
+                          transform: "translateY(-4px)",
+                        },
+                      }}
+                    >
+                      <CardContent
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 2,
+                          position: "relative",
+                        }}
+                      >
+                        {/* Product Image */}
+                        <Box
+                          sx={{
+                            width: 80,
+                            height: 80,
+                            overflow: "hidden",
+                            borderRadius: 1,
+                          }}
+                        >
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                            }}
+                          />
+                        </Box>
+
+                        <Box sx={{ flexGrow: 1 }}>
+                          {/* Product Name */}
+                          <Typography fontWeight="bold">
+                            {item.productName}
+                          </Typography>
+
+                          {/* Product Price: Unit */}
+                          <Typography color="text.secondary">
+                            Giá mỗi sản phẩm: {formatMoney(item.unitPrice)}
+                          </Typography>
+
+                          {/* Product Quantity */}
+                          <Box
+                            sx={{
+                              display: "flex",
+                              alignItems: "center",
+                              mt: 1,
+                            }}
+                          >
+                            <IconButton size="small">
+                              <RemoveIcon
+                                onClick={(e) => {
+                                  handleDecrease(item);
+                                }}
+                              />
+                            </IconButton>
+
+                            <Typography sx={{ mx: 1 }}>
+                              {item.quantity}
+                            </Typography>
+
+                            <IconButton size="small">
+                              <AddIcon
+                                onClick={(e) => {
+                                  handleIncrease(item);
+                                }}
+                              />
+                            </IconButton>
+                          </Box>
+                        </Box>
+
+                        {/* Product Price: Total */}
+                        <Typography color="text.secondary">
+                          Giá toàn bộ sản phẩm:{" "}
+                          <span
+                            style={{ fontWeight: "bold", color: "#1976d2" }}
+                          >
+                            {formatMoney(item.totalPrice)}
+                          </span>
+                        </Typography>
+
+                        {/* Button delete */}
+                        <IconButton
+                          size="small"
+                          color="error"
+                          sx={{ position: "absolute", top: 8, right: 8 }}
+                          onClick={() => handeDeleteCartItem(item)}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+
+                <Pagination
+                  count={Math.ceil(cartItemData.length / itemsPerPage)}
+                  page={page}
+                  onChange={handlePageChange}
+                  color="primary"
+                  sx={{ mt: 2, display: "flex", justifyContent: "center" }}
+                />
+              </>
             ) : (
-              <p className="text-gray-500">Chưa có địa chỉ giao hàng</p>
+              // Cart Item dont exist
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  minHeight: "200px",
+                }}
+              >
+                <img
+                  src="src/assets/img/cart/empty_cart.webp"
+                  style={{
+                    width: 500,
+                    height: 300,
+                    marginBottom: 16,
+                  }}
+                  alt="No Token"
+                />
+                <Typography color="error" variant="body1">
+                  Giỏ hàng trống!
+                </Typography>
+              </Box>
             )}
-            <Toast ref={primeToast} />
-
-            <ConfirmDialog
-              group="declarative"
-              visible={visible}
-              onHide={() => setVisible(false)}
-              message="Bạn cần đăng nhập để nhập địa chỉ. Bạn có muốn đăng nhập không?"
-              header="Yêu cầu đăng nhập"
-              icon="pi pi-question-circle"
-              accept={accept}
-              reject={reject}
-              style={{ width: "50vw" }}
-              breakpoints={{ "1100px": "75vw", "960px": "100vw" }}
+          </>
+        ) : (
+          // Token doesnt exit
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              minHeight: "200px",
+            }}
+          >
+            <img
+              src="src/assets/img/cart/no_token_cart_banner_image.png"
+              style={{ width: 500, height: 300, marginBottom: 16 }}
+              alt="No Token"
             />
+            <Typography color="error" variant="body1">
+              Bạn cần đăng nhập để xem giỏ hàng!
+            </Typography>
+          </Box>
+        )}
+      </Box>
 
-            <Button
-              className="w-full mt-4 bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
-              onClick={() => {
-                if (!isLoggedIn) {
-                  setVisible(true); // Mở ConfirmDialog nếu chưa đăng nhập
-                } else {
-                  setShowAddressModal(true); // Nếu đã đăng nhập thì mở form địa chỉ
-                }
-              }}
-              label="Nhập địa chỉ"
-            />
-          </div>
-          <h3 className="text-xl font-bold mb-4">Tổng cộng</h3>
-          <p className="text-lg text-gray-700 mb-2">
+      {/* Address and payment */}
+      {cartData && cartItemData && cartItemData?.length > 0 ? (
+        <Box
+          sx={{
+            flex: 1,
+            borderRadius: 2,
+            backgroundColor: "#f9f9f9",
+            p: 3,
+            boxShadow: 1,
+            mt: 12.2,
+            mb: 6,
+          }}
+        >
+          <Typography variant="h6" fontWeight="bold" gutterBottom>
+            Địa chỉ giao hàng
+          </Typography>
+
+          <Typography color="text.secondary" sx={{ mb: 2 }}>
+            Chưa có địa chỉ giao hàng
+          </Typography>
+
+          <Button variant="contained" fullWidth sx={{ mb: 4 }}>
+            Nhập địa chỉ
+          </Button>
+
+          <Typography variant="h6" fontWeight="bold" gutterBottom>
+            Tổng cộng
+          </Typography>
+
+          <Typography variant="body1" sx={{ mb: 2 }}>
             Tổng đơn hàng:{" "}
-            <span className="font-semibold text-blue-600">
-              {total.toLocaleString()}₫
+            <span style={{ fontWeight: "bold", color: "#1976d2" }}>
+              {formatMoney(cartData.totalPrice)}
             </span>
-          </p>
-          <button className="w-full mt-4 bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
-            Thanh toán ngay
-          </button>
-        </motion.div>
-      </div>
+          </Typography>
 
-      {showAddressModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-xl shadow w-96">
-            <h3 className="text-xl font-bold mb-4">Nhập địa chỉ giao hàng</h3>
-            <input
-              type="text"
-              placeholder="Họ tên người nhận"
-              value={recipientName}
-              onChange={(e) => setRecipientName(e.target.value)}
-              className="w-full mb-1 p-2 border rounded"
-            />
-            {errors.recipientName && (
-              <p className="text-sm text-red-500 mb-1">
-                Vui lòng nhập họ tên người nhận
-              </p>
-            )}
-            <input
-              type="text"
-              placeholder=""
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              className="w-full mb-1 p-2 border rounded"
-            />
-            {errors.phoneNumber && (
-              <p className="text-sm text-red-500 mb-1">
-                Vui lòng nhập số điện thoại
-              </p>
-            )}
-            <input
-              type="text"
-              placeholder="Số nhà, tên đường"
-              value={street}
-              onChange={(e) => setStreet(e.target.value)}
-              className="w-full mb-1 p-2 border rounded"
-            />
-            {errors.street && (
-              <p className="text-sm text-red-500 mb-1">
-                Vui lòng nhập địa chỉ cụ thể
-              </p>
-            )}
-            <select
-              value={selectedProvince}
-              onChange={(e) => {
-                setSelectedProvince(e.target.value);
-                setSelectedDistrict("");
-                setSelectedWard("");
-              }}
-              className="w-full mb-1 p-2 border rounded"
-            >
-              <option value="">Chọn tỉnh/thành phố</option>
-              {provinces.map((province) => (
-                <option key={province.code} value={province.code}>
-                  {province.name}
-                </option>
-              ))}
-            </select>
-            {errors.selectedProvince && (
-              <p className="text-sm text-red-500 mb-1">
-                Vui lòng chọn tỉnh/thành
-              </p>
-            )}
-            <select
-              value={selectedDistrict}
-              onChange={(e) => {
-                setSelectedDistrict(e.target.value);
-                setSelectedWard("");
-              }}
-              disabled={!selectedProvince}
-              className="w-full mb-1 p-2 border rounded"
-            >
-              <option value="">Chọn quận/huyện</option>
-              {districts.map((district) => (
-                <option key={district.code} value={district.code}>
-                  {district.name}
-                </option>
-              ))}
-            </select>
-            {errors.selectedDistrict && (
-              <p className="text-sm text-red-500 mb-1">
-                Vui lòng chọn quận/huyện
-              </p>
-            )}
-            <select
-              value={selectedWard}
-              onChange={(e) => setSelectedWard(e.target.value)}
-              disabled={!selectedDistrict}
-              className="w-full mb-4 p-2 border rounded"
-            >
-              <option value="">Chọn phường/xã</option>
-              {wards.map((ward) => (
-                <option key={ward.code} value={ward.code}>
-                  {ward.name}
-                </option>
-              ))}
-            </select>
-            {errors.selectedWard && (
-              <p className="text-sm text-red-500 mb-4">
-                Vui lòng chọn phường/xã
-              </p>
-            )}
-            <div className="flex justify-end">
-              <button
-                onClick={() => setShowAddressModal(false)}
-                className="mr-2 px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-              >
-                Hủy
-              </button>
-              <button
-                onClick={handleConfirmAddress}
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-              >
-                Xác nhận
-              </button>
-            </div>
-          </div>
-        </div>
+          <Button variant="contained" color="primary" fullWidth>
+            Thanh toán ngay
+          </Button>
+        </Box>
+      ) : (
+        <></>
       )}
-    </div>
+    </Box>
   );
 }

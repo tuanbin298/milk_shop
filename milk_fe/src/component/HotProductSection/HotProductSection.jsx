@@ -55,12 +55,13 @@ export default function HotProductSection() {
           </div>
 
           <div className="text-center mt-8">
-            <button
-              className="text-[#F75385] border border-pink-300 rounded-full px-6 py-2 text-base 
-              font-medium hover:bg-[#F75385] hover:text-pink-50 transition-colors"
+            <Link
+              to="/all"
+              className="inline-block text-[#F75385] border border-pink-300 rounded-full px-6 py-2 text-base 
+                font-medium hover:bg-[#F75385] hover:text-white transition-colors"
             >
               Xem tất cả <span className="ml-1">➤</span>
-            </button>
+            </Link>
           </div>
         </>
       )}

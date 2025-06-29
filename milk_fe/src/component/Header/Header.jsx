@@ -11,23 +11,36 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { Link, useNavigate } from "react-router";
 import "./Header.css";
 import { useEffect, useState } from "react";
-import { Avatar, Menu, MenuItem } from "@mui/material";
+import { Avatar, Badge, Menu, MenuItem, styled } from "@mui/material";
 import { toast } from "react-toastify";
+
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  "& .MuiBadge-badge": {
+    right: -3,
+    top: 13,
+    border: `2px solid ${(theme.vars ?? theme).palette.background.paper}`,
+    padding: "0 4px",
+  },
+}));
 
 export default function Header() {
   const role = localStorage.getItem("roles");
+  const sessionToken = localStorage.getItem("sessionToken");
+  const fullname = localStorage.getItem("fullName");
 
   // State
+  const navigate = useNavigate();
+
   const [anchorEl, setAnchorEl] = useState(null); //State for close menu
   const [loggedIn, setLoggedIn] = useState(false);
   const [fullName, setFullName] = useState("");
-  const navigate = useNavigate();
+  const [momCategories, setMomCategories] = useState([]);
+  const [babyCategories, setBabyCategories] = useState([]);
+
+  const [cartItemCount, setCartItemCount] = useState(0);
 
   // Check status of login
   const checkLoginStatus = () => {
-    const sessionToken = localStorage.getItem("sessionToken");
-    const fullname = localStorage.getItem("fullName");
-
     if (sessionToken) {
       setLoggedIn(true);
       setFullName(fullname);
@@ -74,6 +87,64 @@ export default function Header() {
 
     navigate("/login");
   };
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch("http://localhost:8080/api/categories/getAll");
+        if (res.ok) {
+          const data = await res.json();
+          const momCats = data.filter((cat) =>
+            cat.name.toLowerCase().includes("women")
+          );
+          const babyCats = data.filter((cat) =>
+            cat.name.toLowerCase().includes("baby")
+          );
+          setMomCategories(momCats);
+          // console.log("Mẹ:", momCats); // để biết có lấy được không
+          setBabyCategories(babyCats);
+        }
+      } catch (error) {
+        console.error("Lỗi gọi API category:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  // Get cart
+  const getCart = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/carts`, {
+        method: "GET",
+        headers: {
+          accept: "*/*",
+          Authorization: `Bearer ${sessionToken}`,
+        },
+      });
+
+      if (response?.ok) {
+        const data = await response.json();
+        setCartItemCount(
+          data.cartItems?.reduce((acc, cur) => {
+            return acc + cur.quantity;
+          }, 0)
+        );
+      }
+    } catch (error) {
+      console.error("Lỗi tải giỏ hàng người dùng: ", error);
+    }
+  };
+
+  useEffect(() => {
+    getCart();
+
+    window.addEventListener("cart-updated", getCart);
+
+    return () => {
+      window.removeEventListener("cart-updated", getCart);
+    };
+  }, []);
 
   return (
     <div>
@@ -191,27 +262,29 @@ export default function Header() {
           {/* Cart */}
           <div className="flex items-center text-[20px]">
             <button>
-              <Link to="/cart">
-                <img
-                  src="src/assets/img/icon/cart-icon.png"
-                  alt="Giỏ hàng"
-                  className="w-[30px] h-[30px] mr-[9px]"
-                />
-                Giỏ hàng
+              <Link to="/cart" className="flex flex-col items-center">
+                <StyledBadge badgeContent={cartItemCount} color="secondary">
+                  <img
+                    src="src/assets/img/icon/cart-icon.png"
+                    alt="Giỏ hàng"
+                    className="w-[30px] h-[30px]"
+                  />
+                </StyledBadge>
+                <span className="text-sm mt-1">Giỏ hàng</span>
               </Link>
             </button>
           </div>
 
           {/* Order */}
-          <div className="flex items-center  text-[20px] ">
+          <div className="flex items-center text-[20px] ">
             <button>
-              <Link to="/">
+              <Link to="/" className="flex flex-col items-center">
                 <img
                   src="src/assets/img/icon/order-icon.png"
                   alt="Giỏ hàng"
                   className="w-[30px] h-[32px] mr-[9px]"
                 />
-                Đơn hàng
+                <span className="text-sm mt-1">Đơn hàng</span>
               </Link>
             </button>
           </div>
@@ -231,16 +304,42 @@ export default function Header() {
             </Link>
           </div>
 
-          <div className="flex items-center space-x-1">
+          <div className="relative group">
             <Link to="/baby">
-              <span className="text-base font-semibold">SỮA CHO BÉ</span>
+              <span className="text-base font-semibold cursor-pointer">
+                SỮA CHO BÉ
+              </span>
             </Link>
+            <div className="absolute top-full left-0 hidden group-hover:block bg-white shadow-lg rounded z-10 min-w-[200px] py-2">
+              {babyCategories.map((cat) => (
+                <Link
+                  key={cat.id}
+                  to={`/category/${cat.id}`}
+                  className="block px-4 py-2 text-gray-700 hover:bg-pink-100"
+                >
+                  {cat.name}
+                </Link>
+              ))}
+            </div>
           </div>
 
-          <div className="flex items-center space-x-1">
+          <div className="relative group">
             <Link to="/mom">
-              <span className="text-base font-semibold">SỮA CHO MẸ</span>
+              <div className="text-base font-semibold cursor-pointer">
+                SỮA CHO MẸ
+              </div>
             </Link>
+            <div className="absolute top-full left-0 hidden group-hover:block bg-white shadow-lg rounded z-10 min-w-[200px] py-2">
+              {momCategories.map((cat) => (
+                <Link
+                  key={cat.id}
+                  to={`/category/${cat.id}`}
+                  className="block px-4 py-2 text-gray-700 hover:bg-pink-100"
+                >
+                  {cat.name}
+                </Link>
+              ))}
+            </div>
           </div>
 
           <div className="flex items-center space-x-1">

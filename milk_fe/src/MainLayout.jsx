@@ -25,6 +25,9 @@ import BrandList from "./page/BrandListPage/BrandList";
 import MomMilkPage from "./page/ProductPage/MomMilkPage";
 import BabyMilkPage from "./page/ProductPage/BabyMilkPage";
 import ProductDetailPage from "./page/ProductPage/ProductDetailPage";
+import AllMilkPage from "./page/ProductPage/AllMilkPage";
+import FeedbackTable from "./page/Admin/Tables/FeedbackTable";
+import CategoryProductPage from "./page/ProductPage/CategoryProductPage";
 
 
 function MainLayout() {
@@ -62,6 +65,7 @@ function MainLayout() {
                 <Route path="brandlist" element={<BrandTable />} />
                 <Route path="articlelist" element={<ArticleTable />} />
                 <Route path="admin-profile" element={<AdminProfile />} />
+                <Route path="feedbacklist" element={<FeedbackTable />} />
               </Route>
             </Routes>
           </LayoutAdmin>
@@ -82,6 +86,11 @@ function MainLayout() {
             <Route path="/product/:id" element={<ProductDetailPage />} />
             <Route path="/mom" element={<MomMilkPage />} />
             <Route path="/baby" element={<BabyMilkPage />} />
+            <Route path="/all" element={<AllMilkPage />} />
+            <Route
+              path="/category/:categoryId"
+              element={<CategoryProductPage />}
+            />
           </Routes>
         </LayoutPage>
       )}

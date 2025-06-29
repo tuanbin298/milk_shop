@@ -20,19 +20,19 @@ const ProductCard = ({ product }) => {
           {product.name}
         </p>
 
-        <div className="flex justify-between items-center mt-2">
+        <div className="flex justify-between  items-center mt-2">
           <p className="text-red-600 font-bold text-sm">
             {formatMoney(product.price)}
           </p>
 
-          <Link to={`/product/${product.id}`}>
+          <div className="flex justify-between items-center mt-2">
             <button
               className="text-[#F75385] text-sm font-medium border border-[#F75385] rounded-full px-3 py-1 
-          hover:bg-[#F75385] hover:text-pink-50 transition-colors"
+            bg-white hover:bg-[#F75385] hover:text-white transition-colors"
             >
               Chi tiết
             </button>
-          </Link>
+          </div>
         </div>
       </div>
     </Link>

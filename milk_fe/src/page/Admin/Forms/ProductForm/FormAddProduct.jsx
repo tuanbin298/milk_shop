@@ -69,8 +69,8 @@ const AddProduct = ({ open, handleClose }) => {
     if (name === "description") {
       if (value.trim() === "") {
         newErrors.description = "Mô tả không được để trống";
-      } else if (value.trim().length > 100) {
-        newErrors.description = "Mô tả không được vượt quá 100 ký tự";
+      } else if (value.trim().length > 200) {
+        newErrors.description = "Mô tả không được vượt quá 200 ký tự";
       } else {
         newErrors.description = "";
       }
@@ -146,6 +146,8 @@ const AddProduct = ({ open, handleClose }) => {
 
   // Call API brand
   const getBrandsList = async () => {
+    if (!token) return;
+
     try {
       const response = await fetch(`http://localhost:8080/api/brands/getAll`, {
         method: "GET",
@@ -167,6 +169,8 @@ const AddProduct = ({ open, handleClose }) => {
   };
 
   const getCategoryList = async () => {
+    if (!token) return;
+
     try {
       const response = await fetch(
         `http://localhost:8080/api/categories/getAll`,

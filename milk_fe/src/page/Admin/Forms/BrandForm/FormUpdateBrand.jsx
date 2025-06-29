@@ -49,8 +49,8 @@ const UpdateBrand = ({ open, brand, handleClose, refreshBrands }) => {
     if (name === "description") {
       if (value.trim() === "") {
         newErrors.description = "Mô tả không được để trống";
-      } else if (value.trim().length > 100) {
-        newErrors.description = "Mô tả không được vượt quá 100 ký tự";
+      } else if (value.trim().length > 200) {
+        newErrors.description = "Mô tả không được vượt quá 200 ký tự";
       } else {
         newErrors.description = "";
       }
