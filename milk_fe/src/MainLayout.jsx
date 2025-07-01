@@ -28,7 +28,7 @@ import ProductDetailPage from "./page/ProductPage/ProductDetailPage";
 import AllMilkPage from "./page/ProductPage/AllMilkPage";
 import FeedbackTable from "./page/Admin/Tables/FeedbackTable";
 import CategoryProductPage from "./page/ProductPage/CategoryProductPage";
-import AllArticle from "./page/NewArticle/AllArticlePage";
+import NewArticle from "./page/NewArticle/NewArticle";
 
 
 function MainLayout() {
@@ -88,7 +88,7 @@ function MainLayout() {
             <Route path="/mom" element={<MomMilkPage />} />
             <Route path="/baby" element={<BabyMilkPage />} />
             <Route path="/all" element={<AllMilkPage />} />
-            <Route path="/all-article" element={<AllArticle/>} />
+            <Route path="/all-article" element={<NewArticle/>} />
             <Route
               path="/category/:categoryId"
               element={<CategoryProductPage />}
