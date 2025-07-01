@@ -30,7 +30,6 @@ import FeedbackTable from "./page/Admin/Tables/FeedbackTable";
 import CategoryProductPage from "./page/ProductPage/CategoryProductPage";
 import AllArticle from "./page/NewArticle/AllArticlePage";
 
-
 function MainLayout() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -88,7 +87,7 @@ function MainLayout() {
             <Route path="/mom" element={<MomMilkPage />} />
             <Route path="/baby" element={<BabyMilkPage />} />
             <Route path="/product-list" element={<AllMilkPage />} />
-            <Route path="/all-article" element={<AllArticle/>} />
+            <Route path="/all-article" element={<AllArticle />} />
             <Route
               path="/category/:categoryId"
               element={<CategoryProductPage />}
