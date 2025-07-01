@@ -48,7 +48,7 @@ const AddArticle = ({ open, handleClose }) => {
       title: "",
       image: "",
       content: "",
-      authorName: "",
+      authorName: user,
       link: "",
     });
 

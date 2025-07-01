@@ -9,12 +9,15 @@ export default function AllArticles() {
   // Fetch article list
   const getArticleList = async () => {
     try {
-      const response = await fetch("http://localhost:8080/api/articles/getAll", {
-        method: "GET",
-        headers: {
-          accept: "*/*",
-        },
-      });
+      const response = await fetch(
+        "http://localhost:8080/api/articles/getAll",
+        {
+          method: "GET",
+          headers: {
+            accept: "*/*",
+          },
+        }
+      );
 
       if (response?.ok) {
         const data = await response.json();
@@ -100,7 +103,9 @@ export default function AllArticles() {
             );
           })
         ) : (
-          <p className="text-center col-span-3 text-gray-500">Không có bài viết nào.</p>
+          <p className="text-center col-span-3 text-gray-500">
+            Không có bài viết nào.
+          </p>
         )}
       </div>
 
