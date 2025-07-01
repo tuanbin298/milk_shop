@@ -13,6 +13,11 @@ import "./Header.css";
 import { useEffect, useState } from "react";
 import { Avatar, Badge, Menu, MenuItem, styled } from "@mui/material";
 import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import {
+  setSearchResults,
+  setSearchTerm,
+} from "../../state/searchProduct/searchSlice";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -28,16 +33,70 @@ export default function Header() {
   const sessionToken = localStorage.getItem("sessionToken");
   const fullname = localStorage.getItem("fullName");
 
-  // State
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
+  // State
   const [anchorEl, setAnchorEl] = useState(null); //State for close menu
   const [loggedIn, setLoggedIn] = useState(false);
   const [fullName, setFullName] = useState("");
   const [momCategories, setMomCategories] = useState([]);
   const [babyCategories, setBabyCategories] = useState([]);
-
   const [cartItemCount, setCartItemCount] = useState(0);
+  const [productData, setProductData] = useState([]);
+  const [searchValue, setSearchValue] = useState("");
+
+  // Logic call API
+  const getProductList = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/products/getAll`,
+        {
+          method: "GET",
+          headers: {
+            accept: "*/*",
+          },
+        }
+      );
+
+      if (response?.ok) {
+        const data = await response.json();
+        setProductData(data);
+      } else {
+        toast.error("Lỗi tải danh sách sản phẩm: ");
+      }
+    } catch (err) {
+      toast.error("Lỗi tải danh sách sản phẩm: ", err);
+    }
+  };
+
+  useEffect(() => {
+    getProductList();
+  }, []);
+
+  // Redux logic
+  const handleSearchValue = (e) => {
+    setSearchValue(e.target.value);
+  };
+
+  // When stay at product-list, it will auto search (dont need to click btn)
+  useEffect(() => {
+    const availableProducts = productData?.filter((product) => {
+      return product.name.toLowerCase().includes(searchValue.toLowerCase());
+    });
+
+    dispatch(setSearchResults(availableProducts));
+  }, [searchValue, dispatch]);
+
+  const handleSearch = (e) => {
+    dispatch(setSearchTerm(searchValue));
+
+    const availableProducts = productData?.filter((product) => {
+      return product.name.toLowerCase().includes(searchValue.toLowerCase());
+    });
+
+    dispatch(setSearchResults(availableProducts));
+  };
 
   // Check status of login
   const checkLoginStatus = () => {
@@ -95,10 +154,10 @@ export default function Header() {
         if (res.ok) {
           const data = await res.json();
           const momCats = data.filter((cat) =>
-            cat.name.toLowerCase().includes("women")
+            cat.name.toLowerCase().includes("mẹ")
           );
           const babyCats = data.filter((cat) =>
-            cat.name.toLowerCase().includes("baby")
+            cat.name.toLowerCase().includes("bé")
           );
           setMomCategories(momCats);
           // console.log("Mẹ:", momCats); // để biết có lấy được không
@@ -253,9 +312,15 @@ export default function Header() {
               type="text"
               placeholder="Tìm sản phẩm ..."
               className="flex-grow px-4 py-2 text-sm outline-none"
+              onChange={handleSearchValue}
             />
-            <button className="bg-[#F5D1DE] text-[#EF608C] px-4 h-full flex items-center justify-center">
-              <SearchOutlined />
+            <button
+              onClick={handleSearch}
+              className="bg-[#F5D1DE] text-[#EF608C] px-4 h-full flex items-center justify-center"
+            >
+              <Link to={"/product-list"}>
+                <SearchOutlined />
+              </Link>
             </button>
           </div>
 

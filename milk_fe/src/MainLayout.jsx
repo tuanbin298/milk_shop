@@ -85,7 +85,7 @@ function MainLayout() {
             <Route path="/product/:id" element={<ProductDetailPage />} />
             <Route path="/mom" element={<MomMilkPage />} />
             <Route path="/baby" element={<BabyMilkPage />} />
-            <Route path="/all" element={<AllMilkPage />} />
+            <Route path="/product-list" element={<AllMilkPage />} />
             <Route
               path="/category/:categoryId"
               element={<CategoryProductPage />}

@@ -306,7 +306,7 @@ export default function CartPage() {
                     height: 300,
                     marginBottom: 16,
                   }}
-                  alt="No Token"
+                  alt="Empty cart"
                 />
                 <Typography color="error" variant="body1">
                   Giỏ hàng trống!

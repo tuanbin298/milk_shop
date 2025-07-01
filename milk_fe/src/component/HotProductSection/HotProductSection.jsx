@@ -56,7 +56,7 @@ export default function HotProductSection() {
 
           <div className="text-center mt-8">
             <Link
-              to="/all"
+              to="/product-list"
               className="inline-block text-[#F75385] border border-pink-300 rounded-full px-6 py-2 text-base 
                 font-medium hover:bg-[#F75385] hover:text-white transition-colors"
             >
