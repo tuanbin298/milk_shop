@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 export default function NewsSection() {
   const [articlesdata, setArticlesdata] = useState([]);
@@ -42,7 +43,7 @@ export default function NewsSection() {
       {/* News Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {articlesdata &&
-          articlesdata.map((article) => {
+          articlesdata.slice(0, 3).map((article) => {
             const url = article.link;
 
             return (
@@ -91,10 +92,14 @@ export default function NewsSection() {
       </div>
 
       {/* View All Button */}
+
       <div className="flex justify-center mt-10">
-        <button className="text-[#F75385] border border-pink-300 rounded-full px-6 py-2 text-base font-medium hover:bg-[#F75385] hover:text-white transition-colors">
+        <Link
+          to="/all-article"
+          className="text-[#F75385] border border-pink-300 rounded-full px-6 py-2 text-base font-medium hover:bg-[#F75385] hover:text-white transition-colors"
+        >
           Xem tất cả <span className="ml-1">➤</span>
-        </button>
+        </Link>
       </div>
     </div>
   );
