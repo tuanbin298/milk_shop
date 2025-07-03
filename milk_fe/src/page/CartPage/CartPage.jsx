@@ -124,6 +124,10 @@ export default function CartPage() {
     }
   };
 
+  const handleGoToCheckout = () => {
+    navigate("/checkout");
+  };
+
   // Logic delete cart item
   const handeDeleteCartItem = async (item) => {
     try {
@@ -347,21 +351,9 @@ export default function CartPage() {
             p: 3,
             boxShadow: 1,
             mt: 12.2,
-            mb: 6,
+            mb: 40,
           }}
         >
-          <Typography variant="h6" fontWeight="bold" gutterBottom>
-            Địa chỉ giao hàng
-          </Typography>
-
-          <Typography color="text.secondary" sx={{ mb: 2 }}>
-            Chưa có địa chỉ giao hàng
-          </Typography>
-
-          <Button variant="contained" fullWidth sx={{ mb: 4 }}>
-            Nhập địa chỉ
-          </Button>
-
           <Typography variant="h6" fontWeight="bold" gutterBottom>
             Tổng cộng
           </Typography>
@@ -373,7 +365,12 @@ export default function CartPage() {
             </span>
           </Typography>
 
-          <Button variant="contained" color="primary" fullWidth>
+          <Button
+            variant="contained"
+            color="primary"
+            fullWidth
+            onClick={handleGoToCheckout}
+          >
             Thanh toán ngay
           </Button>
         </Box>
