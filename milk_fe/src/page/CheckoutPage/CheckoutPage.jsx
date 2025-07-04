@@ -1,11 +1,10 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Typography,
   TextField,
   Button,
   MenuItem,
-  Divider,
   Table,
   TableHead,
   TableRow,
@@ -13,19 +12,20 @@ import {
   TableBody,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-
 import { toast } from "react-toastify";
 import { formatMoney } from "../../utils/formatMoney";
 
 export default function CheckoutPage() {
   const token = localStorage.getItem("sessionToken");
   const navigate = useNavigate();
+
   const [fullName, setFullName] = useState(
     localStorage.getItem("fullName") || ""
   );
   const [email, setEmail] = useState(localStorage.getItem("username") || "");
   const [phone, setPhone] = useState(localStorage.getItem("phone") || "");
 
+  // State
   const [cartData, setCartData] = useState(null);
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
