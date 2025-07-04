@@ -25,6 +25,7 @@ import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import SearchIcon from "@mui/icons-material/Search";
 import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import { toast } from "react-toastify";
 
 import { Sheet, Table } from "@mui/joy";
 import { useEffect, useState } from "react";
@@ -37,6 +38,8 @@ const FeedbackTable = () => {
   const [loading, setLoading] = useState(true);
   const [selectedFeedback, setSelectedFeedback] = useState(null);
   const [openDetailModal, setOpenDetailModal] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [feedbackToDelete, setFeedbackToDelete] = useState(null);
 
   const itemsPerPage = 5;
   const token = localStorage.getItem("sessionToken");
@@ -59,6 +62,35 @@ const FeedbackTable = () => {
       console.error("Lỗi kết nối API:", err);
     } finally {
       setLoading(false);
+    }
+  };
+  const handleDeleteFeedback = async () => {
+    if (!feedbackToDelete) return;
+
+    try {
+      const res = await fetch(
+        `http://localhost:8080/api/feedbacks/${feedbackToDelete.id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Accept: "*/*",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (res.ok) {
+        await fetchFeedbacks();
+        toast.success("Xoá phản hồi thành công!");
+      } else {
+        toast.error("Xoá phản hồi thất bại!");
+      }
+    } catch (err) {
+      console.error("Lỗi khi xoá:", err);
+      alert("Có lỗi khi xoá!");
+    } finally {
+      setOpenDeleteModal(false);
+      setFeedbackToDelete(null);
     }
   };
 
@@ -98,31 +130,14 @@ const FeedbackTable = () => {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            mt: 4,
+            marginTop: "30px",
             mb: 2,
+            mt: 1,
           }}
         >
           <Typography sx={{ p: 4 }} variant="h5">
-            Quản lý phản hồi khách hàng
+            Danh sách phản hồi khách hàng
           </Typography>
-
-          <TextField
-            sx={{ mr: 2 }}
-            size="small"
-            value={searchKeyword}
-            onChange={(e) => {
-              setSearchKeyword(e.target.value);
-              setPage(1);
-            }}
-            placeholder="Tìm theo nội dung phản hồi"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
         </Box>
 
         {loading ? (
@@ -156,14 +171,15 @@ const FeedbackTable = () => {
                           : "—"}
                       </TableCell>
                       <TableCell>{f.isApproved ? "✔" : "✘"}</TableCell>
-                      <TableCell>{f.user_id || "—"}</TableCell>
+                      <TableCell>{f.userId || "—"}</TableCell>
                       <TableCell>{f.productName || "—"}</TableCell>
                       <TableCell>
                         <DeleteIcon
                           sx={{ color: "red", cursor: "pointer", mr: 1 }}
-                          onClick={() =>
-                            alert(`Xoá phản hồi ID: ${f.id} (chưa có API)`)
-                          }
+                          onClick={() => {
+                            setFeedbackToDelete(f);
+                            setOpenDeleteModal(true);
+                          }}
                         />
                         <VisibilityIcon
                           sx={{ color: "green", cursor: "pointer" }}
@@ -265,7 +281,6 @@ const FeedbackTable = () => {
 
           {/* Nội dung */}
           <Box px={3} py={3} display="flex" flexDirection="column" gap={2}>
-            {/* Nội dung */}
             <Box display="flex" gap={2} alignItems="center">
               <SvgIcon color="action">
                 <NotesOutlinedIcon />
@@ -276,7 +291,6 @@ const FeedbackTable = () => {
               <Typography>{selectedFeedback?.comment || "—"}</Typography>
             </Box>
 
-            {/* Thời gian */}
             <Box display="flex" gap={2} alignItems="center">
               <SvgIcon color="action">
                 <AccessTimeOutlinedIcon />
@@ -293,7 +307,6 @@ const FeedbackTable = () => {
               </Typography>
             </Box>
 
-            {/* Phê duyệt */}
             <Box display="flex" gap={2} alignItems="center">
               <SvgIcon color="action">
                 <CheckCircleOutlineIcon />
@@ -306,7 +319,6 @@ const FeedbackTable = () => {
               </Typography>
             </Box>
 
-            {/* Người dùng */}
             <Box display="flex" gap={2} alignItems="center">
               <SvgIcon color="action">
                 <PersonOutlineIcon />
@@ -317,7 +329,6 @@ const FeedbackTable = () => {
               <Typography>{selectedFeedback?.userId || "—"}</Typography>
             </Box>
 
-            {/* Sản phẩm */}
             <Box display="flex" gap={2} alignItems="center">
               <SvgIcon color="action">
                 <Inventory2OutlinedIcon />
@@ -327,6 +338,104 @@ const FeedbackTable = () => {
               </Typography>
               <Typography>{selectedFeedback?.productName || "—"}</Typography>
             </Box>
+
+            {/* Nút Phê duyệt / Từ chối */}
+            {selectedFeedback && !selectedFeedback.isApproved && (
+              <Box display="flex" gap={2} justifyContent="flex-end" mt={2}>
+                <Button
+                  onClick={async () => {
+                    try {
+                      const res = await fetch(
+                        `http://localhost:8080/api/feedbacks/${selectedFeedback.id}/approve`,
+                        {
+                          method: "PUT",
+                          headers: {
+                            Authorization: `Bearer ${token}`,
+                            "Content-Type": "application/json",
+                          },
+                        }
+                      );
+
+                      if (res.ok) {
+                        toast.success("Phê duyệt thành công!");
+                        await fetchFeedbacks();
+                        setOpenDetailModal(false);
+                      } else {
+                        toast.error("Phê duyệt thất bại!");
+                      }
+                    } catch (err) {
+                      console.error("Lỗi khi phê duyệt:", err);
+                      toast.error("Có lỗi xảy ra khi phê duyệt!");
+                    }
+                  }}
+                  variant="contained"
+                  color="success"
+                  sx={{ textTransform: "none", fontWeight: 600 }}
+                >
+                  Phê duyệt
+                </Button>
+              </Box>
+            )}
+          </Box>
+        </Box>
+      </Modal>
+      <Modal open={openDeleteModal} onClose={() => setOpenDeleteModal(false)}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 420,
+            bgcolor: "background.paper",
+            borderRadius: 3,
+            boxShadow: 24,
+            p: 4,
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+          }}
+        >
+          <Typography variant="h6" fontWeight="bold" color="error.main">
+            Xác nhận xoá
+          </Typography>
+
+          <Typography color="text.secondary">
+            Bạn có chắc chắn muốn xoá phản hồi này?
+          </Typography>
+
+          <Box display="flex" justifyContent="flex-end" gap={2} mt={2}>
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={() => setOpenDeleteModal(false)}
+              sx={{
+                borderRadius: 2,
+                px: 3,
+                fontWeight: 600,
+              }}
+            >
+              HỦY
+            </Button>
+            <Button
+              onClick={handleDeleteFeedback}
+              variant="text"
+              sx={{
+                color: "#f44336",
+                border: "2px solid #f44336",
+                backgroundColor: "#ffffff",
+                textTransform: "none",
+                borderRadius: 2,
+                fontWeight: 600,
+                "&:hover": {
+                  backgroundColor: "#f44336",
+                  color: "#ffffff",
+                  borderColor: "#f44336",
+                },
+              }}
+            >
+              XÓA
+            </Button>
           </Box>
         </Box>
       </Modal>

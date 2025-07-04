@@ -106,19 +106,9 @@ export default function FeedbackSection() {
                   </p>
 
                   <div className="flex items-center">
-                    <div className="flex justify-center w-1/3">
-                      <img
-                        src={`https://i.pravatar.cc/150?u=${fb.userId}`}
-                        onError={(e) =>
-                          (e.currentTarget.src = "/default-avatar.png")
-                        }
-                        alt="Avatar"
-                        className="w-12 h-12 rounded-full object-cover"
-                      />
-                    </div>
                     <div className="w-2/3 pl-3">
                       <p className="text-sm font-semibold text-black truncate">
-                        Người dùng #{fb.userId}
+                        Khách hàng {fb.fullName}
                       </p>
                       <p className="text-sm text-gray-500 truncate">
                         {fb.productName || "Sản phẩm không xác định"}
