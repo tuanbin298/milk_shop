@@ -30,6 +30,7 @@ import FeedbackTable from "./page/Admin/Tables/FeedbackTable";
 import CategoryProductPage from "./page/ProductPage/CategoryProductPage";
 import AllArticle from "./page/NewArticle/AllArticlePage";
 import CheckoutPage from "./page/CheckoutPage/CheckoutPage";
+import DashboardOverview from "./page/Admin/DashboardOverview.JSX";
 
 function MainLayout() {
   const location = useLocation();
@@ -67,6 +68,10 @@ function MainLayout() {
                 <Route path="articlelist" element={<ArticleTable />} />
                 <Route path="admin-profile" element={<AdminProfile />} />
                 <Route path="feedbacklist" element={<FeedbackTable />} />
+                <Route
+                  path="dashboardoverview"
+                  element={<DashboardOverview />}
+                />
               </Route>
             </Routes>
           </LayoutAdmin>

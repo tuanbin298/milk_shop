@@ -1,24 +1,45 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function FeedbackSection() {
-  const feedbacks = Array(10)
-    .fill(null)
-    .map((_, i) => ({
-      quote: [
-        "“Sản phẩm rất tuyệt vời, bé nhà mình dùng hợp lắm!”",
-        "“Dịch vụ giao hàng nhanh chóng, đóng gói cẩn thận!”",
-        "“Tư vấn nhiệt tình, giá cả hợp lý!”",
-      ][i % 3],
-      name: `Người dùng ${i + 1}`,
-      description: "Khách hàng thân thiết",
-      avatar: `https://i.pravatar.cc/150?img=${i + 1}`,
-    }));
-
-  const visibleCount = 3;
+  const [feedbacks, setFeedbacks] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [pageIndex, setPageIndex] = useState(0);
 
-  const maxIndex = feedbacks.length - visibleCount;
+  const visibleCount = 3;
+  const maxIndex = Math.max(0, feedbacks.length - visibleCount);
+  const token = localStorage.getItem("sessionToken");
+
+  useEffect(() => {
+    const fetchFeedbacks = async () => {
+      try {
+        const res = await fetch("http://localhost:8080/api/feedbacks/getAll", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const approved = data.filter((fb) => fb.isApproved === true);
+          setFeedbacks(approved);
+        } else {
+          console.error("Lỗi lấy phản hồi");
+        }
+      } catch (err) {
+        console.error("Lỗi kết nối API:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFeedbacks();
+  }, [token]);
+
+  const formatDate = (dateStr) => {
+    if (!dateStr || !dateStr.includes("T")) return "—";
+    const [y, m, d] = dateStr.split("T")[0].split("-");
+    return `${d}/${m}/${y}`;
+  };
 
   const prevSlide = () => {
     setPageIndex((prev) => (prev === 0 ? maxIndex : prev - 1));
@@ -28,21 +49,42 @@ export default function FeedbackSection() {
     setPageIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
   };
 
+  if (loading) {
+    return (
+      <div className="py-10 text-center text-gray-500">
+        Đang tải phản hồi...
+      </div>
+    );
+  }
+  if (feedbacks.length === 0) {
+    return null;
+  }
+  if (feedbacks.length === 0) {
+    return (
+      <div className="py-10 text-center text-gray-500">
+        Chưa có phản hồi nào được duyệt.
+      </div>
+    );
+  }
+
   return (
-    <div className="px-5 py-5 bg-white">
-      <h2 className="text-[32px] font-bold text-[#F75385] mb-8 ">
+    <section className="px-5 py-5 bg-white">
+      <h2 className="text-[28px] font-bold text-[#F75385] mb-5">
         Feedback của khách hàng
       </h2>
 
       <div className="relative flex items-center justify-center">
-        <button
-          onClick={prevSlide}
-          className="z-10 bg-white border border-gray-300 rounded-full p-3 shadow hover:bg-pink-100 transition-colors"
-        >
-          <ChevronLeft size={24} />
-        </button>
+        {/* Prev Button */}
+        {feedbacks.length > visibleCount && (
+          <button
+            onClick={prevSlide}
+            className="absolute left-0 z-10 bg-white border border-gray-300 rounded-full p-3 shadow hover:bg-pink-100 transition-colors"
+          >
+            <ChevronLeft size={24} />
+          </button>
+        )}
 
-        {/* Track container */}
+        {/* Carousel */}
         <div className="w-[960px] overflow-hidden">
           <div
             className="flex transition-transform duration-500 ease-in-out"
@@ -54,25 +96,36 @@ export default function FeedbackSection() {
             }}
           >
             {feedbacks.map((fb, idx) => (
-              <div key={idx} className="w-[320px] flex-shrink-0 px-3">
-                <div className="bg-white rounded-xl shadow p-6 flex flex-col justify-between h-full">
-                  <p className="text-center text-black text-lg font-medium mb-6">
-                    {fb.quote}
+              <div
+                key={idx}
+                className="w-[320px] max-w-[320px] flex-shrink-0 px-3"
+              >
+                <div className="bg-white rounded-xl shadow-md p-6 flex flex-col justify-between h-full border border-gray-100 hover:shadow-lg transition-shadow duration-300">
+                  <p className="text-center text-gray-800 text-lg font-medium mb-6 italic">
+                    “{fb.comment}”
                   </p>
 
                   <div className="flex items-center">
-                    <div className="basis-1/3 flex justify-center">
+                    <div className="flex justify-center w-1/3">
                       <img
-                        src={fb.avatar}
-                        alt={fb.name}
-                        className="w-10 h-10 rounded-full object-cover"
+                        src={`https://i.pravatar.cc/150?u=${fb.userId}`}
+                        onError={(e) =>
+                          (e.currentTarget.src = "/default-avatar.png")
+                        }
+                        alt="Avatar"
+                        className="w-12 h-12 rounded-full object-cover"
                       />
                     </div>
-                    <div className="basis-2/3 pl-3">
+                    <div className="w-2/3 pl-3">
                       <p className="text-sm font-semibold text-black truncate">
-                        {fb.name}
+                        Người dùng #{fb.userId}
                       </p>
-                      <p className="text-sm text-gray-500">{fb.description}</p>
+                      <p className="text-sm text-gray-500 truncate">
+                        {fb.productName || "Sản phẩm không xác định"}
+                      </p>
+                      <p className="text-xs text-gray-400">
+                        {formatDate(fb.createdAt)}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -81,13 +134,16 @@ export default function FeedbackSection() {
           </div>
         </div>
 
-        <button
-          onClick={nextSlide}
-          className="z-10 bg-white border border-gray-300 rounded-full p-3 shadow hover:bg-pink-100 transition-colors"
-        >
-          <ChevronRight size={24} />
-        </button>
+        {/* Next Button */}
+        {feedbacks.length > visibleCount && (
+          <button
+            onClick={nextSlide}
+            className="absolute right-0 z-10 bg-white border border-gray-300 rounded-full p-3 shadow hover:bg-pink-100 transition-colors"
+          >
+            <ChevronRight size={24} />
+          </button>
+        )}
       </div>
-    </div>
+    </section>
   );
 }
