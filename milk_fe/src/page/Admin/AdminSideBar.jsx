@@ -159,7 +159,7 @@ const AdminSidebar = () => {
             <div className="border-b border-white-700 p-4">
               {/* Overview */}
               <ListItem disablePadding>
-                <ListItemButton>
+                <ListItemButton onClick={() => navigate("dashboardoverview")}>
                   <ListItemIcon>
                     <HomeOutlinedIcon
                       style={{ marginRight: "20px", color: "white" }}
