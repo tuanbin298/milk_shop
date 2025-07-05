@@ -10,7 +10,6 @@ const RegisterPage = () => {
 
   const [input, setInput] = useState({
     username: "",
-    address: "",
     fullName: "",
     password: "",
     phone: "",
@@ -121,14 +120,6 @@ const RegisterPage = () => {
             onChange={handleInputChange}
             placeholder="Nhập số điện thoại"
             error={errors.phone}
-          />
-          <InputField
-            label="Địa chỉ"
-            name="address"
-            type="text"
-            value={input.address}
-            onChange={handleInputChange}
-            placeholder="Nhập địa chỉ"
           />
           <InputField
             label="Mật khẩu"

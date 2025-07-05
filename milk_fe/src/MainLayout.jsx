@@ -30,6 +30,7 @@ import FeedbackTable from "./page/Admin/Tables/FeedbackTable";
 import CategoryProductPage from "./page/ProductPage/CategoryProductPage";
 import AllArticle from "./page/NewArticle/AllArticlePage";
 import CheckoutPage from "./page/CheckoutPage/CheckoutPage";
+import PaymentPage from "./page/PaymentPage/PaymentPage";
 
 function MainLayout() {
   const location = useLocation();
@@ -94,6 +95,7 @@ function MainLayout() {
               path="/category/:categoryId"
               element={<CategoryProductPage />}
             />
+            <Route path="/payment" element={<PaymentPage />} />
           </Routes>
         </LayoutPage>
       )}

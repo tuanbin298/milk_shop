@@ -14,6 +14,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { formatMoney } from "../../utils/formatMoney";
+import { Image } from "antd";
 
 export default function CheckoutPage() {
   const token = localStorage.getItem("sessionToken");
@@ -151,14 +152,8 @@ export default function CheckoutPage() {
 
     const fullAddress = `${street}, ${ward}, ${district}, ${province}`;
 
-    const orderData = {
-      fullName,
-      phone,
-      email,
-      address: fullAddress,
-      cartItems: cartData?.cartItems || [],
-      totalPrice: cartData?.totalPrice || 0,
-    };
+    try {
+    } catch (error) {}
 
     // Chuyển sang trang thanh toán, truyền dữ liệu qua navigate
     navigate("/payment", {
@@ -189,6 +184,7 @@ export default function CheckoutPage() {
             helperText={errors.fullName ? "Vui lòng nhập họ tên" : ""}
             fullWidth
           />
+
           <Box display="flex" gap={2}>
             <TextField
               label="Email"
@@ -232,6 +228,7 @@ export default function CheckoutPage() {
             helperText={errors.street ? "Địa chỉ không được trống" : ""}
             fullWidth
           />
+
           <Box display="flex" gap={2}>
             <TextField
               select
@@ -385,7 +382,7 @@ export default function CheckoutPage() {
               >
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>
-                  <img
+                  <Image
                     src={item.image}
                     alt={item.productName}
                     style={{ width: 50, height: 50, objectFit: "cover" }}
@@ -401,7 +398,6 @@ export default function CheckoutPage() {
           </TableBody>
         </Table>
 
-        {/* Tách phần tạm tính và tổng cộng, không cần Divider dư */}
         <Box mt={2}>
           <Typography variant="h6">
             <strong>Tổng cộng:</strong>{" "}

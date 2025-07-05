@@ -155,7 +155,18 @@ export default function CartPage() {
   };
 
   return (
-    <Box sx={{ p: 4, display: "flex", gap: 4, alignItems: "stretch" }}>
+    <Box
+      sx={{
+        p: 4,
+        display: "flex",
+        gap: 4,
+        alignItems: "flex-start",
+        justifyContent: "center",
+        maxWidth: "1200px",
+        maxHeight: "700px",
+        margin: "0 auto",
+      }}
+    >
       {/* Cart Items */}
       <Box sx={{ flex: 2 }}>
         <Button
@@ -371,7 +382,7 @@ export default function CartPage() {
             fullWidth
             onClick={handleGoToCheckout}
           >
-            Thanh toán ngay
+            Tiến hành thanh toán
           </Button>
         </Box>
       ) : (
