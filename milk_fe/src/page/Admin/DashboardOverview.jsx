@@ -50,14 +50,14 @@ export default function DashboardOverview() {
             },
           }),
         ]);
-        console.log(ordersRes);
+        // console.log(ordersRes);
         if (!ordersRes.ok || !productsRes.ok) {
           throw new Error("Tải dữ liệu thất bại");
         }
 
         const ordersData = await ordersRes.json();
         const productsData = await productsRes.json();
-        console.log(ordersRes);
+        // console.log(ordersRes);
         setOrders(ordersData);
         setProducts(productsData);
         setLoading(false);

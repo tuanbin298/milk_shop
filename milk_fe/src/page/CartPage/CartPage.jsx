@@ -30,6 +30,7 @@ export default function CartPage() {
   const startIndex = (page - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const paginatedItems = cartItemData?.slice(startIndex, endIndex);
+  // console.log("pagination: ", paginatedItems);
 
   const handlePageChange = (event, value) => {
     setPage(value);
@@ -48,10 +49,11 @@ export default function CartPage() {
 
       if (response?.ok) {
         const data = await response.json();
+
         setCartData(data);
         setCartItemData(data.cartItems);
       } else {
-        toast.error("Lỗi tải giỏ hàng người dùng: ");
+        console.error("Lỗi tải giỏ hàng người dùng: ");
       }
     } catch (error) {
       console.error("Lỗi tải giỏ hàng người dùng: ", error);
@@ -201,6 +203,7 @@ export default function CartPage() {
                           transform: "translateY(-4px)",
                         },
                       }}
+                      onClick={() => navigate(`/product/${item.productId}`)}
                     >
                       <CardContent
                         sx={{
@@ -209,6 +212,7 @@ export default function CartPage() {
                           gap: 2,
                           position: "relative",
                         }}
+                        onClick={(e) => e.stopPropagation()}
                       >
                         {/* Product Image */}
                         <Box

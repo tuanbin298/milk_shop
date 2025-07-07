@@ -55,10 +55,9 @@ const LoginPage = () => {
         localStorage.setItem("fullName", data.fullName);
         localStorage.setItem("username", data.username);
         localStorage.setItem("roles", data.roles);
-        localStorage.setItem("address", data.address);
         localStorage.setItem("phone", data.phone);
 
-        window.dispatchEvent(new Event("storage"));
+        window.dispatchEvent(new Event("login-status-changed"));
 
         if (data.roles === "ADMIN" || data.roles === "STAFF") {
           toast.success("Quản trị viên đăng nhập thành công");

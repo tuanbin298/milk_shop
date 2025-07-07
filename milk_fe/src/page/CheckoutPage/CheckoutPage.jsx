@@ -17,9 +17,10 @@ import { formatMoney } from "../../utils/formatMoney";
 import { Image } from "antd";
 
 export default function CheckoutPage() {
-  const token = localStorage.getItem("sessionToken");
   const navigate = useNavigate();
 
+  const token = localStorage.getItem("sessionToken");
+  const userId = localStorage.getItem("id");
   const [fullName, setFullName] = useState(
     localStorage.getItem("fullName") || ""
   );
@@ -28,6 +29,7 @@ export default function CheckoutPage() {
 
   // State
   const [cartData, setCartData] = useState(null);
+  const [orderId, setOrderId] = useState();
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [wards, setWards] = useState([]);
@@ -68,14 +70,14 @@ export default function CheckoutPage() {
 
   // Lấy tỉnh/thành
   const getProvinces = async () => {
-    const res = await fetch("https://provinces.open-api.vn/api/p/");
+    const res = await fetch("http://provinces.open-api.vn/api/p/");
     const data = await res.json();
     setProvinces(data);
   };
 
   const getDistricts = async (provinceCode) => {
     const res = await fetch(
-      `https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`
+      `http://provinces.open-api.vn/api/p/${provinceCode}?depth=2`
     );
     const data = await res.json();
     setDistricts(data.districts);
@@ -83,7 +85,7 @@ export default function CheckoutPage() {
 
   const getWards = async (districtCode) => {
     const res = await fetch(
-      `https://provinces.open-api.vn/api/d/${districtCode}?depth=2`
+      `http://provinces.open-api.vn/api/d/${districtCode}?depth=2`
     );
     const data = await res.json();
     setWards(data.wards);
@@ -130,7 +132,7 @@ export default function CheckoutPage() {
     });
   };
 
-  const handleSubmitOrder = () => {
+  const handleSubmitOrder = async () => {
     const { province, district, ward, street } = address;
 
     const newErrors = {
@@ -153,12 +155,30 @@ export default function CheckoutPage() {
     const fullAddress = `${street}, ${ward}, ${district}, ${province}`;
 
     try {
-    } catch (error) {}
+      const response = await fetch(
+        `http://localhost:8080/api/orders/place/${userId}?address=${encodeURIComponent(
+          fullAddress
+        )}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-    // Chuyển sang trang thanh toán, truyền dữ liệu qua navigate
-    navigate("/payment", {
-      state: orderData,
-    });
+      if (response?.ok) {
+        const data = await response.json();
+
+        window.dispatchEvent(new Event("cart-updated"));
+        navigate(`/payment/${data.id}`);
+      } else {
+        toast.error("Lỗi khi tiến hành thanh toán");
+      }
+    } catch (error) {
+      console.error("Xảy ra lỗi khi tạo đơn hàng: ", error);
+    }
   };
 
   return (

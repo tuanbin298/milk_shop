@@ -30,8 +30,12 @@ import { toast } from "react-toastify";
 import { Sheet, Table } from "@mui/joy";
 import { useEffect, useState } from "react";
 import BackToDashboardButton from "../../../utils/backToDashboardBtn";
+import { formatDate, formatTime } from "../../../utils/formatDateTime";
+import { useNavigate } from "react-router-dom";
 
 const FeedbackTable = () => {
+  const navigate = useNavigate();
+
   const [searchKeyword, setSearchKeyword] = useState("");
   const [page, setPage] = useState(1);
   const [feedbackList, setFeedbackList] = useState([]);
@@ -54,7 +58,6 @@ const FeedbackTable = () => {
       if (res.ok) {
         const data = await res.json();
         setFeedbackList(data);
-        console.log(data);
       } else {
         console.error("Lỗi lấy danh sách phản hồi");
       }
@@ -109,17 +112,6 @@ const FeedbackTable = () => {
 
   const handlePageChange = (e, value) => setPage(value);
 
-  const formatDate = (dateStr) => {
-    if (!dateStr || !dateStr.includes("T")) return "—";
-    const [y, m, d] = dateStr.split("T")[0].split("-");
-    return `${d}/${m}/${y}`;
-  };
-
-  const formatTime = (dateStr) => {
-    if (!dateStr || !dateStr.includes("T")) return "";
-    return dateStr.split("T")[1]?.slice(0, 5);
-  };
-
   return (
     <Box sx={{ px: 3, backgroundColor: "#f4f4f4" }}>
       <BackToDashboardButton />
@@ -160,31 +152,40 @@ const FeedbackTable = () => {
 
               <TableBody>
                 {paginated.length > 0 ? (
-                  paginated.map((f) => (
-                    <TableRow key={f.id}>
-                      <TableCell>{f.comment || "—"}</TableCell>
+                  paginated.map((feedback) => (
+                    <TableRow key={feedback.id}>
+                      <TableCell>{feedback.comment || "—"}</TableCell>
                       <TableCell>
-                        {f.createdAt
-                          ? `${formatDate(f.createdAt)} | ${formatTime(
-                              f.createdAt
-                            )}`
-                          : "—"}
+                        {formatDate(feedback.createdAt.split("T")[0])} {" | "}
+                        {formatTime(feedback.createdAt)}
                       </TableCell>
-                      <TableCell>{f.isApproved ? "✔" : "✘"}</TableCell>
-                      <TableCell>{f.userId || "—"}</TableCell>
-                      <TableCell>{f.productName || "—"}</TableCell>
+                      <TableCell>{feedback.isApproved ? "✔" : "✘"}</TableCell>
+                      <TableCell>{feedback.fullName || "—"}</TableCell>
+                      <TableCell
+                        sx={{
+                          cursor: "pointer",
+                          "&:hover": {
+                            textDecoration: "underline",
+                          },
+                        }}
+                        onClick={() =>
+                          navigate(`/product/${feedback.productId}`)
+                        }
+                      >
+                        {feedback.productName || "—"}
+                      </TableCell>
                       <TableCell>
                         <DeleteIcon
                           sx={{ color: "red", cursor: "pointer", mr: 1 }}
                           onClick={() => {
-                            setFeedbackToDelete(f);
+                            setFeedbackToDelete(feedback);
                             setOpenDeleteModal(true);
                           }}
                         />
                         <VisibilityIcon
                           sx={{ color: "green", cursor: "pointer" }}
                           onClick={() => {
-                            setSelectedFeedback(f);
+                            setSelectedFeedback(feedback);
                             setOpenDetailModal(true);
                           }}
                         />
@@ -229,6 +230,7 @@ const FeedbackTable = () => {
           </TableContainer>
         )}
       </Sheet>
+
       <Modal open={openDetailModal} onClose={() => setOpenDetailModal(false)}>
         <Box
           sx={{
@@ -379,6 +381,7 @@ const FeedbackTable = () => {
           </Box>
         </Box>
       </Modal>
+
       <Modal open={openDeleteModal} onClose={() => setOpenDeleteModal(false)}>
         <Box
           sx={{

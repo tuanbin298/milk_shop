@@ -1,6 +1,7 @@
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
+import { Navigate } from "react-router-dom";
 
 // Page
 import LoginPage from "./page/LoginPage/LoginPage";
@@ -32,6 +33,7 @@ import AllArticle from "./page/NewArticle/AllArticlePage";
 import CheckoutPage from "./page/CheckoutPage/CheckoutPage";
 import PaymentPage from "./page/PaymentPage/PaymentPage";
 import DashboardOverview from "./page/Admin/DashboardOverview.JSX";
+import NavigatePage from "./page/StatusPage/NavigatePage";
 
 function MainLayout() {
   const location = useLocation();
@@ -62,6 +64,14 @@ function MainLayout() {
           <LayoutAdmin>
             <Routes>
               <Route path="/dashboard" element={<AdminDashboard />}>
+                <Route
+                  index
+                  element={<Navigate to="dashboardoverview" replace />}
+                />
+                <Route
+                  path="dashboardoverview"
+                  element={<DashboardOverview />}
+                />
                 <Route path="userlist" element={<UserTable />} />
                 <Route path="productlist" element={<ProductTable />} />
                 <Route path="categorylist" element={<CategoryTable />} />
@@ -69,10 +79,6 @@ function MainLayout() {
                 <Route path="articlelist" element={<ArticleTable />} />
                 <Route path="admin-profile" element={<AdminProfile />} />
                 <Route path="feedbacklist" element={<FeedbackTable />} />
-                <Route
-                  path="dashboardoverview"
-                  element={<DashboardOverview />}
-                />
               </Route>
             </Routes>
           </LayoutAdmin>
@@ -100,7 +106,8 @@ function MainLayout() {
               path="/category/:categoryId"
               element={<CategoryProductPage />}
             />
-            <Route path="/payment" element={<PaymentPage />} />
+            <Route path="/payment/:orderId" element={<PaymentPage />} />
+            <Route path="/navigatepage" element={<NavigatePage />} />
           </Routes>
         </LayoutPage>
       )}

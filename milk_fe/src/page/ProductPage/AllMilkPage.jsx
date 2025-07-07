@@ -19,7 +19,7 @@ const AllMilkPage = () => {
 
   // Redux
   const dispatch = useDispatch();
-  const { searchResults } = useSelector((state) => state.search);
+  const { searchResults, searchTerm } = useSelector((state) => state.search);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -62,8 +62,13 @@ const AllMilkPage = () => {
     dispatch(setSearchTerm(""));
   };
 
-  let filteredProducts =
-    searchResults.length > 0 ? [...searchResults] : [...products];
+  // User searchTerm/searchResults to display data
+  let filteredProducts;
+  if (searchTerm) {
+    filteredProducts = [...searchResults];
+  } else {
+    filteredProducts = [...products];
+  }
 
   if (selectedBrand) {
     filteredProducts = filteredProducts.filter(
@@ -141,7 +146,13 @@ const AllMilkPage = () => {
 
           <div className="flex-1">
             {filteredProducts.length === 0 ? (
-              <p className="text-gray-500">Không tìm thấy sản phẩm.</p>
+              searchTerm ? (
+                <p className="text-gray-500">
+                  Không tìm thấy sản phẩm phù hợp.
+                </p>
+              ) : (
+                <p className="text-gray-500">Không có sản phẩm nào.</p>
+              )
             ) : (
               <>
                 <div className="flex justify-end mb-4">

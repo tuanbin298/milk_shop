@@ -51,7 +51,7 @@ const AdminSidebar = () => {
 
   // State
   const [openAddModal, setOpenAddModal] = useState(false);
-  const [selectedSection, setSelectedSection] = useState("overview");
+  const [selectedSection, setSelectedSection] = useState("");
 
   const [openDropdowns, setOpenDropdowns] = useState({
     users: false,

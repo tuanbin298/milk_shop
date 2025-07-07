@@ -18,6 +18,10 @@ import {
   setSearchResults,
   setSearchTerm,
 } from "../../state/searchProduct/searchSlice";
+import avaterImage from "../../assets/img/user/avatar.png";
+import shopLogo from "../../assets/logo/logoluna.png";
+import imageCart from "../../assets/img/icon/cart-icon.png";
+import imageOrder from "../../assets/img/icon/order-icon.png";
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -30,8 +34,6 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 export default function Header() {
   const role = localStorage.getItem("roles");
-  const sessionToken = localStorage.getItem("sessionToken");
-  const fullname = localStorage.getItem("fullName");
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -100,6 +102,9 @@ export default function Header() {
 
   // Check status of login
   const checkLoginStatus = () => {
+    const fullname = localStorage.getItem("fullName");
+    const sessionToken = localStorage.getItem("sessionToken");
+
     if (sessionToken) {
       setLoggedIn(true);
       setFullName(fullname);
@@ -112,11 +117,10 @@ export default function Header() {
   useEffect(() => {
     checkLoginStatus();
 
-    // Listen event in storage of another tab
-    window.addEventListener("storage", checkLoginStatus);
+    window.addEventListener("login-status-changed", checkLoginStatus);
 
     return () => {
-      window.removeEventListener("storage", checkLoginStatus);
+      window.removeEventListener("login-status-changed", checkLoginStatus);
     };
   }, []);
 
@@ -141,6 +145,7 @@ export default function Header() {
 
     setLoggedIn(false);
     setAnchorEl(null);
+    setCartItemCount(0);
 
     toast.success("Đăng xuất thành công");
 
@@ -173,6 +178,8 @@ export default function Header() {
 
   // Get cart
   const getCart = async () => {
+    const sessionToken = localStorage.getItem("sessionToken");
+
     try {
       const response = await fetch(`http://localhost:8080/api/carts`, {
         method: "GET",
@@ -199,9 +206,11 @@ export default function Header() {
     getCart();
 
     window.addEventListener("cart-updated", getCart);
+    window.addEventListener("login-status-changed", getCart);
 
     return () => {
       window.removeEventListener("cart-updated", getCart);
+      window.removeEventListener("login-status-changed", getCart);
     };
   }, []);
 
@@ -232,10 +241,7 @@ export default function Header() {
                   className="flex items-center space-x-2 px-3 py-1 rounded-full hover:bg-gray-300 transition"
                 >
                   {" "}
-                  <Avatar
-                    alt="Default avatar"
-                    src="src/assets/img/user/avatar.png"
-                  />
+                  <Avatar alt="Default avatar" src={avaterImage} />
                   <span className="text-base text-[16px]">{fullName}</span>
                 </button>
 
@@ -291,7 +297,7 @@ export default function Header() {
           <div className="flex items-center space-x-2">
             <Link to="/">
               <img
-                src="./src/assets/logo/logoluna.png"
+                src={shopLogo}
                 alt="Milk Logo"
                 className="h-30 w-auto object-contain"
               />
@@ -330,7 +336,7 @@ export default function Header() {
               <Link to="/cart" className="flex flex-col items-center">
                 <StyledBadge badgeContent={cartItemCount} color="secondary">
                   <img
-                    src="src/assets/img/icon/cart-icon.png"
+                    src={imageCart}
                     alt="Giỏ hàng"
                     className="w-[30px] h-[30px]"
                   />
@@ -345,7 +351,7 @@ export default function Header() {
             <button>
               <Link to="/" className="flex flex-col items-center">
                 <img
-                  src="src/assets/img/icon/order-icon.png"
+                  src={imageOrder}
                   alt="Giỏ hàng"
                   className="w-[30px] h-[32px] mr-[9px]"
                 />
