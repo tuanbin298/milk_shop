@@ -34,6 +34,8 @@ import CheckoutPage from "./page/CheckoutPage/CheckoutPage";
 import PaymentPage from "./page/PaymentPage/PaymentPage";
 import DashboardOverview from "./page/Admin/DashboardOverview.JSX";
 import NavigatePage from "./page/StatusPage/NavigatePage";
+import SuccessPage from "./page/StatusPage/SuccessPage";
+import FailedPage from "./page/StatusPage/FailPage";
 
 function MainLayout() {
   const location = useLocation();
@@ -108,6 +110,8 @@ function MainLayout() {
             />
             <Route path="/payment/:orderId" element={<PaymentPage />} />
             <Route path="/navigatepage" element={<NavigatePage />} />
+            <Route path="/SUCCESS" element={<SuccessPage />} />
+            <Route path="/ERROR" element={<FailedPage />} />
           </Routes>
         </LayoutPage>
       )}
