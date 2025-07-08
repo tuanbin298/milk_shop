@@ -3,8 +3,6 @@ import {
   Typography,
   Button,
   Modal,
-  TextField,
-  InputAdornment,
   CircularProgress,
   TableContainer,
   TableHead,
@@ -15,14 +13,16 @@ import {
   Pagination,
   Paper,
   SvgIcon,
+  Tooltip,
 } from "@mui/material";
 
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
 import NotesOutlinedIcon from "@mui/icons-material/NotesOutlined";
 import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
-import SearchIcon from "@mui/icons-material/Search";
 import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { toast } from "react-toastify";
@@ -127,7 +127,7 @@ const FeedbackTable = () => {
             mt: 1,
           }}
         >
-          <Typography sx={{ p: 4 }} variant="h5">
+          <Typography variant="h5" fontWeight={700} color="primary" px={4}>
             Danh sách phản hồi khách hàng
           </Typography>
         </Box>
@@ -159,7 +159,13 @@ const FeedbackTable = () => {
                         {formatDate(feedback.createdAt.split("T")[0])} {" | "}
                         {formatTime(feedback.createdAt)}
                       </TableCell>
-                      <TableCell>{feedback.isApproved ? "✔" : "✘"}</TableCell>
+                      <TableCell>
+                        {feedback.isApproved ? (
+                          <CheckCircleIcon sx={{ color: "green" }} />
+                        ) : (
+                          <CancelIcon sx={{ color: "red" }} />
+                        )}
+                      </TableCell>
                       <TableCell>{feedback.fullName || "—"}</TableCell>
                       <TableCell
                         sx={{
@@ -175,20 +181,35 @@ const FeedbackTable = () => {
                         {feedback.productName || "—"}
                       </TableCell>
                       <TableCell>
-                        <DeleteIcon
-                          sx={{ color: "red", cursor: "pointer", mr: 1 }}
-                          onClick={() => {
-                            setFeedbackToDelete(feedback);
-                            setOpenDeleteModal(true);
-                          }}
-                        />
-                        <VisibilityIcon
-                          sx={{ color: "green", cursor: "pointer" }}
-                          onClick={() => {
-                            setSelectedFeedback(feedback);
-                            setOpenDetailModal(true);
-                          }}
-                        />
+                        <Tooltip title="Xoá đánh giá">
+                          <DeleteIcon
+                            sx={{
+                              color: "error.main",
+                              cursor: "pointer",
+                              transition: "0.2s",
+                              "&:hover": { transform: "scale(1.2)" },
+                            }}
+                            onClick={() => {
+                              setFeedbackToDelete(feedback);
+                              setOpenDeleteModal(true);
+                            }}
+                          />
+                        </Tooltip>
+
+                        <Tooltip title="Xem chi tiết">
+                          <VisibilityIcon
+                            sx={{
+                              color: "success.main",
+                              cursor: "pointer",
+                              transition: "0.2s",
+                              "&:hover": { transform: "scale(1.2)" },
+                            }}
+                            onClick={() => {
+                              setSelectedFeedback(feedback);
+                              setOpenDetailModal(true);
+                            }}
+                          />
+                        </Tooltip>
                       </TableCell>
                     </TableRow>
                   ))

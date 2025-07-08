@@ -36,6 +36,11 @@ import DashboardOverview from "./page/Admin/DashboardOverview.JSX";
 import NavigatePage from "./page/StatusPage/NavigatePage";
 import SuccessPage from "./page/StatusPage/SuccessPage";
 import FailedPage from "./page/StatusPage/FailPage";
+import AddUser from "./page/Admin/Forms/UserForm/FormAddUser";
+import AddArticle from "./page/Admin/Forms/ArticleForm/FormAddArticle";
+import AddBrand from "./page/Admin/Forms/BrandForm/FormAddBrand";
+import AddCategory from "./page/Admin/Forms/CategoryForm/FormAddCategory";
+import AddProduct from "./page/Admin/Forms/ProductForm/FormAddProduct";
 
 function MainLayout() {
   const location = useLocation();
@@ -81,6 +86,11 @@ function MainLayout() {
                 <Route path="articlelist" element={<ArticleTable />} />
                 <Route path="admin-profile" element={<AdminProfile />} />
                 <Route path="feedbacklist" element={<FeedbackTable />} />
+                <Route path="add-user" element={<AddUser />} />
+                <Route path="add-article" element={<AddArticle />} />
+                <Route path="add-brand" element={<AddBrand />} />
+                <Route path="add-category" element={<AddCategory />} />
+                <Route path="add-product" element={<AddProduct />} />
               </Route>
             </Routes>
           </LayoutAdmin>
@@ -109,7 +119,7 @@ function MainLayout() {
               element={<CategoryProductPage />}
             />
             <Route path="/payment/:orderId" element={<PaymentPage />} />
-            <Route path="/navigatepage" element={<NavigatePage />} />
+            <Route path="/successpayment" element={<NavigatePage />} />
             <Route path="/SUCCESS" element={<SuccessPage />} />
             <Route path="/ERROR" element={<FailedPage />} />
           </Routes>

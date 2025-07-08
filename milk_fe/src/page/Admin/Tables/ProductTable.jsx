@@ -13,6 +13,7 @@ import {
   TableHead,
   TableRow,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
@@ -25,6 +26,8 @@ import BackToDashboardButton from "../../../utils/backToDashboardBtn";
 import { Image } from "antd";
 import { formatMoney } from "../../../utils/formatMoney";
 import UpdateProduct from "../Forms/ProductForm/FormUpdateProduct";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
 
 const ProductTable = () => {
   const token = localStorage.getItem("sessionToken");
@@ -217,14 +220,21 @@ const ProductTable = () => {
           }}
         >
           {/* Title */}
-          <Typography sx={{ p: 4 }} variant="h5">
+          <Typography variant="h5" fontWeight={700} color="primary" px={4}>
             Danh sách sản phẩm
           </Typography>
 
           {/* Search & Filter */}
           <Box>
             <TextField
-              sx={{ mr: 2 }}
+              sx={{
+                mr: 2,
+                backgroundColor: "#f5f5f5",
+                borderRadius: 2,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 2,
+                },
+              }}
               size="small"
               value={searchKeyword}
               onChange={(e) => {
@@ -250,7 +260,14 @@ const ProductTable = () => {
                 setPage(1); // reset to first page
               }}
               SelectProps={{ native: true }}
-              sx={{ mr: 2 }}
+              sx={{
+                mr: 2,
+                backgroundColor: "#f5f5f5",
+                borderRadius: 2,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 2,
+                },
+              }}
             >
               <option value="">Tất cả loại</option>
               {categorydata?.map((category) => (
@@ -262,6 +279,14 @@ const ProductTable = () => {
 
             <TextField
               select
+              sx={{
+                mr: 2,
+                backgroundColor: "#f5f5f5",
+                borderRadius: 2,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 2,
+                },
+              }}
               size="small"
               value={brandFilter}
               onChange={(e) => {
@@ -280,7 +305,16 @@ const ProductTable = () => {
           </Box>
         </Box>
 
-        <TableContainer component={Paper} sx={{ maxHeight: 540 }}>
+        <TableContainer
+          component={Paper}
+          sx={{
+            maxHeight: 540,
+            maxHeight: 500,
+            borderRadius: 3,
+            boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+            overflow: "hidden",
+          }}
+        >
           <Table
             size="md"
             variant="outlined"
@@ -347,30 +381,47 @@ const ProductTable = () => {
                     <TableCell>
                       {" "}
                       <Chip
+                        icon={
+                          product?.status ? <CheckCircleIcon /> : <CancelIcon />
+                        }
                         label={product?.status ? "Còn hàng" : "Hết hàng"}
                         color={product?.status ? "success" : "error"}
-                        variant="outlined"
+                        variant="filled"
                         size="small"
                       />
                     </TableCell>
                     <TableCell>
                       {userRole === "ADMIN" && (
                         <>
-                          <DeleteIcon
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedProduct(product);
-                              setOpenDeleteModal(true);
-                            }}
-                            sx={{ color: "red", cursor: "pointer", mr: 1 }}
-                          />
+                          <Tooltip title="Xoá sản phẩm">
+                            <DeleteIcon
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedProduct(product);
+                                setOpenDeleteModal(true);
+                              }}
+                              sx={{
+                                color: "error.main",
+                                cursor: "pointer",
+                                transition: "0.2s",
+                                "&:hover": { transform: "scale(1.2)" },
+                              }}
+                            />
+                          </Tooltip>
                         </>
                       )}
                       {(userRole === "ADMIN" || userRole === "STAFF") && (
-                        <VisibilityIcon
-                          onClick={() => handleRowClick(product)}
-                          sx={{ color: "green", cursor: "pointer" }}
-                        />
+                        <Tooltip title="Xem chi tiết">
+                          <VisibilityIcon
+                            onClick={() => handleRowClick(product)}
+                            sx={{
+                              color: "success.main",
+                              cursor: "pointer",
+                              transition: "0.2s",
+                              "&:hover": { transform: "scale(1.2)" },
+                            }}
+                          />
+                        </Tooltip>
                       )}
                     </TableCell>
                   </TableRow>
@@ -387,7 +438,7 @@ const ProductTable = () => {
             </TableBody>
 
             {/* Footer */}
-            <TableFooter>
+            <TableFooter sx={{ borderTop: "1px solid #e0e0e0" }}>
               <TableRow>
                 <TableCell colSpan={9}>
                   <Box
@@ -395,6 +446,7 @@ const ProductTable = () => {
                     justifyContent="space-between"
                     alignItems="center"
                     marginX={2}
+                    py={1}
                   >
                     <Pagination
                       size="small"
@@ -405,7 +457,7 @@ const ProductTable = () => {
                       onChange={handlePageChange}
                     />
 
-                    <Typography color="text.secondary">
+                    <Typography color="text.secondary" fontWeight={500}>
                       Tổng số sản phẩm: {filterProduct.length}
                     </Typography>
                   </Box>
@@ -441,8 +493,8 @@ const ProductTable = () => {
               gap: 2,
             }}
           >
-            <Typography variant="h6" fontWeight="bold" color="error.main">
-              Xác nhận xoá
+            <Typography variant="h6" fontWeight="bold" color="error">
+              ⚠️ Xác nhận xoá
             </Typography>
 
             <Typography color="text.secondary">

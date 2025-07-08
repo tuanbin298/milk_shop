@@ -18,6 +18,8 @@ const FailedPage = () => {
         alignItems: "center",
         bgcolor: "#fdf6f9",
         px: 2,
+        mt: 2,
+        mb: 2,
       }}
     >
       <Paper

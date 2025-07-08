@@ -17,13 +17,14 @@ const style = {
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 900,
-  maxHeight: "80vh",
+  width: "100%",
+  maxWidth: 900,
+  maxHeight: "90vh",
   overflowY: "auto",
   bgcolor: "background.paper",
-  border: "2px solid #000",
+  borderRadius: 2,
   boxShadow: 24,
-  p: 2,
+  p: 3,
 };
 
 const AddArticle = ({ open, handleClose }) => {
