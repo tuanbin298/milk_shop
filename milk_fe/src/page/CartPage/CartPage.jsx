@@ -30,6 +30,7 @@ export default function CartPage() {
   const startIndex = (page - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const paginatedItems = cartItemData?.slice(startIndex, endIndex);
+  // console.log("pagination: ", paginatedItems);
 
   const handlePageChange = (event, value) => {
     setPage(value);
@@ -48,10 +49,11 @@ export default function CartPage() {
 
       if (response?.ok) {
         const data = await response.json();
+
         setCartData(data);
         setCartItemData(data.cartItems);
       } else {
-        toast.error("Lỗi tải giỏ hàng người dùng: ");
+        console.error("Lỗi tải giỏ hàng người dùng: ");
       }
     } catch (error) {
       console.error("Lỗi tải giỏ hàng người dùng: ", error);
@@ -124,6 +126,10 @@ export default function CartPage() {
     }
   };
 
+  const handleGoToCheckout = () => {
+    navigate("/checkout");
+  };
+
   // Logic delete cart item
   const handeDeleteCartItem = async (item) => {
     try {
@@ -151,7 +157,18 @@ export default function CartPage() {
   };
 
   return (
-    <Box sx={{ p: 4, display: "flex", gap: 4, alignItems: "stretch" }}>
+    <Box
+      sx={{
+        p: 4,
+        display: "flex",
+        gap: 4,
+        alignItems: "flex-start",
+        justifyContent: "center",
+        maxWidth: "1200px",
+        maxHeight: "700px",
+        margin: "0 auto",
+      }}
+    >
       {/* Cart Items */}
       <Box sx={{ flex: 2 }}>
         <Button
@@ -186,6 +203,7 @@ export default function CartPage() {
                           transform: "translateY(-4px)",
                         },
                       }}
+                      onClick={() => navigate(`/product/${item.productId}`)}
                     >
                       <CardContent
                         sx={{
@@ -194,6 +212,7 @@ export default function CartPage() {
                           gap: 2,
                           position: "relative",
                         }}
+                        onClick={(e) => e.stopPropagation()}
                       >
                         {/* Product Image */}
                         <Box
@@ -306,7 +325,7 @@ export default function CartPage() {
                     height: 300,
                     marginBottom: 16,
                   }}
-                  alt="No Token"
+                  alt="Empty cart"
                 />
                 <Typography color="error" variant="body1">
                   Giỏ hàng trống!
@@ -347,21 +366,9 @@ export default function CartPage() {
             p: 3,
             boxShadow: 1,
             mt: 12.2,
-            mb: 6,
+            mb: 40,
           }}
         >
-          <Typography variant="h6" fontWeight="bold" gutterBottom>
-            Địa chỉ giao hàng
-          </Typography>
-
-          <Typography color="text.secondary" sx={{ mb: 2 }}>
-            Chưa có địa chỉ giao hàng
-          </Typography>
-
-          <Button variant="contained" fullWidth sx={{ mb: 4 }}>
-            Nhập địa chỉ
-          </Button>
-
           <Typography variant="h6" fontWeight="bold" gutterBottom>
             Tổng cộng
           </Typography>
@@ -373,8 +380,13 @@ export default function CartPage() {
             </span>
           </Typography>
 
-          <Button variant="contained" color="primary" fullWidth>
-            Thanh toán ngay
+          <Button
+            variant="contained"
+            color="primary"
+            fullWidth
+            onClick={handleGoToCheckout}
+          >
+            Tiến hành thanh toán
           </Button>
         </Box>
       ) : (

@@ -51,7 +51,7 @@ const AdminSidebar = () => {
 
   // State
   const [openAddModal, setOpenAddModal] = useState(false);
-  const [selectedSection, setSelectedSection] = useState("overview");
+  const [selectedSection, setSelectedSection] = useState("");
 
   const [openDropdowns, setOpenDropdowns] = useState({
     users: false,
@@ -134,10 +134,16 @@ const AdminSidebar = () => {
           width: 260,
           flexShrink: 0,
           [`& .MuiDrawer-paper`]: {
-            backgroundColor: "#EF608C",
-            color: "white",
+            backgroundColor: "#2F3542",
+            color: "#F1F2F6",
             width: 260,
             boxSizing: "border-box",
+          },
+          "& .MuiListItemButton-root:hover": {
+            backgroundColor: "#4C566A",
+          },
+          "& .MuiListItemIcon-root": {
+            color: "#D8DEE9",
           },
         }}
       >
@@ -159,11 +165,9 @@ const AdminSidebar = () => {
             <div className="border-b border-white-700 p-4">
               {/* Overview */}
               <ListItem disablePadding>
-                <ListItemButton>
+                <ListItemButton onClick={() => navigate("dashboardoverview")}>
                   <ListItemIcon>
-                    <HomeOutlinedIcon
-                      style={{ marginRight: "20px", color: "white" }}
-                    />
+                    <HomeOutlinedIcon sx={{ color: "#00BFA6" }} />
                   </ListItemIcon>
                   <ListItemText primary="Tổng quan" sx={{ color: "white" }} />
                 </ListItemButton>
@@ -175,9 +179,7 @@ const AdminSidebar = () => {
                   <ListItem disablePadding>
                     <ListItemButton onClick={() => toggleDropdown("users")}>
                       <ListItemIcon>
-                        <PersonOutlineOutlinedIcon
-                          style={{ marginRight: "20px", color: "white" }}
-                        />
+                        <PersonOutlineOutlinedIcon sx={{ color: "#FF7043" }} />
                       </ListItemIcon>
 
                       <ListItemText
@@ -211,7 +213,7 @@ const AdminSidebar = () => {
                           <ListItemButton
                             onClick={() => {
                               setSelectedSection("addUser");
-                              navigate("/dashboard");
+                              navigate("add-user");
                               setOpenAddModal(true);
                             }}
                           >
@@ -229,9 +231,7 @@ const AdminSidebar = () => {
               <ListItem disablePadding>
                 <ListItemButton onClick={() => toggleDropdown("products")}>
                   <ListItemIcon>
-                    <ShoppingBagOutlinedIcon
-                      style={{ marginRight: "20px", color: "white" }}
-                    />
+                    <ShoppingBagOutlinedIcon style={{ color: "#29B6F6" }} />
                   </ListItemIcon>
                   <ListItemText primary="Sản phẩm" sx={{ color: "white" }} />
                   {/* Icon arrow */}
@@ -261,7 +261,7 @@ const AdminSidebar = () => {
                       <ListItemButton
                         onClick={() => {
                           setSelectedSection("addProduct");
-                          navigate("/dashboard");
+                          navigate("add-product");
                           setOpenAddModal(true);
                         }}
                       >
@@ -277,9 +277,7 @@ const AdminSidebar = () => {
               <ListItem disablePadding>
                 <ListItemButton onClick={() => toggleDropdown("orders")}>
                   <ListItemIcon>
-                    <ReceiptLongIcon
-                      style={{ marginRight: "20px", color: "white" }}
-                    />
+                    <ReceiptLongIcon style={{ color: "#FFCA28" }} />
                   </ListItemIcon>
                   <ListItemText primary="Đơn hàng" sx={{ color: "white" }} />
                   {openDropdowns.orders ? (
@@ -322,9 +320,7 @@ const AdminSidebar = () => {
               <ListItem disablePadding>
                 <ListItemButton onClick={() => toggleDropdown("categories")}>
                   <ListItemIcon>
-                    <CategoryOutlinedIcon
-                      style={{ marginRight: "20px", color: "white" }}
-                    />
+                    <CategoryOutlinedIcon style={{ color: "#AB47BC" }} />
                   </ListItemIcon>
                   <ListItemText primary="Phân loại" sx={{ color: "white" }} />
                   {/* Icon arrow */}
@@ -356,7 +352,7 @@ const AdminSidebar = () => {
                           setSelectedSection("addCategory");
                           setOpenAddModal(true);
                         }
-                        navigate("/dashboard");
+                        navigate("add-category");
                       }}
                     >
                       <LibraryAddOutlinedIcon className="mr-5" />
@@ -370,9 +366,7 @@ const AdminSidebar = () => {
               <ListItem disablePadding>
                 <ListItemButton onClick={() => toggleDropdown("articles")}>
                   <ListItemIcon>
-                    <AssignmentOutlinedIcon
-                      style={{ marginRight: "20px", color: "white" }}
-                    />
+                    <AssignmentOutlinedIcon style={{ color: "#66BB6A" }} />
                   </ListItemIcon>
 
                   <ListItemText primary="Bài viết" sx={{ color: "white" }} />
@@ -403,7 +397,7 @@ const AdminSidebar = () => {
                       onClick={() => {
                         setSelectedSection("addArticle");
                         setOpenAddModal(true);
-                        navigate("/dashboard");
+                        navigate("add-article");
                       }}
                     >
                       <AddCommentOutlinedIcon className="mr-5" />
@@ -417,9 +411,7 @@ const AdminSidebar = () => {
               <ListItem disablePadding>
                 <ListItemButton onClick={() => toggleDropdown("brands")}>
                   <ListItemIcon>
-                    <BrandingWatermarkIcon
-                      style={{ marginRight: "20px", color: "white" }}
-                    />
+                    <BrandingWatermarkIcon style={{ color: "#EC407A" }} />
                   </ListItemIcon>
 
                   <ListItemText primary="Thương hiệu" sx={{ color: "white" }} />
@@ -447,7 +439,7 @@ const AdminSidebar = () => {
                           setSelectedSection("addBrand");
                           setOpenAddModal(true);
                         }
-                        navigate("/dashboard");
+                        navigate("add-brand");
                       }}
                     >
                       <LibraryAddOutlinedIcon className="mr-5" />
@@ -461,9 +453,7 @@ const AdminSidebar = () => {
               <ListItem disablePadding>
                 <ListItemButton onClick={() => toggleDropdown("feedbacks")}>
                   <ListItemIcon>
-                    <TextsmsOutlinedIcon
-                      style={{ marginRight: "20px", color: "white" }}
-                    />
+                    <TextsmsOutlinedIcon style={{ color: "#FFA726" }} />
                   </ListItemIcon>
 
                   <ListItemText primary="Đánh giá" sx={{ color: "white" }} />
@@ -497,9 +487,7 @@ const AdminSidebar = () => {
               <ListItem disablePadding>
                 <ListItemButton>
                   <ListItemIcon>
-                    <KeyboardReturnIcon
-                      style={{ marginRight: "20px", color: "white" }}
-                    />
+                    <KeyboardReturnIcon style={{ color: "#90CAF9" }} />
                   </ListItemIcon>
                   <ListItemText
                     onClick={() => navigate("/")}
@@ -515,9 +503,7 @@ const AdminSidebar = () => {
               <ListItem disablePadding>
                 <ListItemButton>
                   <ListItemIcon>
-                    <AssignmentIndIcon
-                      style={{ marginRight: "20px", color: "white" }}
-                    />
+                    <AssignmentIndIcon style={{ color: "#4DD0E1" }} />
                   </ListItemIcon>
                   <ListItemText
                     onClick={() => navigate("admin-profile")}
@@ -533,9 +519,7 @@ const AdminSidebar = () => {
               <ListItem onClick={handleLogout} disablePadding>
                 <ListItemButton>
                   <ListItemIcon>
-                    <LogoutIcon
-                      style={{ marginRight: "20px", color: "white" }}
-                    />
+                    <LogoutIcon style={{ color: "#EF5350" }} />
                   </ListItemIcon>
                   <ListItemText primary="Đăng xuất" sx={{ color: "white" }} />
                 </ListItemButton>

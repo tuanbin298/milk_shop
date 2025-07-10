@@ -12,6 +12,7 @@ import {
   TableHead,
   TableRow,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
@@ -149,14 +150,21 @@ const ArticleTable = () => {
           }}
         >
           {/* Title */}
-          <Typography sx={{ p: 4 }} variant="h5">
+          <Typography variant="h5" fontWeight={700} color="primary" px={4}>
             Danh sách bài viết
           </Typography>
 
           {/* Search & Filter */}
           <Box>
             <TextField
-              sx={{ mr: 2 }}
+              sx={{
+                mr: 2,
+                backgroundColor: "#f5f5f5",
+                borderRadius: 2,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 2,
+                },
+              }}
               size="small"
               value={searchKeyword}
               onChange={(e) => {
@@ -259,19 +267,33 @@ const ArticleTable = () => {
                     </TableCell>
                     <TableCell>{article.authorName}</TableCell>
                     <TableCell>
-                      <DeleteIcon
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedArticle(article);
-                          setOpenDeleteModal(true);
-                        }}
-                        sx={{ color: "red", cursor: "pointer", mr: 1 }}
-                      />
+                      <Tooltip title="Xoá bài viết">
+                        <DeleteIcon
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedArticle(article);
+                            setOpenDeleteModal(true);
+                          }}
+                          sx={{
+                            color: "error.main",
+                            cursor: "pointer",
+                            transition: "0.2s",
+                            "&:hover": { transform: "scale(1.2)" },
+                          }}
+                        />
+                      </Tooltip>
 
-                      <VisibilityIcon
-                        onClick={() => handleRowClick(article)}
-                        sx={{ color: "green", cursor: "pointer" }}
-                      />
+                      <Tooltip title="Xem chi tiết">
+                        <VisibilityIcon
+                          onClick={() => handleRowClick(article)}
+                          sx={{
+                            color: "success.main",
+                            cursor: "pointer",
+                            transition: "0.2s",
+                            "&:hover": { transform: "scale(1.2)" },
+                          }}
+                        />
+                      </Tooltip>
                     </TableCell>
                   </TableRow>
                 ))
@@ -341,8 +363,8 @@ const ArticleTable = () => {
               gap: 2,
             }}
           >
-            <Typography variant="h6" fontWeight="bold" color="error.main">
-              Xác nhận xoá
+            <Typography variant="h6" fontWeight="bold" color="error">
+              ⚠️ Xác nhận xoá
             </Typography>
 
             <Typography color="text.secondary">

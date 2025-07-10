@@ -11,17 +11,20 @@ import { toast } from "react-toastify";
 import { handleImageUpload } from "../../../../utils/uploadImage";
 import { Image } from "antd";
 import { useNavigate } from "react-router-dom";
+
 const style = {
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  width: 600,
+  width: "100%",
+  maxWidth: 900,
+  maxHeight: "90vh",
+  overflowY: "auto",
   bgcolor: "background.paper",
-  border: "2px solid #000",
+  borderRadius: 2,
   boxShadow: 24,
   p: 3,
-  borderRadius: 2,
 };
 
 const AddBrand = ({ open, handleClose }) => {

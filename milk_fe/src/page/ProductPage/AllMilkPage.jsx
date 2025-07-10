@@ -1,7 +1,13 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ProductCard from "../../component/ProductCard/ProductCard";
 import Pagination from "@mui/material/Pagination";
 import FilterSidebar from "../../component/FilterSidebar/FilterSidebar";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import {
+  setSearchResults,
+  setSearchTerm,
+} from "../../state/searchProduct/searchSlice";
 
 const AllMilkPage = () => {
   const [products, setProducts] = useState([]);
@@ -10,7 +16,10 @@ const AllMilkPage = () => {
   const [selectedBrand, setSelectedBrand] = useState(null);
   const [selectedPriceRange, setSelectedPriceRange] = useState(null);
   const [sortOption, setSortOption] = useState("");
-  const itemsPerPage = 12;
+
+  // Redux
+  const dispatch = useDispatch();
+  const { searchResults, searchTerm } = useSelector((state) => state.search);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -48,9 +57,19 @@ const AllMilkPage = () => {
     setSelectedPriceRange(null);
     setSortOption("");
     setPage(1);
+
+    dispatch(setSearchResults([]));
+    dispatch(setSearchTerm(""));
   };
 
-  let filteredProducts = [...products];
+  // User searchTerm/searchResults to display data
+  let filteredProducts;
+  if (searchTerm) {
+    filteredProducts = [...searchResults];
+  } else {
+    filteredProducts = [...products];
+  }
+
   if (selectedBrand) {
     filteredProducts = filteredProducts.filter(
       (p) => p.brandName === selectedBrand
@@ -69,6 +88,8 @@ const AllMilkPage = () => {
     filteredProducts.sort((a, b) => b.price - a.price);
   }
 
+  // Pagination
+  const itemsPerPage = 12;
   const startIndex = (page - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentProducts = filteredProducts.slice(startIndex, endIndex);
@@ -125,7 +146,13 @@ const AllMilkPage = () => {
 
           <div className="flex-1">
             {filteredProducts.length === 0 ? (
-              <p className="text-gray-500">Không tìm thấy sản phẩm.</p>
+              searchTerm ? (
+                <p className="text-gray-500">
+                  Không tìm thấy sản phẩm phù hợp.
+                </p>
+              ) : (
+                <p className="text-gray-500">Không có sản phẩm nào.</p>
+              )
             ) : (
               <>
                 <div className="flex justify-end mb-4">

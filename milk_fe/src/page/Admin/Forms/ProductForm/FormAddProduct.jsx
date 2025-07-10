@@ -78,9 +78,9 @@ const AddProduct = ({ open, handleClose }) => {
     if (name === "quantity") {
       const quantityNumber = Number(value);
       newErrors.quantity =
-        !isNaN(quantityNumber) && quantityNumber > 0
+        !isNaN(quantityNumber) && quantityNumber >= 0
           ? ""
-          : "Số lượng phải là số và lớn hơn 0";
+          : "Số lượng phải là số dương";
     }
 
     setErrors(newErrors);

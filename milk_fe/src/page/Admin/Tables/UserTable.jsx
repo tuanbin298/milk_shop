@@ -23,6 +23,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Sheet, Table } from "@mui/joy";
 import UpdateUser from "../Forms/UserForm/FormUpdateUser";
+import Tooltip from "@mui/material/Tooltip";
 
 const UserTable = () => {
   const token = localStorage.getItem("sessionToken");
@@ -139,11 +140,12 @@ const UserTable = () => {
 
       <Sheet
         sx={{
-          backgroundColor: "#fff",
+          backgroundColor: "#ffffff",
           border: "1px",
-          borderRadius: 10,
+          borderRadius: 4,
           p: 2,
           mb: 2,
+          boxShadow: "0px 2px 8px rgba(0,0,0,0.1)",
         }}
       >
         {/* Title & Filter */}
@@ -158,14 +160,21 @@ const UserTable = () => {
           }}
         >
           {/* Title */}
-          <Typography sx={{ p: 4 }} variant="h5">
+          <Typography variant="h5" fontWeight={700} color="primary" px={4}>
             Danh sách người dùng
           </Typography>
 
           {/* Search & Filter */}
           <Box>
             <TextField
-              sx={{ mr: 2 }}
+              sx={{
+                mr: 2,
+                backgroundColor: "#f5f5f5",
+                borderRadius: 2,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 2,
+                },
+              }}
               size="small"
               value={searchKeyword}
               onChange={(e) => {
@@ -184,6 +193,14 @@ const UserTable = () => {
 
             <TextField
               select
+              sx={{
+                mr: 2,
+                backgroundColor: "#f5f5f5",
+                borderRadius: 2,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 2,
+                },
+              }}
               size="small"
               value={roleFilter}
               onChange={(e) => {
@@ -202,7 +219,15 @@ const UserTable = () => {
           </Box>
         </Box>
 
-        <TableContainer component={Paper} sx={{ maxHeight: 440 }}>
+        <TableContainer
+          component={Paper}
+          sx={{
+            maxHeight: 500,
+            borderRadius: 3,
+            boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+            overflow: "hidden",
+          }}
+        >
           {/* Table */}
           <Table
             size="md"
@@ -264,32 +289,24 @@ const UserTable = () => {
                       <Chip
                         label={user.roles}
                         sx={{
-                          backgroundColor:
+                          bgcolor:
                             user.roles === "ADMIN"
-                              ? "rgba(76, 175, 80, 0.1)"
+                              ? "rgba(33,150,243,0.1)"
                               : user.roles === "STAFF"
-                              ? "rgba(255, 152, 0, 0.1)"
-                              : "rgba(244, 67, 54, 0.1)",
+                              ? "rgba(255,193,7,0.1)"
+                              : "rgba(244,67,54,0.1)",
                           color:
                             user.roles === "ADMIN"
-                              ? "#4caf50"
+                              ? "#2196f3"
                               : user.roles === "STAFF"
                               ? "#ff9800"
                               : "#f44336",
-                          border: `1px solid ${
-                            user.roles === "ADMIN"
-                              ? "#4caf50"
-                              : user.roles === "STAFF"
-                              ? "#ff9800"
-                              : "#f44336"
-                          }`,
-                          fontWeight: 500,
-                          display: "inline-block",
-                          minWidth: "90px",
-                          textAlign: "center",
+                          borderRadius: "12px",
+                          fontWeight: 600,
+                          px: 1.5,
+                          py: 0.5,
+                          fontSize: 12,
                         }}
-                        size="small"
-                        variant="outlined"
                       />
                     </TableCell>
                     <TableCell>
@@ -304,18 +321,33 @@ const UserTable = () => {
                     </TableCell>
                     {userRole === "ADMIN" ? (
                       <TableCell>
-                        <DeleteIcon
-                          onClick={(e) => {
-                            e.stopPropagation(); // Prevent open modal
-                            setSelectedUserDelete(user);
-                            setOpenDeleteModal(true);
-                          }}
-                          sx={{ color: "red", cursor: "pointer", mr: 2 }}
-                        />
-                        <VisibilityIcon
-                          onClick={() => handleRowClick(user)}
-                          sx={{ color: "green", cursor: "pointer" }}
-                        />
+                        <Tooltip title="Xoá người dùng">
+                          <DeleteIcon
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedUserDelete(user);
+                              setOpenDeleteModal(true);
+                            }}
+                            sx={{
+                              color: "error.main",
+                              cursor: "pointer",
+                              transition: "0.2s",
+                              "&:hover": { transform: "scale(1.2)" },
+                            }}
+                          />
+                        </Tooltip>
+
+                        <Tooltip title="Xem chi tiết">
+                          <VisibilityIcon
+                            onClick={() => handleRowClick(user)}
+                            sx={{
+                              color: "success.main",
+                              cursor: "pointer",
+                              transition: "0.2s",
+                              "&:hover": { transform: "scale(1.2)" },
+                            }}
+                          />
+                        </Tooltip>
                       </TableCell>
                     ) : (
                       <></>
@@ -342,18 +374,19 @@ const UserTable = () => {
                     justifyContent="space-between"
                     alignItems="center"
                     marginX={2}
+                    py={1}
                   >
                     <Pagination
-                      size="small"
+                      size="medium"
                       shape="rounded"
                       color="primary"
-                      count={Math.ceil(filterUser.length / itemsPerPage)} //Calculate total of how many page need to display
+                      count={Math.ceil(filterUser.length / itemsPerPage)}
                       page={page}
                       onChange={handlePageChange}
                     />
 
-                    <Typography color="text.secondary">
-                      Tổng số người: {filterUser.length}
+                    <Typography color="text.secondary" fontWeight={500}>
+                      Tổng số người dùng: {filterUser.length}
                     </Typography>
                   </Box>
                 </TableCell>
@@ -388,12 +421,12 @@ const UserTable = () => {
               gap: 2,
             }}
           >
-            <Typography variant="h6" fontWeight="bold" color="error.main">
-              Xác nhận xoá
+            <Typography variant="h6" fontWeight="bold" color="error">
+              ⚠️ Xác nhận xoá
             </Typography>
 
             <Typography color="text.secondary">
-              Bạn có chắc chắn muốn xoá người dùng này?
+              Bạn có chắc chắn muốn xoá người dùng này không?
             </Typography>
 
             <Box display="flex" justifyContent="flex-end" gap={2} mt={2}>

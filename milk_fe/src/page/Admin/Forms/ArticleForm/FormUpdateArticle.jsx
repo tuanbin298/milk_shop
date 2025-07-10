@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 import { handleImageUpload } from "../../../../utils/uploadImage";
 import { formatDate, formatTime } from "../../../../utils/formatDateTime";
 
-const UpdateArticle = ({ open, article, handleClose, refreshBrands }) => {
+const UpdateArticle = ({ open, article, handleClose, refreshArticle }) => {
   const token = localStorage.getItem("sessionToken");
 
   //State

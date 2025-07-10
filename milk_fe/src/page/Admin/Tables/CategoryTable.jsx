@@ -12,6 +12,7 @@ import {
   TableHead,
   TableRow,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
@@ -124,11 +125,12 @@ const CategoryTable = () => {
 
       <Sheet
         sx={{
-          backgroundColor: "#fff",
+          backgroundColor: "#ffffff",
           border: "1px",
-          borderRadius: 10,
+          borderRadius: 4,
           p: 2,
           mb: 2,
+          boxShadow: "0px 2px 8px rgba(0,0,0,0.1)",
         }}
       >
         <Box
@@ -141,13 +143,20 @@ const CategoryTable = () => {
             mt: 1,
           }}
         >
-          <Typography sx={{ p: 4 }} variant="h5">
+          <Typography variant="h5" fontWeight={700} color="primary" px={4}>
             Danh sách danh mục
           </Typography>
 
           <Box>
             <TextField
-              sx={{ mr: 2 }}
+              sx={{
+                mr: 2,
+                backgroundColor: "#f5f5f5",
+                borderRadius: 2,
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: 2,
+                },
+              }}
               size="small"
               value={searchKeyword}
               onChange={(e) => {
@@ -166,7 +175,15 @@ const CategoryTable = () => {
           </Box>
         </Box>
 
-        <TableContainer component={Paper} sx={{ maxHeight: 440 }}>
+        <TableContainer
+          component={Paper}
+          sx={{
+            maxHeight: 440,
+            borderRadius: 3,
+            boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+            overflow: "hidden",
+          }}
+        >
           <Table
             size="md"
             variant="outlined"
@@ -205,18 +222,33 @@ const CategoryTable = () => {
                     {category.description || "-"}
                   </TableCell>
                   <TableCell>
-                    <DeleteIcon
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedCategory(category);
-                        setOpenDeleteModal(true);
-                      }}
-                      sx={{ color: "red", cursor: "pointer" }}
-                    />
-                    <VisibilityIcon
-                      onClick={() => handleRowClick(category)}
-                      sx={{ color: "green", cursor: "pointer" }}
-                    />
+                    <Tooltip title="Xoá loại">
+                      <DeleteIcon
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedCategory(category);
+                          setOpenDeleteModal(true);
+                        }}
+                        sx={{
+                          color: "error.main",
+                          cursor: "pointer",
+                          transition: "0.2s",
+                          "&:hover": { transform: "scale(1.2)" },
+                        }}
+                      />
+                    </Tooltip>
+
+                    <Tooltip title="Xem chi tiết">
+                      <VisibilityIcon
+                        onClick={() => handleRowClick(category)}
+                        sx={{
+                          color: "success.main",
+                          cursor: "pointer",
+                          transition: "0.2s",
+                          "&:hover": { transform: "scale(1.2)" },
+                        }}
+                      />
+                    </Tooltip>
                   </TableCell>
                 </TableRow>
               ))}

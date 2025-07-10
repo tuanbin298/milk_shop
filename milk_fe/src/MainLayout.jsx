@@ -1,6 +1,7 @@
 import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
+import { Navigate } from "react-router-dom";
 
 // Page
 import LoginPage from "./page/LoginPage/LoginPage";
@@ -28,8 +29,18 @@ import ProductDetailPage from "./page/ProductPage/ProductDetailPage";
 import AllMilkPage from "./page/ProductPage/AllMilkPage";
 import FeedbackTable from "./page/Admin/Tables/FeedbackTable";
 import CategoryProductPage from "./page/ProductPage/CategoryProductPage";
-import NewArticle from "./page/NewArticle/NewArticle";
-
+import AllArticle from "./page/NewArticle/AllArticlePage";
+import CheckoutPage from "./page/CheckoutPage/CheckoutPage";
+import PaymentPage from "./page/PaymentPage/PaymentPage";
+import DashboardOverview from "./page/Admin/DashboardOverview.JSX";
+import NavigatePage from "./page/StatusPage/NavigatePage";
+import SuccessPage from "./page/StatusPage/SuccessPage";
+import FailedPage from "./page/StatusPage/FailPage";
+import AddUser from "./page/Admin/Forms/UserForm/FormAddUser";
+import AddArticle from "./page/Admin/Forms/ArticleForm/FormAddArticle";
+import AddBrand from "./page/Admin/Forms/BrandForm/FormAddBrand";
+import AddCategory from "./page/Admin/Forms/CategoryForm/FormAddCategory";
+import AddProduct from "./page/Admin/Forms/ProductForm/FormAddProduct";
 
 function MainLayout() {
   const location = useLocation();
@@ -60,6 +71,14 @@ function MainLayout() {
           <LayoutAdmin>
             <Routes>
               <Route path="/dashboard" element={<AdminDashboard />}>
+                <Route
+                  index
+                  element={<Navigate to="dashboardoverview" replace />}
+                />
+                <Route
+                  path="dashboardoverview"
+                  element={<DashboardOverview />}
+                />
                 <Route path="userlist" element={<UserTable />} />
                 <Route path="productlist" element={<ProductTable />} />
                 <Route path="categorylist" element={<CategoryTable />} />
@@ -67,6 +86,11 @@ function MainLayout() {
                 <Route path="articlelist" element={<ArticleTable />} />
                 <Route path="admin-profile" element={<AdminProfile />} />
                 <Route path="feedbacklist" element={<FeedbackTable />} />
+                <Route path="add-user" element={<AddUser />} />
+                <Route path="add-article" element={<AddArticle />} />
+                <Route path="add-brand" element={<AddBrand />} />
+                <Route path="add-category" element={<AddCategory />} />
+                <Route path="add-product" element={<AddProduct />} />
               </Route>
             </Routes>
           </LayoutAdmin>
@@ -87,12 +111,17 @@ function MainLayout() {
             <Route path="/product/:id" element={<ProductDetailPage />} />
             <Route path="/mom" element={<MomMilkPage />} />
             <Route path="/baby" element={<BabyMilkPage />} />
-            <Route path="/all" element={<AllMilkPage />} />
-            <Route path="/all-article" element={<NewArticle/>} />
+            <Route path="/product-list" element={<AllMilkPage />} />
+            <Route path="/all-article" element={<AllArticle />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
             <Route
               path="/category/:categoryId"
               element={<CategoryProductPage />}
             />
+            <Route path="/payment/:orderId" element={<PaymentPage />} />
+            <Route path="/successpayment" element={<NavigatePage />} />
+            <Route path="/SUCCESS" element={<SuccessPage />} />
+            <Route path="/ERROR" element={<FailedPage />} />
           </Routes>
         </LayoutPage>
       )}

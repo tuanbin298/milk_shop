@@ -68,7 +68,7 @@ export default function BrandList() {
         const data = await response.json();
 
         var brand = data.filter(function (item) {
-          return item.name === name;
+          return item.name.trim().toLowerCase() === name.trim().toLowerCase();
         });
 
         setBrandsdata(brand);
@@ -96,10 +96,19 @@ export default function BrandList() {
 
       {/* Brand img and description */}
       {brandsdata && brandsdata.length > 0 && (
-        <Grid container spacing={4} alignItems="center" sx={{ mb: 4 }}>
+        <Grid
+          container
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 4,
+            mb: 4,
+            flexWrap: "wrap",
+          }}
+        >
           <Grid item xs={12} md={4}>
             <Image
-              width="100%"
+              width={200}
               style={{
                 borderRadius: 8,
                 boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
@@ -112,7 +121,11 @@ export default function BrandList() {
           <Grid item xs={12} md={8}>
             <Typography
               variant="body1"
-              sx={{ textAlign: "justify", fontSize: "1rem" }}
+              sx={{
+                textAlign: "justify",
+                fontSize: "1rem",
+                maxWidth: "900px",
+              }}
             >
               {brandsdata[0].description}
             </Typography>
@@ -132,7 +145,6 @@ export default function BrandList() {
               {/* Product image */}
               <div className="w-full h-[160px] flex items-center justify-center overflow-hidden mb-3">
                 <Image
-                  // width="100%"
                   style={{
                     borderRadius: 8,
                     boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
