@@ -29,7 +29,7 @@ import ProductDetailPage from "./page/ProductPage/ProductDetailPage";
 import AllMilkPage from "./page/ProductPage/AllMilkPage";
 import FeedbackTable from "./page/Admin/Tables/FeedbackTable";
 import CategoryProductPage from "./page/ProductPage/CategoryProductPage";
-import AllArticle from "./page/NewArticle/AllArticlePage";
+import AllArticle from "./page/NewArticle/NewArticle";
 import CheckoutPage from "./page/CheckoutPage/CheckoutPage";
 import PaymentPage from "./page/PaymentPage/PaymentPage";
 import DashboardOverview from "./page/Admin/DashboardOverview.JSX";

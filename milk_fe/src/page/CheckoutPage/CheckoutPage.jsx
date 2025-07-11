@@ -170,6 +170,7 @@ export default function CheckoutPage() {
 
       if (response?.ok) {
         const data = await response.json();
+        
 
         window.dispatchEvent(new Event("cart-updated"));
         navigate(`/payment/${data.id}`);
