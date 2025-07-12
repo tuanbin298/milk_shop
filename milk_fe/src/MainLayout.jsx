@@ -41,6 +41,8 @@ import AddArticle from "./page/Admin/Forms/ArticleForm/FormAddArticle";
 import AddBrand from "./page/Admin/Forms/BrandForm/FormAddBrand";
 import AddCategory from "./page/Admin/Forms/CategoryForm/FormAddCategory";
 import AddProduct from "./page/Admin/Forms/ProductForm/FormAddProduct";
+import OrderTable from "./page/Admin/Tables/OrderTable";
+import OrderItemTable from "./page/Admin/Tables/OrderItemsTable";
 
 function MainLayout() {
   const location = useLocation();
@@ -91,6 +93,11 @@ function MainLayout() {
                 <Route path="add-brand" element={<AddBrand />} />
                 <Route path="add-category" element={<AddCategory />} />
                 <Route path="add-product" element={<AddProduct />} />
+                <Route path="orderlist" element={<OrderTable />} />
+                <Route
+                  path="orderlist/orderitem/:id"
+                  element={<OrderItemTable />}
+                />
               </Route>
             </Routes>
           </LayoutAdmin>

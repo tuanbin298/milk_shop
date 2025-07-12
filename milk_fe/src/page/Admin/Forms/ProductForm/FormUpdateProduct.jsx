@@ -160,17 +160,18 @@ const UpdateProduct = ({ open, product, handleClose, refreshProducts }) => {
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: 600,
+          width: { xs: "95%", sm: 600 },
           bgcolor: "background.paper",
-          borderRadius: 3,
-          boxShadow: 24,
+          borderRadius: 4,
+          boxShadow: 10,
           overflow: "hidden",
         }}
       >
         {/* Header */}
         <Box
           sx={{
-            bgcolor: "#e3f2fd",
+            background: "linear-gradient(to right, #42a5f5, #1976d2)",
+            color: "white",
             px: 3,
             py: 2,
             display: "flex",

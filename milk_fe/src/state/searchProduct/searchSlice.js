@@ -18,3 +18,6 @@ const searchSlice = createSlice({
 
 export const { setSearchResults, setSearchTerm } = searchSlice.actions;
 export default searchSlice.reducer;
+
+// initialState: initial value
+// reducers: set data of user input into initialState

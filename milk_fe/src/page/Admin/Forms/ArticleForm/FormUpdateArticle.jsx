@@ -140,7 +140,8 @@ const UpdateArticle = ({ open, article, handleClose, refreshArticle }) => {
         {/* Header */}
         <Box
           sx={{
-            bgcolor: "#e3f2fd",
+            background: "linear-gradient(to right, #42a5f5, #1976d2)",
+            color: "white",
             px: 3,
             py: 2,
             display: "flex",

@@ -32,12 +32,10 @@ import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
 import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import ListAltIcon from "@mui/icons-material/ListAlt";
 import BookmarkAddedIcon from "@mui/icons-material/BookmarkAdded";
-
+import adminLogo from "../../assets/logo/logoluna.png";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { toast } from "react-toastify";
-
 import AddUser from "./Forms/UserForm/FormAddUser";
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AddProduct from "./Forms/ProductForm/FormAddProduct";
@@ -60,6 +58,7 @@ const AdminSidebar = () => {
     articles: false,
     feedbacks: false,
     brands: false,
+    orders: false,
   });
 
   // Change state of section
@@ -156,7 +155,7 @@ const AdminSidebar = () => {
                   height: "40px",
                   marginRight: "10px",
                 }}
-                src="../../src/assets/logo/logoluna.png"
+                src={adminLogo}
               />
               Admin Dashboard
             </div>
@@ -273,7 +272,7 @@ const AdminSidebar = () => {
                 </List>
               </Collapse>
 
-              {/* Order and dropdown */}
+              {/* Order, PreOrder and dropdown */}
               <ListItem disablePadding>
                 <ListItemButton onClick={() => toggleDropdown("orders")}>
                   <ListItemIcon>
@@ -290,17 +289,19 @@ const AdminSidebar = () => {
 
               <Collapse in={openDropdowns.orders} timeout="auto" unmountOnExit>
                 <List component="div" disablePadding sx={{ pl: 2 }}>
-                  <ListItem disablePadding>
-                    <ListItemButton onClick={() => navigate("/orders")}>
-                      <ListItemIcon>
-                        <ListAltIcon style={{ color: "white" }} />
-                      </ListItemIcon>
-                      <ListItemText
-                        primary="Tất cả đơn hàng"
-                        sx={{ color: "white" }}
-                      />
-                    </ListItemButton>
-                  </ListItem>
+                  {role === "ADMIN" && (
+                    <ListItem disablePadding>
+                      <ListItemButton onClick={() => navigate("orderlist")}>
+                        <ListItemIcon>
+                          <ListAltIcon style={{ color: "white" }} />
+                        </ListItemIcon>
+                        <ListItemText
+                          primary="Tất cả đơn hàng"
+                          sx={{ color: "white" }}
+                        />
+                      </ListItemButton>
+                    </ListItem>
+                  )}
 
                   <ListItem disablePadding>
                     <ListItemButton onClick={() => navigate("/preorders")}>

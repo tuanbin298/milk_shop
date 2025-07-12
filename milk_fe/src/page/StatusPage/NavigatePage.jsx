@@ -25,7 +25,6 @@ export default function NavigatePage() {
 
       if (response?.ok) {
         const data = await response.text();
-        console.log("RESPONSE:", data);
 
         if (data === "SUCCESS") {
           navigate("/SUCCESS");

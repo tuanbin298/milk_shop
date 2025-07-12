@@ -217,11 +217,13 @@ export default function DashboardOverview() {
       icon: <Inventory2Icon fontSize="large" sx={{ color: "#f57c00" }} />,
       label: "Tổng sản phẩm trong kho",
       value: `${totalProductQuantity} Sản phẩm`,
+      link: "/dashboard/productlist",
     },
     {
       icon: <CreditScoreIcon fontSize="large" sx={{ color: "#7b1fa2" }} />,
       label: "Tổng đơn hàng",
       value: `${ordersData.length || 0} Đơn`,
+      link: "/dashboard/orderlist",
     },
     {
       icon: <CreditScoreIcon fontSize="large" sx={{ color: "#f57c00" }} />,
@@ -321,6 +323,8 @@ export default function DashboardOverview() {
           <Typography variant="h6" gutterBottom>
             Doanh thu theo ngày
           </Typography>
+
+          {/* Chart */}
           <BarChart
             xAxis={[
               {
@@ -360,10 +364,16 @@ export default function DashboardOverview() {
         <Typography variant="h5" gutterBottom>
           Doanh thu theo tháng
         </Typography>
+
+        {/* Chart */}
         <BarChart
           xAxis={[{ scaleType: "band", data: months }]}
           series={[
-            { data: revenueByMonth, label: "Doanh thu", color: "#1976d2" },
+            {
+              data: revenueByMonth,
+              label: "Doanh thu (VNĐ)",
+              color: "#1976d2",
+            },
           ]}
           width={1000}
           height={400}

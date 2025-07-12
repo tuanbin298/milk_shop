@@ -196,6 +196,8 @@ export default function CartPage() {
                       key={item.id}
                       sx={{
                         mb: 2,
+                        borderRadius: 3,
+                        boxShadow: 2,
                         transition: "all 0.2s ease-in-out",
                         cursor: "pointer",
                         "&:hover": {
