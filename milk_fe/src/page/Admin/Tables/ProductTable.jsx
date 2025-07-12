@@ -28,10 +28,19 @@ import { formatMoney } from "../../../utils/formatMoney";
 import UpdateProduct from "../Forms/ProductForm/FormUpdateProduct";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import {
+  clearProductSelected,
+  setBrandSelected,
+  setCategorySelected,
+} from "../../../state/filter/filterSlice";
 
 const ProductTable = () => {
   const token = localStorage.getItem("sessionToken");
   const userRole = localStorage.getItem("roles");
+
+  const navigate = useNavigate();
 
   // State
   const [searchKeyword, setSearchKeyword] = useState("");
@@ -44,21 +53,29 @@ const ProductTable = () => {
   const [categoryFilter, setCategoryFilter] = useState("");
   const [brandFilter, setBrandFilter] = useState("");
 
+  // Redux
+  const dispatch = useDispatch();
+  const productSelected = useSelector((state) => state.filter.product);
+
   // Search and filter product
   const filterProduct = productData.filter((product) => {
-    const matchesKeyword = product.name
-      .toLowerCase()
-      .includes(searchKeyword.toLowerCase());
+    if (productSelected) {
+      return product.name === productSelected;
+    } else {
+      const matchesKeyword = product.name
+        .toLowerCase()
+        .includes(searchKeyword.toLowerCase());
 
-    const matchesCategory = categoryFilter
-      ? product.categoryName.toLowerCase() === categoryFilter.toLowerCase()
-      : true;
+      const matchesCategory = categoryFilter
+        ? product.categoryName.toLowerCase() === categoryFilter.toLowerCase()
+        : true;
 
-    const matchesBrand = brandFilter
-      ? product.brandName.toLowerCase() === brandFilter.toLowerCase()
-      : true;
+      const matchesBrand = brandFilter
+        ? product.brandName.toLowerCase() === brandFilter.toLowerCase()
+        : true;
 
-    return matchesKeyword && matchesCategory && matchesBrand;
+      return matchesKeyword && matchesCategory && matchesBrand;
+    }
   });
 
   // Pagination configuration
@@ -226,92 +243,107 @@ const ProductTable = () => {
 
           {/* Search & Filter */}
           <Box>
-            <TextField
-              sx={{
-                mr: 2,
-                backgroundColor: "#f5f5f5",
-                borderRadius: 2,
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: 2,
-                },
-              }}
-              size="small"
-              value={searchKeyword}
-              onChange={(e) => {
-                setSearchKeyword(e.target.value);
-                setPage(1);
-              }}
-              placeholder="Tìm theo tên"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
-            />
+            {!productSelected && (
+              <Box>
+                <TextField
+                  sx={{
+                    mr: 2,
+                    backgroundColor: "#f5f5f5",
+                    borderRadius: 2,
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: 2,
+                    },
+                  }}
+                  size="small"
+                  value={searchKeyword}
+                  onChange={(e) => {
+                    setSearchKeyword(e.target.value);
+                    setPage(1);
+                  }}
+                  placeholder="Tìm theo tên"
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
 
-            <TextField
-              select
-              size="small"
-              value={categoryFilter}
-              onChange={(e) => {
-                setCategoryFilter(e.target.value);
-                setPage(1); // reset to first page
-              }}
-              SelectProps={{ native: true }}
-              sx={{
-                mr: 2,
-                backgroundColor: "#f5f5f5",
-                borderRadius: 2,
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: 2,
-                },
-              }}
-            >
-              <option value="">Tất cả loại</option>
-              {categorydata?.map((category) => (
-                <option key={category.id} value={category.categoryName}>
-                  {category.name}
-                </option>
-              ))}
-            </TextField>
+                <TextField
+                  select
+                  size="small"
+                  value={categoryFilter}
+                  onChange={(e) => {
+                    setCategoryFilter(e.target.value);
+                    setPage(1); // reset to first page
+                  }}
+                  SelectProps={{ native: true }}
+                  sx={{
+                    mr: 2,
+                    backgroundColor: "#f5f5f5",
+                    borderRadius: 2,
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: 2,
+                    },
+                  }}
+                >
+                  <option value="">Tất cả loại</option>
+                  {categorydata?.map((category) => (
+                    <option key={category.id} value={category.categoryName}>
+                      {category.name}
+                    </option>
+                  ))}
+                </TextField>
 
-            <TextField
-              select
-              sx={{
-                mr: 2,
-                backgroundColor: "#f5f5f5",
-                borderRadius: 2,
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: 2,
-                },
-              }}
-              size="small"
-              value={brandFilter}
-              onChange={(e) => {
-                setBrandFilter(e.target.value);
-                setPage(1); // reset to first page
-              }}
-              SelectProps={{ native: true }}
-            >
-              <option value="">Tất cả nhãn hiệu</option>
-              {brandsdata?.map((brand) => (
-                <option key={brand.id} value={brand.brandName}>
-                  {brand.name}
-                </option>
-              ))}
-            </TextField>
+                <TextField
+                  select
+                  sx={{
+                    mr: 2,
+                    backgroundColor: "#f5f5f5",
+                    borderRadius: 2,
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: 2,
+                    },
+                  }}
+                  size="small"
+                  value={brandFilter}
+                  onChange={(e) => {
+                    setBrandFilter(e.target.value);
+                    setPage(1); // reset to first page
+                  }}
+                  SelectProps={{ native: true }}
+                >
+                  <option value="">Tất cả nhãn hiệu</option>
+                  {brandsdata?.map((brand) => (
+                    <option key={brand.id} value={brand.brandName}>
+                      {brand.name}
+                    </option>
+                  ))}
+                </TextField>
+              </Box>
+            )}
+
+            {productSelected && (
+              <Button
+                onClick={() => dispatch(clearProductSelected())}
+                variant="outlined"
+                color="primary"
+                sx={{ ml: 2 }}
+              >
+                Hiển thị tất cả sản phẩm
+              </Button>
+            )}
           </Box>
         </Box>
 
         <TableContainer
           component={Paper}
           sx={{
-            maxHeight: 500,
+            maxHeight: 540,
             borderRadius: 3,
             boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-            overflow: "hidden",
+            overflow: "auto",
           }}
         >
           <Table
@@ -374,11 +406,44 @@ const ProductTable = () => {
                     >
                       {product.description}
                     </TableCell>
-                    <TableCell>{product.categoryName}</TableCell>
-                    <TableCell>{product.brandName}</TableCell>
+                    <TableCell
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        dispatch(setCategorySelected(product.categoryName));
+                        navigate("/dashboard/categorylist");
+                      }}
+                      sx={{
+                        fontWeight: 500,
+                        cursor: "pointer",
+                        textDecoration: "none",
+                        "&:hover": {
+                          textDecoration: "underline",
+                          color: "primary.dark",
+                        },
+                      }}
+                    >
+                      {product.categoryName}
+                    </TableCell>
+                    <TableCell
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        dispatch(setBrandSelected(product.brandName));
+                        navigate("/dashboard/brandlist");
+                      }}
+                      sx={{
+                        fontWeight: 500,
+                        cursor: "pointer",
+                        textDecoration: "none",
+                        "&:hover": {
+                          textDecoration: "underline",
+                          color: "primary.dark",
+                        },
+                      }}
+                    >
+                      {product.brandName}
+                    </TableCell>
                     <TableCell>{product.quantity}</TableCell>
                     <TableCell>
-                      {" "}
                       <Chip
                         icon={
                           product?.status ? <CheckCircleIcon /> : <CancelIcon />

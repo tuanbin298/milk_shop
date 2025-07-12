@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { formatDate } from "../../utils/formatDateTime";
 
 export default function FeedbackSection() {
   const [feedbacks, setFeedbacks] = useState([]);
@@ -34,12 +35,6 @@ export default function FeedbackSection() {
 
     fetchFeedbacks();
   }, [token]);
-
-  const formatDate = (dateStr) => {
-    if (!dateStr || !dateStr.includes("T")) return "—";
-    const [y, m, d] = dateStr.split("T")[0].split("-");
-    return `${d}/${m}/${y}`;
-  };
 
   const prevSlide = () => {
     setPageIndex((prev) => (prev === 0 ? maxIndex : prev - 1));

@@ -29,7 +29,7 @@ import ProductDetailPage from "./page/ProductPage/ProductDetailPage";
 import AllMilkPage from "./page/ProductPage/AllMilkPage";
 import FeedbackTable from "./page/Admin/Tables/FeedbackTable";
 import CategoryProductPage from "./page/ProductPage/CategoryProductPage";
-import AllArticle from "./page/NewArticle/AllArticlePage";
+import AllArticle from "./page/NewArticle/NewArticle";
 import CheckoutPage from "./page/CheckoutPage/CheckoutPage";
 import PaymentPage from "./page/PaymentPage/PaymentPage";
 import DashboardOverview from "./page/Admin/DashboardOverview.JSX";
@@ -41,6 +41,8 @@ import AddArticle from "./page/Admin/Forms/ArticleForm/FormAddArticle";
 import AddBrand from "./page/Admin/Forms/BrandForm/FormAddBrand";
 import AddCategory from "./page/Admin/Forms/CategoryForm/FormAddCategory";
 import AddProduct from "./page/Admin/Forms/ProductForm/FormAddProduct";
+import OrderTable from "./page/Admin/Tables/OrderTable";
+import OrderItemTable from "./page/Admin/Tables/OrderItemsTable";
 
 function MainLayout() {
   const location = useLocation();
@@ -91,6 +93,11 @@ function MainLayout() {
                 <Route path="add-brand" element={<AddBrand />} />
                 <Route path="add-category" element={<AddCategory />} />
                 <Route path="add-product" element={<AddProduct />} />
+                <Route path="orderlist" element={<OrderTable />} />
+                <Route
+                  path="orderlist/orderitem/:id"
+                  element={<OrderItemTable />}
+                />
               </Route>
             </Routes>
           </LayoutAdmin>

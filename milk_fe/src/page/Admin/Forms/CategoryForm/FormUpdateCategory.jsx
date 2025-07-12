@@ -1,18 +1,8 @@
-import {
-  Box,
-  Button,
-  Modal,
-  Typography,
-  TextField,
-  Stack,
-  Chip,
-  MenuItem,
-} from "@mui/material";
+import { Box, Button, Modal, Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import CategoryIcon from "@mui/icons-material/Category";
 import UpdateIcon from "@mui/icons-material/Update";
 import DescriptionIcon from "@mui/icons-material/Description";
-import VerifiedUserIcon from "@mui/icons-material/VerifiedUser";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { InfoRow, InputRow } from "../../../../utils/updateForm";
@@ -146,7 +136,8 @@ const UpdateCategory = ({ open, category, handleClose, refreshCategories }) => {
         {/* Header */}
         <Box
           sx={{
-            bgcolor: "#e3f2fd",
+            background: "linear-gradient(to right, #42a5f5, #1976d2)",
+            color: "white",
             px: 3,
             py: 2,
             display: "flex",

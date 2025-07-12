@@ -32,9 +32,12 @@ import { useEffect, useState } from "react";
 import BackToDashboardButton from "../../../utils/backToDashboardBtn";
 import { formatDate, formatTime } from "../../../utils/formatDateTime";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setProductSelected } from "../../../state/filter/filterSlice";
 
 const FeedbackTable = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [searchKeyword, setSearchKeyword] = useState("");
   const [page, setPage] = useState(1);
@@ -168,15 +171,20 @@ const FeedbackTable = () => {
                       </TableCell>
                       <TableCell>{feedback.fullName || "—"}</TableCell>
                       <TableCell
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          dispatch(setProductSelected(feedback.productName));
+                          navigate("/dashboard/productlist");
+                        }}
                         sx={{
+                          fontWeight: 500,
                           cursor: "pointer",
+                          textDecoration: "none",
                           "&:hover": {
                             textDecoration: "underline",
+                            color: "primary.dark",
                           },
                         }}
-                        onClick={() =>
-                          navigate(`/product/${feedback.productId}`)
-                        }
                       >
                         {feedback.productName || "—"}
                       </TableCell>

@@ -23,6 +23,8 @@ import { Sheet, Table } from "@mui/joy";
 import BackToDashboardButton from "../../../utils/backToDashboardBtn";
 import UpdateCategory from "../Forms/CategoryForm/FormUpdateCategory";
 import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { clearCategorySelected } from "../../../state/filter/filterSlice";
 
 const CategoryTable = () => {
   const token = localStorage.getItem("sessionToken");
@@ -34,10 +36,18 @@ const CategoryTable = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
+  // Redux
+  const dispatch = useDispatch();
+  const categorySelected = useSelector((state) => state.filter.category);
+
   // Filter categories by search
-  const filteredCategories = categorieData.filter((category) =>
-    category.name.toLowerCase().includes(searchKeyword.toLowerCase())
-  );
+  const filteredCategories = categorieData.filter((category) => {
+    if (categorySelected) {
+      return category.name === categorySelected;
+    } else {
+      return category.name.toLowerCase().includes(searchKeyword.toLowerCase());
+    }
+  });
 
   // Pagination configuration
   const [page, setPage] = useState(1);
@@ -148,30 +158,43 @@ const CategoryTable = () => {
           </Typography>
 
           <Box>
-            <TextField
-              sx={{
-                mr: 2,
-                backgroundColor: "#f5f5f5",
-                borderRadius: 2,
-                "& .MuiOutlinedInput-root": {
+            {!categorySelected && (
+              <TextField
+                sx={{
+                  mr: 2,
+                  backgroundColor: "#f5f5f5",
                   borderRadius: 2,
-                },
-              }}
-              size="small"
-              value={searchKeyword}
-              onChange={(e) => {
-                setSearchKeyword(e.target.value);
-                setPage(1);
-              }}
-              placeholder="Tìm theo tên danh mục"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
-            />
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: 2,
+                  },
+                }}
+                size="small"
+                value={searchKeyword}
+                onChange={(e) => {
+                  setSearchKeyword(e.target.value);
+                  setPage(1);
+                }}
+                placeholder="Tìm theo tên danh mục"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            )}
+
+            {categorySelected && (
+              <Button
+                onClick={() => dispatch(clearCategorySelected())}
+                variant="outlined"
+                color="primary"
+                sx={{ ml: 2 }}
+              >
+                Hiển thị tất cả loại
+              </Button>
+            )}
           </Box>
         </Box>
 

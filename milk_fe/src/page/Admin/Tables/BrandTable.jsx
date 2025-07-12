@@ -11,6 +11,7 @@ import {
   TableHead,
   TableRow,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -21,6 +22,8 @@ import UpdateBrand from "../Forms/BrandForm/FormUpdateBrand";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { Image } from "antd";
 import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { clearBrandSelected } from "../../../state/filter/filterSlice";
 
 const BrandTable = () => {
   const token = localStorage.getItem("sessionToken");
@@ -32,13 +35,21 @@ const BrandTable = () => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [brandFilter, setBrandFilter] = useState("");
 
+  // Redux
+  const dispatch = useDispatch();
+  const brandSelected = useSelector((state) => state.filter.brand);
+
   // Filter brands by search
   const filteredBrands = brandsdata.filter((brand) => {
-    const matchesBrand = brandFilter
-      ? brand.name.toLowerCase() === brandFilter.toLowerCase()
-      : true;
+    if (brandSelected) {
+      return brand.name === brandSelected;
+    }
 
-    return matchesBrand;
+    if (brandFilter) {
+      return brand.name.toLowerCase() === brandFilter.toLowerCase();
+    }
+
+    return true;
   });
 
   // Pagination configuration
@@ -140,23 +151,36 @@ const BrandTable = () => {
             Danh sách thương hiệu
           </Typography>
 
-          <TextField
-            select
-            size="small"
-            value={brandFilter}
-            onChange={(e) => {
-              setBrandFilter(e.target.value);
-              setPage(1);
-            }}
-            SelectProps={{ native: true }}
-          >
-            <option value="">Tất cả nhãn hiệu</option>
-            {brandsdata?.map((brand) => (
-              <option key={brand.id} value={brand.brandName}>
-                {brand.name}
-              </option>
-            ))}
-          </TextField>
+          {!brandSelected && (
+            <TextField
+              select
+              size="small"
+              value={brandFilter}
+              onChange={(e) => {
+                setBrandFilter(e.target.value);
+                setPage(1);
+              }}
+              SelectProps={{ native: true }}
+            >
+              <option value="">Tất cả thương hiệu</option>
+              {brandsdata?.map((brand) => (
+                <option key={brand.id} value={brand.brandName}>
+                  {brand.name}
+                </option>
+              ))}
+            </TextField>
+          )}
+
+          {brandSelected && (
+            <Button
+              onClick={() => dispatch(clearBrandSelected())}
+              variant="outlined"
+              color="primary"
+              sx={{ ml: 2 }}
+            >
+              Hiển thị tất cả thương hiệu
+            </Button>
+          )}
         </Box>
 
         <TableContainer component={Paper} sx={{ maxHeight: 440 }}>
@@ -212,18 +236,33 @@ const BrandTable = () => {
                     {brand.description || "-"}
                   </TableCell>
                   <TableCell>
-                    <DeleteIcon
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedBrand(brand);
-                        setOpenDeleteModal(true);
-                      }}
-                      sx={{ color: "red", cursor: "pointer", mr: 2 }}
-                    />
-                    <VisibilityIcon
-                      onClick={() => handleRowClick(brand)}
-                      sx={{ color: "green", cursor: "pointer" }}
-                    />
+                    <Tooltip title="Xoá thương hiệu">
+                      <DeleteIcon
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedBrand(brand);
+                          setOpenDeleteModal(true);
+                        }}
+                        sx={{
+                          color: "error.main",
+                          cursor: "pointer",
+                          transition: "0.2s",
+                          "&:hover": { transform: "scale(1.2)" },
+                        }}
+                      />
+                    </Tooltip>
+
+                    <Tooltip title="Xem chi tiết">
+                      <VisibilityIcon
+                        onClick={() => handleRowClick(brand)}
+                        sx={{
+                          color: "success.main",
+                          cursor: "pointer",
+                          transition: "0.2s",
+                          "&:hover": { transform: "scale(1.2)" },
+                        }}
+                      />
+                    </Tooltip>
                   </TableCell>
                 </TableRow>
               ))}

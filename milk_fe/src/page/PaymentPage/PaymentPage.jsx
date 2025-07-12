@@ -43,6 +43,7 @@ export default function PaymentPage() {
         const data = await response.json();
 
         if (data.status === "CANCELED") {
+          localStorage.removeItem("orderId");
           navigate("/checkout");
           toast.info("Đơn hàng bị huỷ do Ba/Mẹ chưa thanh toán!!!");
           return;
@@ -55,7 +56,7 @@ export default function PaymentPage() {
       console.error("Lỗi tải đơn hàng người dùng: ", error);
     }
   };
-  console.log(orderData);
+  // console.log(orderData);
 
   useEffect(() => {
     getOrder();
@@ -103,11 +104,14 @@ export default function PaymentPage() {
       bgcolor="#fff"
       borderRadius={2}
     >
-      <Typography variant="h4" fontWeight="bold" mb={2}>
-        <InventoryIcon className="mr-2" />
-        THÔNG TIN ĐƠN HÀNG
-      </Typography>
-      <Typography variant="h7" mb={2}>
+      <Box display="flex" alignItems="center" mb={2}>
+        <Typography variant="h4" fontWeight="bold" mb={2}>
+          <InventoryIcon className="mr-2" />
+          THÔNG TIN ĐƠN HÀNG
+        </Typography>
+      </Box>
+
+      <Typography variant="body2" color="text.secondary" mb={2}>
         Ba/Mẹ vui lòng thanh toán trong 5 phút để xác nhận mua hàng
       </Typography>
 
@@ -115,71 +119,75 @@ export default function PaymentPage() {
 
       {orderData ? (
         <Box mb={2}>
-          <Typography>
+          <Typography variant="body2" mb={0.5}>
             <strong>Ngày đặt:</strong>{" "}
             {formatDate(orderData.orderDate.split("T")[0])} {" | "}
             {formatTime(orderData.orderDate)}
           </Typography>
-          <Typography>
+          <Typography variant="body2">
             <strong>Mã đơn hàng:</strong> # {orderData.id}
           </Typography>
 
           <Divider sx={{ my: 2 }} />
 
-          <Typography variant="h6" gutterBottom>
-            <strong>Thông tin giao hàng</strong>
-          </Typography>
-          <Typography>
-            <strong>Khách hàng:</strong> {localStorage.getItem("fullName")}
-          </Typography>
-          <Typography>
-            <strong>Email:</strong> {localStorage.getItem("username")}
-          </Typography>
-          <Typography>
-            <strong>Số điện thoại:</strong> {localStorage.getItem("phone")}
-          </Typography>
-          <Typography>
-            <strong>Địa chỉ:</strong> {orderData.address}
-          </Typography>
+          <Box mb={2}>
+            <Typography variant="h6" mb={1}>
+              Thông tin giao hàng
+            </Typography>
+            <Typography variant="body2">
+              <strong>Khách hàng:</strong> {localStorage.getItem("fullName")}
+            </Typography>
+            <Typography variant="body2">
+              <strong>Email:</strong> {localStorage.getItem("username")}
+            </Typography>
+            <Typography variant="body2">
+              <strong>Số điện thoại:</strong> {localStorage.getItem("phone")}
+            </Typography>
+            <Typography variant="body2">
+              <strong>Địa chỉ:</strong> {orderData.address}
+            </Typography>
+          </Box>
 
           <Divider sx={{ my: 2 }} />
 
           {/* Order Items */}
-          <Typography variant="h6" gutterBottom>
-            <strong>Chi tiết đơn hàng</strong>
-          </Typography>
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell>
-                  <strong>#</strong>
-                </TableCell>
-                <TableCell>
-                  <strong>Mã SP</strong>
-                </TableCell>
-                <TableCell>
-                  <strong>Tên sản phẩm</strong>
-                </TableCell>
-                <TableCell>
-                  <strong>Số lượng</strong>
-                </TableCell>
-                <TableCell>
-                  <strong>Đơn giá</strong>
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {orderItemsData?.map((item, index) => (
-                <TableRow key={index}>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>{item.productId}</TableCell>
-                  <TableCell>{item?.productName}</TableCell>
-                  <TableCell>{item.quantity}</TableCell>
-                  <TableCell>{formatMoney(item.totalPrice)}</TableCell>
+          <Box mb={2}>
+            <Typography variant="h6" mb={1}>
+              <strong>Chi tiết đơn hàng</strong>
+            </Typography>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell>
+                    <strong>#</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Mã SP</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Tên sản phẩm</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Số lượng</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Đơn giá</strong>
+                  </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHead>
+              <TableBody>
+                {orderItemsData?.map((item, index) => (
+                  <TableRow key={index}>
+                    <TableCell>{index + 1}</TableCell>
+                    <TableCell>{item.productId}</TableCell>
+                    <TableCell>{item?.productName}</TableCell>
+                    <TableCell>{item.quantity}</TableCell>
+                    <TableCell>{formatMoney(item.totalPrice)}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Box>
 
           <Box mt={4} display="flex" justifyContent="space-between">
             <Typography variant="h6">
