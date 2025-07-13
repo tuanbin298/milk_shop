@@ -147,7 +147,7 @@ const OrderTable = () => {
                       }}
                     >
                       <TableCell>#{order.id}</TableCell>
-                      <TableCell>{order?.username || "Khách hàng"}</TableCell>
+                      <TableCell>{order?.fullName || "Khách hàng"}</TableCell>
                       <TableCell>
                         {formatDate(order.orderDate.split("T")[0])} {" | "}
                         {formatTime(order.orderDate)}

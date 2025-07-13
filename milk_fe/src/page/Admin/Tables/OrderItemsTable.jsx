@@ -123,7 +123,7 @@ const OrderItemTable = () => {
           {/* User */}
           <Typography>
             <PersonIcon color="primary" />
-            Khách hàng: {orderData?.username || "Khách hàng"}
+            Khách hàng: {orderData?.fullName || "Khách hàng"}
           </Typography>
 
           {/* Totol Amount */}
