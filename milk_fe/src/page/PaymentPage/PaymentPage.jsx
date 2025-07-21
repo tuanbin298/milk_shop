@@ -18,11 +18,13 @@ import { formatMoney } from "../../utils/formatMoney";
 
 export default function PaymentPage() {
   const { orderId } = useParams();
+  const userId = localStorage.getItem("id");
   const navigate = useNavigate();
   const token = localStorage.getItem("sessionToken");
 
   // State
   const [orderData, setOrderData] = useState(null);
+  const [pointData, setPointData] = useState(null);
   const [orderItemsData, setOrderItemsData] = useState([]);
 
   // Get order
@@ -58,8 +60,28 @@ export default function PaymentPage() {
   };
   // console.log(orderData);
 
+  // Get user points
+  const getPoint = async () => {
+    try {
+      const res = await fetch(
+        `http://localhost:8080/api/${userId}/loyalty-point`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (res.ok) {
+        const data = await res.json();
+        setPointData(data);
+      }
+    } catch (err) {
+      toast.error("Lỗi khi điểm của người dùng");
+    }
+  };
+  console.log(pointData);
+
   useEffect(() => {
     getOrder();
+    getPoint();
 
     // Auto call getOrder each 1 min to check, if order not exist move to cart page
     // BE logic: if user dont pay in  min, auto cancel order
@@ -126,6 +148,9 @@ export default function PaymentPage() {
           </Typography>
           <Typography variant="body2">
             <strong>Mã đơn hàng:</strong> # {orderData.id}
+          </Typography>
+          <Typography variant="body2">
+            <strong>Số điểm sử dụng:</strong> {pointData} điểm
           </Typography>
 
           <Divider sx={{ my: 2 }} />

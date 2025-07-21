@@ -30,10 +30,31 @@ const UserAccount = () => {
   });
 
   const [originalUser, setOriginalUser] = useState({});
+  const [pointData, setPointData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState({});
 
+  // Get user points
+  const getPoint = async () => {
+    try {
+      const res = await fetch(
+        `http://localhost:8080/api/${customerId}/loyalty-point`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (res.ok) {
+        const data = await res.json();
+        setPointData(data);
+      }
+    } catch (err) {
+      toast.error("Lỗi khi lấy điểm của người dùng");
+    }
+  };
+
   useEffect(() => {
+    getPoint();
+
     if (!token) {
       toast.error("Vui lòng đăng nhập để xem thông tin!");
       navigate("/login");
@@ -187,6 +208,15 @@ const UserAccount = () => {
               disabled={!isEditing}
               error={!!errors.phone}
               helperText={errors.phone}
+            />
+          </Grid>
+
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label="Điểm tích luỹ"
+              value={pointData}
+              disabled
             />
           </Grid>
         </Grid>
