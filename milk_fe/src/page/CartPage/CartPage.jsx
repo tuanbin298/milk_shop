@@ -156,6 +156,8 @@ export default function CartPage() {
     }
   };
 
+  // console.log(cartData);
+
   return (
     <Box
       sx={{

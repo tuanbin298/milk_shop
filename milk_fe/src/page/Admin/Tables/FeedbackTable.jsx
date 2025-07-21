@@ -357,7 +357,7 @@ const FeedbackTable = () => {
               <Typography color="text.secondary" width={120}>
                 Người dùng
               </Typography>
-              <Typography>{selectedFeedback?.userId || "—"}</Typography>
+              <Typography>{selectedFeedback?.fullName || "—"}</Typography>
             </Box>
 
             <Box display="flex" gap={2} alignItems="center">
