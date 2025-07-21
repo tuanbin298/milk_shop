@@ -304,7 +304,7 @@ const AdminSidebar = () => {
                   )}
 
                   <ListItem disablePadding>
-                    <ListItemButton onClick={() => navigate("/preorders")}>
+                    <ListItemButton onClick={() => navigate("preorderlist")}>
                       <ListItemIcon>
                         <BookmarkAddedIcon style={{ color: "white" }} />
                       </ListItemIcon>

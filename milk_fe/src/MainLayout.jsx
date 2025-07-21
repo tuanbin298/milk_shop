@@ -46,6 +46,8 @@ import UserInformation from "./page/ProfilePage/UserDashboard";
 import UserAccount from "./page/ProfilePage/UserAccount";
 import UserOrder from "./page/ProfilePage/OrderUser";
 import UserOrderItem from "./page/ProfilePage/OrderItemUser";
+import PreOrderTable from "./page/Admin/Tables/PreOrderTable";
+import UserPreOrder from "./page/ProfilePage/UserPreOrder";
 
 function MainLayout() {
   const location = useLocation();
@@ -97,6 +99,7 @@ function MainLayout() {
                 <Route path="add-category" element={<AddCategory />} />
                 <Route path="add-product" element={<AddProduct />} />
                 <Route path="orderlist" element={<OrderTable />} />
+                <Route path="preorderlist" element={<PreOrderTable />} />
                 <Route
                   path="orderlist/orderitem/:id"
                   element={<OrderItemTable />}
@@ -120,6 +123,7 @@ function MainLayout() {
               <Route index element={<Navigate to="useraccount" replace />} />
               <Route path="useraccount" element={<UserAccount />} />
               <Route path="userorder" element={<UserOrder />} />
+              <Route path="userpreorder" element={<UserPreOrder />} />
               <Route
                 path="userorder/userorderitem/:id"
                 element={<UserOrderItem />}
@@ -132,6 +136,7 @@ function MainLayout() {
             <Route path="/product-list" element={<AllMilkPage />} />
             <Route path="/all-article" element={<AllArticle />} />
             <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/checkout/:id" element={<CheckoutPage />} />
             <Route
               path="/category/:categoryId"
               element={<CategoryProductPage />}

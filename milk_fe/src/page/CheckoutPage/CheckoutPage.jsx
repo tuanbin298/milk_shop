@@ -12,13 +12,15 @@ import {
   TableBody,
   Container,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { formatMoney } from "../../utils/formatMoney";
 import { Image } from "antd";
 
 export default function CheckoutPage() {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const isPreOrderMode = Boolean(id);
 
   const token = localStorage.getItem("sessionToken");
   const userId = localStorage.getItem("id");
@@ -69,6 +71,39 @@ export default function CheckoutPage() {
     }
   };
 
+  const getData = async () => {
+    try {
+      let data;
+      if (isPreOrderMode) {
+        const res = await fetch(`http://localhost:8080/api/preorders/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        data = await res.json();
+        // Map sang cùng định dạng với cartData nếu cần
+        setCartData({
+          cartItems: [
+            {
+              id: data.id,
+              image: data.productImage,
+              productName: data.productName,
+              quantity: data.quantity,
+              totalPrice: data.totalPrice, // giả sử API trả về
+            },
+          ],
+          totalPrice: data.totalPrice,
+        });
+      } else {
+        const res = await fetch("http://localhost:8080/api/carts", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        data = await res.json();
+        setCartData(data);
+      }
+    } catch (err) {
+      toast.error("Lỗi khi tải thông tin đơn hàng");
+    }
+  };
+
   // Lấy tỉnh/thành
   const getProvinces = async () => {
     const res = await fetch("http://provinces.open-api.vn/api/p/");
@@ -94,6 +129,7 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     getProvinces();
+    getData();
     if (token) getCart();
   }, []);
 

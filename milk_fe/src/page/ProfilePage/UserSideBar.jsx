@@ -33,7 +33,7 @@ const UserSideBar = () => {
         <ListItemButton onClick={() => navigate("userorder")}>
           <ListItemText primary="Đơn hàng" />
         </ListItemButton>
-        <ListItemButton>
+        <ListItemButton onClick={() => navigate("userpreorder")}>
           <ListItemText primary="Đơn hàng đặt trước" />
         </ListItemButton>
         <ListItemButton>
