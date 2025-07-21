@@ -11,6 +11,8 @@ import {
   TableCell,
   TableBody,
   Container,
+  FormControlLabel,
+  Checkbox,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -30,7 +32,8 @@ export default function CheckoutPage() {
 
   // State
   const [cartData, setCartData] = useState(null);
-  const [orderId, setOrderId] = useState();
+  const [pointData, setPointData] = useState(null);
+  const [usePoint, setUsePoint] = useState(false);
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [wards, setWards] = useState([]);
@@ -54,7 +57,7 @@ export default function CheckoutPage() {
     street: "",
   });
 
-  // Lấy giỏ hàng
+  // Get cart
   const getCart = async () => {
     try {
       const res = await fetch("http://localhost:8080/api/carts", {
@@ -66,6 +69,24 @@ export default function CheckoutPage() {
       }
     } catch (err) {
       toast.error("Lỗi khi tải giỏ hàng");
+    }
+  };
+
+  // Get user points
+  const getPoint = async () => {
+    try {
+      const res = await fetch(
+        `http://localhost:8080/api/${userId}/loyalty-point`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (res.ok) {
+        const data = await res.json();
+        setPointData(data);
+      }
+    } catch (err) {
+      toast.error("Lỗi khi lấy điểm của người dùng");
     }
   };
 
@@ -94,7 +115,10 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     getProvinces();
-    if (token) getCart();
+    if (token) {
+      getCart();
+      getPoint();
+    }
   }, []);
 
   const handleChangeProvince = (e) => {
@@ -133,6 +157,7 @@ export default function CheckoutPage() {
     });
   };
 
+  // Create order
   const handleSubmitOrder = async () => {
     const { province, district, ward, street } = address;
 
@@ -159,7 +184,7 @@ export default function CheckoutPage() {
       const response = await fetch(
         `http://localhost:8080/api/orders/place/${userId}?address=${encodeURIComponent(
           fullAddress
-        )}`,
+        )}&usePoints=${usePoint}`,
         {
           method: "POST",
           headers: {
@@ -181,6 +206,8 @@ export default function CheckoutPage() {
       console.error("Xảy ra lỗi khi tạo đơn hàng: ", error);
     }
   };
+
+  console.log(pointData);
 
   return (
     <Container maxWidth="lg">
@@ -444,6 +471,20 @@ export default function CheckoutPage() {
               justifyContent: "space-between",
             }}
           >
+            {pointData > 0 && (
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={usePoint}
+                    onChange={(e) => setUsePoint(e.target.checked)}
+                  />
+                }
+                label={`Bạn có muốn sử dụng ${
+                  pointData?.point || 0
+                } điểm tích luỹ không?`}
+              />
+            )}
+
             <Typography variant="h6">
               <strong>Tổng cộng:</strong>{" "}
               <span style={{ color: "#1976d2" }}>

@@ -123,7 +123,7 @@ const AddProduct = ({ open, handleClose }) => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(productData),
+        body: JSON.stringify({ ...productData, status: true }),
       });
 
       if (response.ok) {
