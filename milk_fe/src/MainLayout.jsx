@@ -47,6 +47,7 @@ import UserAccount from "./page/ProfilePage/UserAccount";
 import UserOrder from "./page/ProfilePage/OrderUser";
 import UserFeedback from "./page/ProfilePage/UserFeedback";
 import UserOrderItem from "./page/ProfilePage/OrderItemUser";
+import ContactPage from "./page/ContactPage/ContactPage";
 
 function MainLayout() {
   const location = useLocation();
@@ -117,6 +118,7 @@ function MainLayout() {
             <Route path="/cart" element={<CartPage />} />
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/intro-page" element={<IntroPage />} />
+            <Route path="/contactpage" element={<ContactPage />} />
             <Route path="/profile-user" element={<UserInformation />}>
               <Route index element={<Navigate to="useraccount" replace />} />
               <Route path="useraccount" element={<UserAccount />} />

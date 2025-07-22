@@ -6,6 +6,7 @@ export default function FeedbackSection() {
   const [feedbacks, setFeedbacks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pageIndex, setPageIndex] = useState(0);
+  const [expandedItems, setExpandedItems] = useState([]); // 👈 thêm state
 
   const visibleCount = 3;
   const maxIndex = Math.max(0, feedbacks.length - visibleCount);
@@ -44,15 +45,18 @@ export default function FeedbackSection() {
     setPageIndex((prev) => (prev === maxIndex ? 0 : prev + 1));
   };
 
+  const toggleExpand = (index) => {
+    setExpandedItems((prev) =>
+      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
+    );
+  };
+
   if (loading) {
     return (
       <div className="py-10 text-center text-gray-500">
         Đang tải phản hồi...
       </div>
     );
-  }
-  if (feedbacks.length === 0) {
-    return null;
   }
   if (feedbacks.length === 0) {
     return (
@@ -90,32 +94,54 @@ export default function FeedbackSection() {
               }%)`,
             }}
           >
-            {feedbacks.map((fb, idx) => (
-              <div
-                key={idx}
-                className="w-[320px] max-w-[320px] flex-shrink-0 px-3"
-              >
-                <div className="bg-white rounded-xl shadow-md p-6 flex flex-col justify-between h-full border border-gray-100 hover:shadow-lg transition-shadow duration-300">
-                  <p className="text-center text-gray-800 text-lg font-medium mb-6 italic">
-                    “{fb.comment}”
-                  </p>
+            {feedbacks.map((fb, idx) => {
+              const wordLimit = 6;
+              const words = fb.comment.split(" ");
+              const isLong = words.length > wordLimit;
+              const isExpanded = expandedItems.includes(idx);
+              const displayComment = isExpanded
+                ? fb.comment
+                : words.slice(0, wordLimit).join(" ");
 
-                  <div className="flex items-center">
-                    <div className="w-2/3 pl-3">
-                      <p className="text-sm font-semibold text-black truncate">
-                        Khách hàng {fb.fullName}
+              return (
+                <div
+                  key={idx}
+                  className="w-[320px] max-w-[320px] flex-shrink-0 px-3"
+                >
+                  <div className="bg-white rounded-xl shadow-md p-6 flex flex-col justify-between h-full border border-gray-100 hover:shadow-lg transition-shadow duration-300 min-h-[240px]">
+                    <div className="flex-1 flex items-center justify-center min-h-[100px]">
+                      <p className="text-center text-gray-800 text-lg font-medium italic">
+                        “{displayComment}
+                        {isLong && !isExpanded && "..."}”
                       </p>
-                      <p className="text-sm text-gray-500 truncate">
-                        {fb.productName || "Sản phẩm không xác định"}
-                      </p>
-                      <p className="text-xs text-gray-400">
-                        {formatDate(fb.createdAt)}
-                      </p>
+                    </div>
+
+                    {isLong && (
+                      <button
+                        onClick={() => toggleExpand(idx)}
+                        className="text-sm text-pink-500 underline self-center mt-2"
+                      >
+                        {isExpanded ? "Ẩn bớt" : "Xem thêm"}
+                      </button>
+                    )}
+
+                    <div className="flex items-center mt-4">
+                      <div className="flex-1 pl-3">
+                        <p className="text-sm font-semibold text-black break-words leading-snug">
+                          Khách hàng {fb.fullName}
+                        </p>
+                        <p className="text-sm text-gray-500 truncate">
+                          {fb.productName || "Sản phẩm không xác định"}
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          {formatDate(fb.createdAt)}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 

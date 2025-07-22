@@ -13,6 +13,10 @@ import {
   Tooltip,
   Typography,
   Rating,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import { Table } from "@mui/joy";
 import { useEffect, useState } from "react";
@@ -29,6 +33,19 @@ const UserFeedback = () => {
   const [feedbacks, setFeedbacks] = useState([]);
   const [page, setPage] = useState(1);
   const itemsPerPage = 6;
+
+  const [selectedComment, setSelectedComment] = useState("");
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const handleOpenDialog = (comment) => {
+    setSelectedComment(comment);
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setSelectedComment("");
+    setOpenDialog(false);
+  };
 
   const startIndex = (page - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -123,9 +140,13 @@ const UserFeedback = () => {
                         overflow: "hidden",
                         whiteSpace: "nowrap",
                         textOverflow: "ellipsis",
+                        cursor: "pointer",
+                        color: "#1976d2",
+                        textDecoration: "underline",
                       }}
+                      onClick={() => handleOpenDialog(fb.comment)}
                     >
-                      <Tooltip title={fb.comment} arrow>
+                      <Tooltip title="Nhấn để xem toàn bộ bình luận" arrow>
                         <span>{fb.comment}</span>
                       </Tooltip>
                     </TableCell>
@@ -172,6 +193,19 @@ const UserFeedback = () => {
           </Table>
         </TableContainer>
       </Paper>
+
+      {/* Dialog hiển thị bình luận chi tiết */}
+      <Dialog open={openDialog} onClose={handleCloseDialog} maxWidth="sm" fullWidth>
+        <DialogTitle>Bình luận chi tiết</DialogTitle>
+        <DialogContent>
+          <Typography variant="body1" sx={{ whiteSpace: "pre-line" }}>
+            {selectedComment}
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>Đóng</Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

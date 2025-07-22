@@ -417,7 +417,7 @@ export default function Header() {
           </div>
 
           <div className="flex items-center space-x-1">
-            <Link to="/">
+            <Link to="/contactpage" className="text-sm font-medium hover:text-pink-600">
               <span className="text-base font-semibold">LIÊN HỆ</span>
             </Link>
           </div>
