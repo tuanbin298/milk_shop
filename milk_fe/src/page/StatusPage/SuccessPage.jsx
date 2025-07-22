@@ -75,7 +75,10 @@ const SuccessPage = () => {
 
           <Button
             variant="outlined"
-            onClick={handleViewOrders}
+            onClick={() => {
+              navigate("/profile-user/userorder");
+              handleViewOrders;
+            }}
             sx={{
               fontWeight: 600,
               px: 3,
@@ -90,7 +93,7 @@ const SuccessPage = () => {
               },
             }}
           >
-            Theo dõi/Đánh giá đơn hàng
+            Theo dõi đơn hàng
           </Button>
         </Stack>
       </Paper>
