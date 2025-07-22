@@ -10,6 +10,7 @@ import {
   TableHead,
   TableRow,
   TextField,
+  Rating,
   Typography,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -32,6 +33,7 @@ import { Image } from "antd";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import PaidIcon from "@mui/icons-material/Paid";
 
+
 const UserOrderItem = () => {
   const { id } = useParams();
   const token = localStorage.getItem("sessionToken");
@@ -45,7 +47,7 @@ const UserOrderItem = () => {
   const [comment, setComment] = useState({
     userId: userId,
     productId: "",
-    rating: 5,
+    rating: "",
     comment: "",
   });
   const [errors, setErrors] = useState({});
@@ -351,6 +353,20 @@ const UserOrderItem = () => {
             Đánh giá sản phẩm
           </Typography>
           <Typography mb={1}>{selectedProduct?.productName}</Typography>
+
+          {/* Đánh giá sao */}
+          <Box display="flex" alignItems="center" mb={2}>
+            <Typography mr={2}>Chất lượng:</Typography>
+            <Rating
+              name="rating"
+              value={comment.rating || 0}
+              onChange={(event, newValue) =>
+                handleChange({ target: { name: "rating", value: newValue } })
+              }
+            />
+          </Box>
+
+          {/* Nhận xét bằng văn bản */}
           <TextField
             fullWidth
             multiline
@@ -358,18 +374,20 @@ const UserOrderItem = () => {
             label="Nhận xét"
             name="comment"
             value={comment.comment}
-            error={errors?.comment}
+            error={!!errors?.comment}
             helperText={errors?.comment}
             onChange={handleChange}
-            sx={{ my: 2 }}
+            sx={{ my: 1 }}
           />
 
+          {/* Nút hành động */}
           <Box display="flex" justifyContent="flex-end" gap={2} mt={2}>
             <Button
               variant="outlined"
               color="primary"
               onClick={() => {
-                setOpenFeedbackModal(false), setErrors();
+                setOpenFeedbackModal(false);
+                setErrors({});
               }}
               sx={{
                 borderRadius: 2,
@@ -379,7 +397,7 @@ const UserOrderItem = () => {
             >
               HỦY
             </Button>
-            <Button variant="contained" onClick={() => handleSubmitFeedback()}>
+            <Button variant="contained" onClick={handleSubmitFeedback}>
               Gửi đánh giá
             </Button>
           </Box>
