@@ -14,8 +14,9 @@ import {
   Paper,
   SvgIcon,
   Tooltip,
+  Rating,
 } from "@mui/material";
-
+import CloseIcon from "@mui/icons-material/Close";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import NotesOutlinedIcon from "@mui/icons-material/NotesOutlined";
@@ -26,7 +27,7 @@ import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
 import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { toast } from "react-toastify";
-
+import StarRateIcon from "@mui/icons-material/StarRate";
 import { Sheet, Table } from "@mui/joy";
 import { useEffect, useState } from "react";
 import BackToDashboardButton from "../../../utils/backToDashboardBtn";
@@ -147,6 +148,7 @@ const FeedbackTable = () => {
                   <TableCell>Nội dung</TableCell>
                   <TableCell>Ngày phản hồi</TableCell>
                   <TableCell>Phê duyệt</TableCell>
+                  <TableCell>Đánh giá</TableCell>
                   <TableCell>Người dùng</TableCell>
                   <TableCell>Sản phẩm</TableCell>
                   <TableCell>Hành động</TableCell>
@@ -168,6 +170,9 @@ const FeedbackTable = () => {
                         ) : (
                           <CancelIcon sx={{ color: "red" }} />
                         )}
+                      </TableCell>
+                      <TableCell>
+                        <Rating value={feedback.rating} readOnly />
                       </TableCell>
                       <TableCell>{feedback.fullName || "—"}</TableCell>
                       <TableCell
@@ -223,7 +228,7 @@ const FeedbackTable = () => {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={6} align="center">
+                    <TableCell colSpan={7} align="center">
                       Không có phản hồi nào
                     </TableCell>
                   </TableRow>
@@ -232,7 +237,7 @@ const FeedbackTable = () => {
 
               <TableFooter>
                 <TableRow>
-                  <TableCell colSpan={6}>
+                  <TableCell colSpan={7}>
                     <Box
                       display="flex"
                       justifyContent="space-between"
@@ -269,43 +274,45 @@ const FeedbackTable = () => {
             transform: "translate(-50%, -50%)",
             width: 480,
             bgcolor: "background.paper",
-            borderRadius: 2,
-            boxShadow: 24,
+            borderRadius: 3,
+            boxShadow: "0 8px 24px rgba(0, 0, 0, 0.2)",
             overflow: "hidden",
+            animation: "fadeIn 0.3s ease-in-out",
           }}
         >
           {/* Header */}
           <Box
             sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              bgcolor: "#e3f2fd",
+              background: "linear-gradient(to right, #42a5f5, #1976d2)",
+              color: "white",
               px: 3,
               py: 2,
-              borderBottom: "1px solid #ddd",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              borderBottom: "1px solid #ccc",
             }}
           >
-            <Typography fontWeight="bold" color="text.primary">
+            <Typography variant="h6" fontWeight={600}>
               Chi tiết phản hồi
             </Typography>
+
             <Button
               onClick={() => setOpenDetailModal(false)}
+              variant="text"
               sx={{
-                minWidth: 0,
-                px: 2,
-                py: 0.5,
-                border: "1px solid #f44336",
                 color: "#f44336",
-                borderRadius: 1,
+                border: "2px solid #f44336",
+                backgroundColor: "#ffffff",
                 textTransform: "none",
-                fontWeight: 600,
+                borderRadius: 2,
                 "&:hover": {
                   backgroundColor: "#f44336",
-                  color: "#fff",
+                  color: "#ffffff",
                 },
               }}
             >
+              <CloseIcon />
               ĐÓNG
             </Button>
           </Box>
@@ -313,7 +320,7 @@ const FeedbackTable = () => {
           {/* Nội dung */}
           <Box px={3} py={3} display="flex" flexDirection="column" gap={2}>
             <Box display="flex" gap={2} alignItems="center">
-              <SvgIcon color="action">
+              <SvgIcon sx={{ color: "#42a5f5" }}>
                 <NotesOutlinedIcon />
               </SvgIcon>
               <Typography color="text.secondary" width={120}>
@@ -323,7 +330,7 @@ const FeedbackTable = () => {
             </Box>
 
             <Box display="flex" gap={2} alignItems="center">
-              <SvgIcon color="action">
+              <SvgIcon sx={{ color: "#7e57c2" }}>
                 <AccessTimeOutlinedIcon />
               </SvgIcon>
               <Typography color="text.secondary" width={120}>
@@ -339,7 +346,7 @@ const FeedbackTable = () => {
             </Box>
 
             <Box display="flex" gap={2} alignItems="center">
-              <SvgIcon color="action">
+              <SvgIcon sx={{ color: "#66bb6a" }}>
                 <CheckCircleOutlineIcon />
               </SvgIcon>
               <Typography color="text.secondary" width={120}>
@@ -351,9 +358,25 @@ const FeedbackTable = () => {
             </Box>
 
             <Box display="flex" gap={2} alignItems="center">
-              <SvgIcon color="action">
+              <SvgIcon sx={{ color: "#fbc02d" }}>
+                <StarRateIcon />
+              </SvgIcon>
+              <Typography color="text.secondary" width={120}>
+                Đánh giá
+              </Typography>
+              <Rating
+                name="read-only-rating"
+                value={selectedFeedback?.rating || 0}
+                readOnly
+                precision={0.5}
+              />
+            </Box>
+
+            <Box display="flex" gap={2} alignItems="center">
+              <SvgIcon sx={{ color: "#29b6f6" }}>
                 <PersonOutlineIcon />
               </SvgIcon>
+
               <Typography color="text.secondary" width={120}>
                 Người dùng
               </Typography>
@@ -361,7 +384,7 @@ const FeedbackTable = () => {
             </Box>
 
             <Box display="flex" gap={2} alignItems="center">
-              <SvgIcon color="action">
+              <SvgIcon sx={{ color: "#ef5350" }}>
                 <Inventory2OutlinedIcon />
               </SvgIcon>
               <Typography color="text.secondary" width={120}>

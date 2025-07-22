@@ -9,6 +9,7 @@ import {
   TableFooter,
   TableHead,
   TableRow,
+  TextField,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -21,7 +22,19 @@ import { formatMoney } from "../../../utils/formatMoney";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import PaidIcon from "@mui/icons-material/Paid";
 import { useNavigate } from "react-router-dom";
+import InventoryIcon from "@mui/icons-material/Inventory";
+
+const orderStatus = [
+  { value: "CANCELED", label: "Huỷ đơn hàng" },
+  { value: "PENDING", label: "Chờ thanh toán" },
+  { value: "PAID", label: "Đã thanh toán" },
+  { value: "PROCESSING", label: "Đang xử lý" },
+  { value: "PACKAGING", label: "Đang đóng gói" },
+  { value: "COMPLETED", label: "Đã hoàn thành" },
+];
 
 const OrderTable = () => {
   const token = localStorage.getItem("sessionToken");
@@ -30,6 +43,16 @@ const OrderTable = () => {
 
   // State
   const [ordersData, setOrdersData] = useState([]);
+  const [filterStatus, setFilterStatus] = useState("");
+
+  // Filter order status
+  const filterOrder = ordersData.filter((order) => {
+    const matchesStatus = filterStatus
+      ? order.status.toLowerCase() === filterStatus.toLowerCase()
+      : true;
+
+    return matchesStatus;
+  });
 
   // Pagination configuration
   const [page, setPage] = useState(1); //Current page
@@ -39,7 +62,7 @@ const OrderTable = () => {
   const startIndex = (page - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
 
-  const paginatedItems = ordersData.slice(startIndex, endIndex) || [];
+  const paginatedItems = filterOrder.slice(startIndex, endIndex) || [];
 
   // Handle page change
   const handlePageChange = (e, value) => setPage(value);
@@ -69,6 +92,11 @@ const OrderTable = () => {
   // Call API when load and page
   useEffect(() => {
     getOrdersList();
+
+    window.addEventListener("order-status-updated", getOrdersList);
+    return () => {
+      window.removeEventListener("order-status-updated", getOrdersList);
+    };
   }, []);
 
   // console.log(ordersData);
@@ -94,10 +122,45 @@ const OrderTable = () => {
           mb: 5,
         }}
       >
-        {/* Title */}
-        <Typography variant="h5" fontWeight={700} color="primary" px={4} mb={4}>
-          Danh sách đơn hàng
-        </Typography>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginTop: "30px",
+            mb: 2,
+            mt: 1,
+          }}
+        >
+          {/* Title */}
+          <Typography
+            variant="h5"
+            fontWeight={700}
+            color="primary"
+            px={4}
+            mb={4}
+          >
+            Danh sách đơn hàng
+          </Typography>
+
+          <TextField
+            select
+            size="small"
+            value={filterStatus}
+            onChange={(e) => {
+              setFilterStatus(e.target.value);
+              setPage(1);
+            }}
+            SelectProps={{ native: true }}
+          >
+            <option value="">Tất cả đơn hàng</option>
+            {orderStatus?.map((status) => (
+              <option key={status.value} value={status.value}>
+                {status.label}
+              </option>
+            ))}
+          </TextField>
+        </Box>
 
         <TableContainer
           component={Paper}
@@ -131,7 +194,7 @@ const OrderTable = () => {
 
             {/* Body */}
             <TableBody>
-              {paginatedItems &&
+              {paginatedItems.length > 0 ? (
                 paginatedItems?.map((order) => (
                   <Tooltip title="Xem chi tiết đơn hàng">
                     <TableRow
@@ -178,9 +241,15 @@ const OrderTable = () => {
                         <Chip
                           icon={
                             order?.status === "PAID" ? (
-                              <CheckCircleIcon />
+                              <PaidIcon />
                             ) : order?.status === "PENDING" ? (
                               <AccessTimeIcon />
+                            ) : order?.status === "PACKAGING" ? (
+                              <InventoryIcon />
+                            ) : order?.status === "PROCESSING" ? (
+                              <LocalShippingIcon />
+                            ) : order?.status === "COMPLETED" ? (
+                              <CheckCircleIcon />
                             ) : (
                               <CancelIcon />
                             )
@@ -190,13 +259,25 @@ const OrderTable = () => {
                               ? "Đã thanh toán"
                               : order?.status === "PENDING"
                               ? "Chờ thanh toán"
-                              : "Hủy đơn hàng"
+                              : order?.status === "PACKAGING"
+                              ? "Đang đóng gói"
+                              : order?.status === "PROCESSING"
+                              ? "Đang vận chuyển"
+                              : order?.status === "COMPLETED"
+                              ? "Hoàn thành đơn hàng"
+                              : "Huỷ đơn hàng"
                           }
                           color={
                             order?.status === "PAID"
                               ? "success"
                               : order?.status === "PENDING"
                               ? "warning"
+                              : order?.status === "PACKAGING"
+                              ? "primary"
+                              : order?.status === "PROCESSING"
+                              ? "info"
+                              : order?.status === "COMPLETED"
+                              ? "success"
                               : "error"
                           }
                           variant="filled"
@@ -205,7 +286,16 @@ const OrderTable = () => {
                       </TableCell>
                     </TableRow>
                   </Tooltip>
-                ))}
+                ))
+              ) : (
+                <>
+                  <TableRow>
+                    <TableCell colSpan={7} align="center">
+                      Không tìm thấy đơn hàng nào
+                    </TableCell>
+                  </TableRow>
+                </>
+              )}
             </TableBody>
 
             {/* Footer */}

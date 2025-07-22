@@ -27,7 +27,7 @@ const BabyMilkPage = () => {
           const filtered = data.filter(
             (product) =>
               product.categoryName &&
-              product.categoryName.toLowerCase().includes("baby")
+              product.categoryName.toLowerCase().includes("bé")
           );
           setProducts(filtered);
         } else {

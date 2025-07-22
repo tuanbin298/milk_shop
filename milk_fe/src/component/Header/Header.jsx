@@ -389,7 +389,7 @@ export default function Header() {
                 <Link
                   key={cat.id}
                   to={`/category/${cat.id}`}
-                  className="block px-4 py-2 text-gray-700 hover:bg-pink-100"
+                  className="block w-full px-4 py-2 text-gray-700 hover:bg-pink-100"
                 >
                   {cat.name}
                 </Link>
@@ -408,7 +408,7 @@ export default function Header() {
                 <Link
                   key={cat.id}
                   to={`/category/${cat.id}`}
-                  className="block px-4 py-2 text-gray-700 hover:bg-pink-100"
+                  className="block w-full px-4 py-2 text-gray-700 hover:bg-pink-100"
                 >
                   {cat.name}
                 </Link>

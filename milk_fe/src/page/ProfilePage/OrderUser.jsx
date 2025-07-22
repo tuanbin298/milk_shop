@@ -23,6 +23,9 @@ import { formatMoney } from "../../utils/formatMoney";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import InventoryIcon from "@mui/icons-material/Inventory";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import PaidIcon from "@mui/icons-material/Paid";
 
 const UserOrder = () => {
   const token = localStorage.getItem("sessionToken");
@@ -175,9 +178,15 @@ const UserOrder = () => {
                         <Chip
                           icon={
                             order?.status === "PAID" ? (
-                              <CheckCircleIcon />
+                              <PaidIcon />
                             ) : order?.status === "PENDING" ? (
                               <AccessTimeIcon />
+                            ) : order?.status === "PACKAGING" ? (
+                              <InventoryIcon />
+                            ) : order?.status === "PROCESSING" ? (
+                              <LocalShippingIcon />
+                            ) : order?.status === "COMPLETED" ? (
+                              <CheckCircleIcon />
                             ) : (
                               <CancelIcon />
                             )
@@ -187,13 +196,25 @@ const UserOrder = () => {
                               ? "Đã thanh toán"
                               : order?.status === "PENDING"
                               ? "Chờ thanh toán"
-                              : "Hủy đơn hàng"
+                              : order?.status === "PACKAGING"
+                              ? "Đang đóng gói"
+                              : order?.status === "PROCESSING"
+                              ? "Đang vận chuyển"
+                              : order?.status === "COMPLETED"
+                              ? "Hoàn thành đơn hàng"
+                              : "Huỷ đơn hàng"
                           }
                           color={
                             order?.status === "PAID"
                               ? "success"
                               : order?.status === "PENDING"
                               ? "warning"
+                              : order?.status === "PACKAGING"
+                              ? "primary"
+                              : order?.status === "PROCESSING"
+                              ? "info"
+                              : order?.status === "COMPLETED"
+                              ? "success"
                               : "error"
                           }
                           variant="filled"

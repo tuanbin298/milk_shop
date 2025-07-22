@@ -49,7 +49,6 @@ const IntroPage = () => {
         <ul className="list-disc list-inside text-gray-700 mb-4 space-y-2">
           <li>Sản phẩm chính hãng 100%</li>
           <li>Giao hàng toàn quốc nhanh chóng</li>
-          <li>Tư vấn dinh dưỡng tận tâm</li>
           <li>Giá cả cạnh tranh, nhiều ưu đãi</li>
         </ul>
         <p className="text-gray-700 leading-relaxed">

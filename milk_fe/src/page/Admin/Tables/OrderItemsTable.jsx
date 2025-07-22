@@ -2,7 +2,9 @@ import {
   Box,
   Button,
   Chip,
+  MenuItem,
   Paper,
+  Select,
   TableBody,
   TableCell,
   TableContainer,
@@ -19,6 +21,8 @@ import LocationOnIcon from "@mui/icons-material/LocationOn";
 import PaymentsIcon from "@mui/icons-material/Payments";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import PaidIcon from "@mui/icons-material/Paid";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -30,6 +34,45 @@ import { Image } from "antd";
 import { useDispatch } from "react-redux";
 import { setProductSelected } from "../../../state/filter/filterSlice";
 
+const renderStatusChip = (status) => {
+  switch (status) {
+    case "PAID":
+      return <Chip icon={<PaidIcon />} label="Đã thanh toán" color="success" />;
+    case "PENDING":
+      return (
+        <Chip
+          icon={<AccessTimeIcon />}
+          label="Chờ thanh toán"
+          color="warning"
+        />
+      );
+    case "PACKAGING":
+      return (
+        <Chip icon={<InventoryIcon />} label="Đang đóng gói" color="info" />
+      );
+    case "PROCESSING":
+      return (
+        <Chip
+          icon={<LocalShippingIcon />}
+          label="Đang vận chuyển"
+          color="primary"
+        />
+      );
+    case "COMPLETED":
+      return (
+        <Chip
+          icon={<CheckCircleIcon />}
+          label="Hoàn thành đơn hàng"
+          color="success"
+        />
+      );
+    case "CANCELED":
+      return <Chip icon={<CancelIcon />} label="Huỷ đơn hàng" color="error" />;
+    default:
+      return <Chip label="Không xác định" color="default" />;
+  }
+};
+
 const OrderItemTable = () => {
   const { id } = useParams();
   const token = localStorage.getItem("sessionToken");
@@ -38,6 +81,7 @@ const OrderItemTable = () => {
 
   // State
   const [orderData, setOrderData] = useState(null);
+  const [newStatus, setNewStatus] = useState("");
 
   // Call api
   const getOrder = async () => {
@@ -72,26 +116,46 @@ const OrderItemTable = () => {
 
   // console.log(orderData);
 
-  const renderStatusChip = (status) => {
-    switch (status) {
+  // Logic handle order status to render status into dropdown
+  const getNextStatus = (currentStatus) => {
+    switch (currentStatus) {
       case "PAID":
-        return (
-          <Chip
-            icon={<CheckCircleIcon />}
-            label="Đã thanh toán"
-            color="success"
-          />
-        );
-      case "PENDING":
-        return (
-          <Chip
-            icon={<AccessTimeIcon />}
-            label="Chờ thanh toán"
-            color="warning"
-          />
-        );
+        return [{ value: "PACKAGING", label: "Đang đóng gói" }];
+      case "PACKAGING":
+        return [{ value: "PROCESSING", label: "Đang vận chuyển" }];
+      case "PROCESSING":
+        return [{ value: "COMPLETED", label: "Đã hoàn thành" }];
       default:
-        return <Chip icon={<CancelIcon />} label="Đã hủy" color="error" />;
+        return [];
+    }
+  };
+
+  const orderStatusOptions = getNextStatus(orderData?.status);
+
+  // Handle submit change status
+  const onUpdateOrder = async (newStatus) => {
+    try {
+      const response = await fetch(
+        `http://localhost:8080/api/orders/${id}/status?status=${newStatus}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            accept: "*/*",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        getOrder();
+        window.dispatchEvent(new Event("order-status-updated"));
+        toast.success("Cập nhật trạng thái thành công!");
+      } else {
+        toast.error("Cập nhật trạng thái thất bại");
+      }
+    } catch (err) {
+      toast.error("Cập nhật trạng thái thất bại");
     }
   };
 
@@ -165,6 +229,37 @@ const OrderItemTable = () => {
             <InventoryIcon />
             Trạng thái: {renderStatusChip(orderData?.status)}
           </Box>
+
+          {/* Dropdown manage status */}
+          {orderStatusOptions?.length > 0 && (
+            <Box mt={1} display="flex" alignItems="center" gap={2}>
+              <Typography variant="body2" fontWeight={500}>
+                Cập nhật trạng thái:
+              </Typography>
+              <Select
+                size="small"
+                value={newStatus}
+                onChange={(e) => setNewStatus(e.target.value)}
+                sx={{ minWidth: 180 }}
+              >
+                {orderStatusOptions.map((option) => (
+                  <MenuItem key={option.value} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </Select>
+
+              <Button
+                variant="contained"
+                color="primary"
+                size="small"
+                disabled={!newStatus}
+                onClick={() => onUpdateOrder(newStatus)}
+              >
+                Xác nhận
+              </Button>
+            </Box>
+          )}
         </Box>
       </Paper>
 

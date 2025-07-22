@@ -153,10 +153,20 @@ const UpdateCategory = ({ open, category, handleClose, refreshCategories }) => {
 
           <Button
             onClick={handleCloseModal}
-            variant="outlined"
-            color="error"
-            startIcon={<CloseIcon />}
+            variant="text"
+            sx={{
+              color: "#f44336",
+              border: "2px solid #f44336",
+              backgroundColor: "#ffffff",
+              textTransform: "none",
+              borderRadius: 2,
+              "&:hover": {
+                backgroundColor: "#f44336",
+                color: "#ffffff",
+              },
+            }}
           >
+            <CloseIcon />
             Đóng
           </Button>
         </Box>

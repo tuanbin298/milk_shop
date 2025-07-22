@@ -28,7 +28,7 @@ const MomMilkPage = () => {
           const filtered = data.filter(
             (product) =>
               product.categoryName &&
-              product.categoryName.toLowerCase().includes("women")
+              product.categoryName.toLowerCase().includes("mẹ")
           );
           setProducts(filtered);
         } else {

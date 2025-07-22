@@ -69,6 +69,7 @@ const UserAccount = () => {
 
     setOriginalUser({
       fullName: fullName || "",
+      username: username || "",
       phone: phone || "",
     });
   }, [navigate, token]);
@@ -193,8 +194,9 @@ const UserAccount = () => {
               fullWidth
               label="Email"
               name="username"
-              value={userInfo.username}
+              value={userInfo.username ?? ""}
               disabled
+              InputLabelProps={{ shrink: true }}
             />
           </Grid>
 
@@ -238,8 +240,6 @@ const UserAccount = () => {
                 onClick={() => {
                   setUserInfo({
                     ...originalUser,
-                    username: userInfo.username,
-                    address: "",
                   });
                   setIsEditing(false);
                 }}

@@ -29,6 +29,8 @@ import { formatMoney } from "../../utils/formatMoney";
 import PersonIcon from "@mui/icons-material/Person";
 import { Table } from "@mui/joy";
 import { Image } from "antd";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import PaidIcon from "@mui/icons-material/Paid";
 
 const UserOrderItem = () => {
   const { id } = useParams();
@@ -125,11 +127,7 @@ const UserOrderItem = () => {
     switch (status) {
       case "PAID":
         return (
-          <Chip
-            icon={<CheckCircleIcon />}
-            label="Đã thanh toán"
-            color="success"
-          />
+          <Chip icon={<PaidIcon />} label="Đã thanh toán" color="success" />
         );
       case "PENDING":
         return (
@@ -139,13 +137,38 @@ const UserOrderItem = () => {
             color="warning"
           />
         );
+      case "PACKAGING":
+        return (
+          <Chip icon={<InventoryIcon />} label="Đang đóng gói" color="info" />
+        );
+      case "PROCESSING":
+        return (
+          <Chip
+            icon={<LocalShippingIcon />}
+            label="Đang vận chuyển"
+            color="primary"
+          />
+        );
+      case "COMPLETED":
+        return (
+          <Chip
+            icon={<CheckCircleIcon />}
+            label="Hoàn thành đơn hàng"
+            color="success"
+          />
+        );
+      case "CANCELED":
+        return (
+          <Chip icon={<CancelIcon />} label="Huỷ đơn hàng" color="error" />
+        );
       default:
-        return <Chip icon={<CancelIcon />} label="Đã hủy" color="error" />;
+        return <Chip label="Không xác định" color="default" />;
     }
   };
 
   //   console.log(orderData);
-  console.log(selectedProduct);
+  // console.log(selectedProduct);
+
   return (
     <>
       <Button
@@ -307,10 +330,7 @@ const UserOrderItem = () => {
       </Box>
 
       {/* Modal feedback*/}
-      <Modal
-        open={openFeedbackModal}
-        // onClose={() => setOpenDeleteModal(false)}
-      >
+      <Modal open={openFeedbackModal}>
         <Box
           sx={{
             position: "absolute",

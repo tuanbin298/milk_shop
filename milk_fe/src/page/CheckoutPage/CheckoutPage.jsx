@@ -207,7 +207,7 @@ export default function CheckoutPage() {
     }
   };
 
-  console.log(pointData);
+  // console.log(pointData);
 
   return (
     <Container maxWidth="lg">
@@ -480,7 +480,7 @@ export default function CheckoutPage() {
                   />
                 }
                 label={`Bạn có muốn sử dụng ${
-                  pointData?.point || 0
+                  pointData || 0
                 } điểm tích luỹ không?`}
               />
             )}
