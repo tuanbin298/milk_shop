@@ -215,8 +215,9 @@ const UserAccount = () => {
             <TextField
               fullWidth
               label="Điểm tích luỹ"
-              value={pointData}
+              value={pointData ?? ""}
               disabled
+              InputLabelProps={{ shrink: true }}
             />
           </Grid>
         </Grid>

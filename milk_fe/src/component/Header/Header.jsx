@@ -349,7 +349,10 @@ export default function Header() {
           {/* Order */}
           <div className="flex items-center text-[20px] ">
             <button>
-              <Link to="/" className="flex flex-col items-center">
+              <Link
+                to="/profile-user/userorder"
+                className="flex flex-col items-center"
+              >
                 <img
                   src={imageOrder}
                   alt="Giỏ hàng"
