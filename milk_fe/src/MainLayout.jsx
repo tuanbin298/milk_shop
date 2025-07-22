@@ -45,6 +45,7 @@ import OrderItemTable from "./page/Admin/Tables/OrderItemsTable";
 import UserInformation from "./page/ProfilePage/UserDashboard";
 import UserAccount from "./page/ProfilePage/UserAccount";
 import UserOrder from "./page/ProfilePage/OrderUser";
+import UserFeedback from "./page/ProfilePage/UserFeedback";
 import UserOrderItem from "./page/ProfilePage/OrderItemUser";
 
 function MainLayout() {
@@ -120,6 +121,7 @@ function MainLayout() {
               <Route index element={<Navigate to="useraccount" replace />} />
               <Route path="useraccount" element={<UserAccount />} />
               <Route path="userorder" element={<UserOrder />} />
+              <Route path="userfeedback" element={<UserFeedback />} />
               <Route
                 path="userorder/userorderitem/:id"
                 element={<UserOrderItem />}
