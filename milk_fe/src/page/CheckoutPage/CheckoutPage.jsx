@@ -15,6 +15,7 @@ import {
   Checkbox,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { formatMoney } from "../../utils/formatMoney";
 import { Image } from "antd";
@@ -29,7 +30,7 @@ export default function CheckoutPage() {
   );
   const [email, setEmail] = useState(localStorage.getItem("username") || "");
   const [phone, setPhone] = useState(localStorage.getItem("phone") || "");
-
+  const { id: preorderId } = useParams();
   // State
   const [cartData, setCartData] = useState(null);
   const [pointData, setPointData] = useState(null);
@@ -37,7 +38,7 @@ export default function CheckoutPage() {
   const [provinces, setProvinces] = useState([]);
   const [districts, setDistricts] = useState([]);
   const [wards, setWards] = useState([]);
-
+  const [preOrderData, setPreOrderData] = useState(null);
   const [errors, setErrors] = useState({
     fullName: false,
     phone: false,
@@ -69,6 +70,25 @@ export default function CheckoutPage() {
       }
     } catch (err) {
       toast.error("Lỗi khi tải giỏ hàng");
+    }
+  };
+
+  const getPreOrderById = async () => {
+    try {
+      const res = await fetch(
+        `http://localhost:8080/api/preorders/getById/${preorderId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (res.ok) {
+        const data = await res.json();
+        setPreOrderData(data);
+      } else {
+        toast.error("Không tìm thấy đơn đặt trước");
+      }
+    } catch (err) {
+      toast.error("Lỗi khi tải đơn đặt trước");
     }
   };
 
@@ -116,7 +136,11 @@ export default function CheckoutPage() {
   useEffect(() => {
     getProvinces();
     if (token) {
-      getCart();
+      if (preorderId) {
+        getPreOrderById();
+      } else {
+        getCart();
+      }
       getPoint();
     }
   }, []);
@@ -160,7 +184,6 @@ export default function CheckoutPage() {
   // Create order
   const handleSubmitOrder = async () => {
     const { province, district, ward, street } = address;
-
     const newErrors = {
       fullName: !fullName.trim(),
       phone: !phone.trim(),
@@ -169,9 +192,7 @@ export default function CheckoutPage() {
       district: !district,
       ward: !ward,
     };
-
     setErrors(newErrors);
-
     const hasError = Object.values(newErrors).some((e) => e);
     if (hasError) {
       toast.error("Vui lòng điền đầy đủ thông tin bắt buộc");
@@ -181,23 +202,27 @@ export default function CheckoutPage() {
     const fullAddress = `${street}, ${ward}, ${district}, ${province}`;
 
     try {
-      const response = await fetch(
-        `http://localhost:8080/api/orders/place/${userId}?address=${encodeURIComponent(
-          fullAddress
-        )}&usePoints=${usePoint}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const url = preorderId
+        ? `http://localhost:8080/api/preorders/checkout/${preorderId}?address=${encodeURIComponent(
+            fullAddress
+          )}&usePoints=${usePoint}`
+        : `http://localhost:8080/api/orders/place/${userId}?address=${encodeURIComponent(
+            fullAddress
+          )}&usePoints=${usePoint}`;
+
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response?.ok) {
         const data = await response.json();
-
-        window.dispatchEvent(new Event("cart-updated"));
+        if (!preorderId) {
+          window.dispatchEvent(new Event("cart-updated"));
+        }
         navigate(`/payment/${data.id}`);
       } else {
         toast.error("Lỗi khi tiến hành thanh toán");
@@ -382,9 +407,16 @@ export default function CheckoutPage() {
                 variant="outlined"
                 color="secondary"
                 size="small"
-                onClick={() => navigate("/cart")}
+                onClick={() =>
+                  preorderId
+                    ? navigate("/profile-user/userpreorder")
+                    : navigate("/cart")
+                }
               >
-                ← Quay lại giỏ hàng
+                ←{" "}
+                {preorderId
+                  ? "Quay lại đơn hàng đặt trước"
+                  : "Quay lại giỏ hàng"}
               </Button>
 
               <Button
@@ -432,31 +464,41 @@ export default function CheckoutPage() {
             </TableHead>
 
             <TableBody>
-              {cartData?.cartItems?.map((item, index) => (
-                <TableRow
-                  key={item.id}
-                  sx={{
-                    borderBottom:
-                      index === cartData.cartItems.length - 1
-                        ? "none"
-                        : "1px solid #eee",
-                  }}
-                >
-                  <TableCell>{index + 1}</TableCell>
+              {preOrderData ? (
+                <TableRow>
+                  <TableCell>1</TableCell>
                   <TableCell>
                     <Image
-                      src={item.image}
-                      alt={item.productName}
+                      src={preOrderData.image}
+                      alt={preOrderData.productName}
                       style={{ width: 50, height: 50, objectFit: "cover" }}
                     />
                   </TableCell>
-                  <TableCell>{item.productName}</TableCell>
-                  <TableCell>{item.quantity}</TableCell>
+                  <TableCell>{preOrderData.productName}</TableCell>
+                  <TableCell>{preOrderData.quantity}</TableCell>
                   <TableCell align="right">
-                    {formatMoney(item.totalPrice)}
+                    {formatMoney(preOrderData.totalPrice)}
                   </TableCell>
                 </TableRow>
-              ))}
+              ) : (
+                cartData?.cartItems?.map((item, index) => (
+                  <TableRow key={item.id}>
+                    <TableCell>{index + 1}</TableCell>
+                    <TableCell>
+                      <Image
+                        src={item.image}
+                        alt={item.productName}
+                        style={{ width: 50, height: 50, objectFit: "cover" }}
+                      />
+                    </TableCell>
+                    <TableCell>{item.productName}</TableCell>
+                    <TableCell>{item.quantity}</TableCell>
+                    <TableCell align="right">
+                      {formatMoney(item.totalPrice)}
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
 
@@ -488,7 +530,9 @@ export default function CheckoutPage() {
             <Typography variant="h6">
               <strong>Tổng cộng:</strong>{" "}
               <span style={{ color: "#1976d2" }}>
-                {formatMoney(cartData?.totalPrice || 0)}
+                {formatMoney(
+                  preOrderData?.totalPrice || cartData?.totalPrice || 0
+                )}
               </span>
             </Typography>
           </Box>

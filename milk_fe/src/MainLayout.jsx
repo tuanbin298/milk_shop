@@ -48,6 +48,9 @@ import UserOrder from "./page/ProfilePage/OrderUser";
 import UserFeedback from "./page/ProfilePage/UserFeedback";
 import UserOrderItem from "./page/ProfilePage/OrderItemUser";
 import ContactPage from "./page/ContactPage/ContactPage";
+import PreOrderTable from "./page/Admin/Tables/PreorderTable";
+import UserPreOrder from "./page/ProfilePage/UserPreOrder";
+import UserPreorderDetail from "./page/ProfilePage/UserPreOrderDetail";
 
 function MainLayout() {
   const location = useLocation();
@@ -99,6 +102,7 @@ function MainLayout() {
                 <Route path="add-category" element={<AddCategory />} />
                 <Route path="add-product" element={<AddProduct />} />
                 <Route path="orderlist" element={<OrderTable />} />
+                <Route path="preorderlist" element={<PreOrderTable />} />
                 <Route
                   path="orderlist/orderitem/:id"
                   element={<OrderItemTable />}
@@ -124,9 +128,14 @@ function MainLayout() {
               <Route path="useraccount" element={<UserAccount />} />
               <Route path="userorder" element={<UserOrder />} />
               <Route path="userfeedback" element={<UserFeedback />} />
+              <Route path="userpreorder" element={<UserPreOrder />} />
               <Route
                 path="userorder/userorderitem/:id"
                 element={<UserOrderItem />}
+              />
+              <Route
+                path="userpreorder/userpreorderdetail/:id"
+                element={<UserPreorderDetail />}
               />
             </Route>
             <Route path="/branddetail/:name" element={<BrandList />} />
@@ -136,6 +145,7 @@ function MainLayout() {
             <Route path="/product-list" element={<AllMilkPage />} />
             <Route path="/all-article" element={<AllArticle />} />
             <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/checkout/:id" element={<CheckoutPage />} />
             <Route
               path="/category/:categoryId"
               element={<CategoryProductPage />}

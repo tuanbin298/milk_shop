@@ -1,8 +1,11 @@
+import { useState } from "react";
 import { formatMoney } from "../../utils/formatMoney";
 import toast, { Toaster } from "react-hot-toast";
 
 const ProductDetailInfo = ({ product }) => {
   const token = localStorage.getItem("sessionToken");
+  const [isPreOrderOpen, setIsPreOrderOpen] = useState(false);
+  const [preOrderQty, setPreOrderQty] = useState(1);
 
   const handleAddToCart = async (e) => {
     try {
@@ -14,8 +17,7 @@ const ProductDetailInfo = ({ product }) => {
         },
         body: JSON.stringify({
           productId: product.id,
-          quantity: 1,
-          note: "",
+          quantity: preOrderQty,
         }),
       });
 
@@ -42,8 +44,32 @@ const ProductDetailInfo = ({ product }) => {
     }
   };
 
-  const handlePreOrder = (qty) => {
-    console.log("Đặt trước:", qty);
+  const handlePreOrderSubmit = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/preorders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          productId: product.id,
+          quantity: preOrderQty,
+        }),
+      });
+      console.log(preOrderQty);
+      if (response.ok) {
+        toast.success("Yêu cầu đặt trước đã được gửi!");
+        setIsPreOrderOpen(false);
+        setPreOrderQty(1);
+      } else {
+        const errorText = await response.text();
+        console.error("Lỗi đặt trước:", errorText);
+        toast.error("Đặt trước thất bại. Vui lòng thử lại!");
+      }
+    } catch (error) {
+      toast.error("Có lỗi xảy ra. Vui lòng thử lại!");
+    }
   };
 
   return (
@@ -97,7 +123,7 @@ const ProductDetailInfo = ({ product }) => {
               </>
             ) : (
               <button
-                onClick={() => handlePreOrder(quantity)}
+                onClick={() => setIsPreOrderOpen(true)}
                 className="text-base px-4 py-2 rounded-full font-semibold bg-[#F75385] hover:bg-[#FAA4BD] text-white"
               >
                 Đặt Trước
@@ -106,6 +132,36 @@ const ProductDetailInfo = ({ product }) => {
           </div>
         </div>
       </div>
+      {isPreOrderOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md shadow-lg">
+            <h2 className="text-xl font-bold mb-4">Đặt Trước Sản Phẩm</h2>
+
+            <label className="block mb-2 font-medium">Số lượng</label>
+            <input
+              type="number"
+              min={1}
+              value={preOrderQty}
+              onChange={(e) => setPreOrderQty(Number(e.target.value))}
+              className="w-full border border-gray-300 rounded px-3 py-2 mb-4 focus:outline-none focus:ring-2 focus:ring-pink-400"
+            />
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setIsPreOrderOpen(false)}
+                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={handlePreOrderSubmit}
+                className="px-4 py-2 bg-[#F75385] text-white rounded hover:bg-[#FAA4BD]"
+              >
+                Gửi yêu cầu
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

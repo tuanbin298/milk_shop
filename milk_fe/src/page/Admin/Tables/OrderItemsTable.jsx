@@ -117,11 +117,22 @@ const OrderItemTable = () => {
   // console.log(orderData);
 
   // Logic handle order status to render status into dropdown
+  // const getNextStatus = (currentStatus) => {
+  //   switch (currentStatus) {
+  //     case "PAID":
+  //       return [{ value: "PACKAGING", label: "Đang đóng gói" }];
+  //     case "PACKAGING":
+  //       return [{ value: "PROCESSING", label: "Đang vận chuyển" }];
+  //     case "PROCESSING":
+  //       return [{ value: "COMPLETED", label: "Đã hoàn thành" }];
+  //     default:
+  //       return [];
+  //   }
+  // };
+
   const getNextStatus = (currentStatus) => {
     switch (currentStatus) {
       case "PAID":
-        return [{ value: "PACKAGING", label: "Đang đóng gói" }];
-      case "PACKAGING":
         return [{ value: "PROCESSING", label: "Đang vận chuyển" }];
       case "PROCESSING":
         return [{ value: "COMPLETED", label: "Đã hoàn thành" }];
