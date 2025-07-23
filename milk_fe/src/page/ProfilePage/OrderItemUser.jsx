@@ -33,7 +33,6 @@ import { Image } from "antd";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import PaidIcon from "@mui/icons-material/Paid";
 
-
 const UserOrderItem = () => {
   const { id } = useParams();
   const token = localStorage.getItem("sessionToken");
@@ -312,18 +311,20 @@ const UserOrderItem = () => {
                   <TableCell>{formatMoney(item.unitPrice)}</TableCell>
                   <TableCell>{item.quantity}</TableCell>
                   <TableCell>{formatMoney(item.totalPrice)}</TableCell>
-                  <TableCell>
-                    <Button
-                      variant="outlined"
-                      size="small"
-                      onClick={() => {
-                        setSelectedProduct(item);
-                        setOpenFeedbackModal(true);
-                      }}
-                    >
-                      Đánh giá
-                    </Button>
-                  </TableCell>
+                  {orderData?.status === "COMPLETED" && (
+                    <TableCell>
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        onClick={() => {
+                          setSelectedProduct(item);
+                          setOpenFeedbackModal(true);
+                        }}
+                      >
+                        Đánh giá
+                      </Button>
+                    </TableCell>
+                  )}
                 </TableRow>
               ))}
             </TableBody>
