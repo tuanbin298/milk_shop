@@ -150,7 +150,7 @@ const ProductDetailPage = () => {
                 className="border border-gray-200 rounded-lg p-4 bg-gray-50 shadow-sm flex flex-col justify-between text-center"
               >
                 <p className="font-semibold text-gray-800 mb-2">
-                  {fb.username || "Ẩn danh"}
+                  {fb.username || "Khách hàng"}
                 </p>
                 <p className="text-gray-700 text-sm mb-4">{fb.comment}</p>
 
