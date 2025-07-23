@@ -175,6 +175,8 @@ const PreOrderTable = () => {
                             ? "Đã xác nhận"
                             : item.status === "PENDING"
                             ? "Đang chờ"
+                            : item.status === "PAID"
+                            ? "Đã thanh toán"
                             : "Hủy"
                         }
                         color={
@@ -182,6 +184,8 @@ const PreOrderTable = () => {
                             ? "success"
                             : item.status === "PENDING"
                             ? "warning"
+                            : item.status === "PAID"
+                            ? "primary"
                             : "error"
                         }
                         size="small"

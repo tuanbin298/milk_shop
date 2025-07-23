@@ -46,8 +46,9 @@ import UserInformation from "./page/ProfilePage/UserDashboard";
 import UserAccount from "./page/ProfilePage/UserAccount";
 import UserOrder from "./page/ProfilePage/OrderUser";
 import UserOrderItem from "./page/ProfilePage/OrderItemUser";
-import PreOrderTable from "./page/Admin/Tables/PreOrderTable";
+import PreOrderTable from "./page/Admin/Tables/PreorderTable";
 import UserPreOrder from "./page/ProfilePage/UserPreOrder";
+import UserPreorderDetail from "./page/ProfilePage/UserPreOrderDetail";
 
 function MainLayout() {
   const location = useLocation();
@@ -127,6 +128,10 @@ function MainLayout() {
               <Route
                 path="userorder/userorderitem/:id"
                 element={<UserOrderItem />}
+              />
+              <Route
+                path="userpreorder/userpreorderdetail/:id"
+                element={<UserPreorderDetail />}
               />
             </Route>
             <Route path="/branddetail/:name" element={<BrandList />} />

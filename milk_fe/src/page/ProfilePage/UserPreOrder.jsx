@@ -108,7 +108,7 @@ const UserPreOrder = () => {
                 <TableCell sx={{ width: "120px" }}>Ngày đặt</TableCell>
                 <TableCell>Thời gian xác nhận</TableCell>
                 <TableCell>Trạng thái</TableCell>
-                <TableCell>Hành động</TableCell>
+                <TableCell></TableCell>
               </TableRow>
             </TableHead>
 
@@ -122,7 +122,9 @@ const UserPreOrder = () => {
                         "&:hover": { backgroundColor: "#f0f0f0" },
                       }}
                       onClick={() =>
-                        navigate(`/profile-user/preorder/detail/${item.id}`)
+                        navigate(
+                          `/profile-user/userpreorder/userpreorderdetail/${item.id}`
+                        )
                       }
                     >
                       <TableCell>#{item.id}</TableCell>
