@@ -42,6 +42,7 @@ export default function DashboardOverview() {
   const [usersData, setUsersData] = useState([]);
   const [brandsData, setBrandsData] = useState([]);
   const [feedbacksData, setFeedbacksData] = useState([]);
+  const [preOrdersData, setPreOrdersData] = useState([]);
 
   const [totalRevenue, setTotalRevenue] = useState(0);
   const [totalProductQuantity, setTotalProductQuantity] = useState([0]);
@@ -145,11 +146,33 @@ export default function DashboardOverview() {
       }
     };
 
+    const getPreOrdersList = async () => {
+      try {
+        const response = await fetch(`http://localhost:8080/api/preorders`, {
+          method: "GET",
+          headers: {
+            accept: "*/*",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setPreOrdersData(data);
+        } else {
+          toast.error("Lỗi tải danh sách đặt trước");
+        }
+      } catch (error) {
+        toast.error("Lỗi server khi tải danh sách đặt trước");
+      }
+    };
+
     getOrders();
     getProducts();
     getUsers();
     getBrands();
     getFeedbacks();
+    getPreOrdersList();
   }, []);
 
   useEffect(() => {
@@ -228,7 +251,8 @@ export default function DashboardOverview() {
     {
       icon: <CreditScoreIcon fontSize="large" sx={{ color: "#f57c00" }} />,
       label: "Tổng đơn đặt trước",
-      value: `${0} Đơn`,
+      value: `${preOrdersData.length || 0} Đơn`,
+      link: "/dashboard/preorderlist",
     },
     {
       icon: <PersonIcon fontSize="large" sx={{ color: "#d32f2f" }} />,

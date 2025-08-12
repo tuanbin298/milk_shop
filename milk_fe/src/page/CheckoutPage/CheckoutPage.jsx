@@ -31,6 +31,7 @@ export default function CheckoutPage() {
   const [email, setEmail] = useState(localStorage.getItem("username") || "");
   const [phone, setPhone] = useState(localStorage.getItem("phone") || "");
   const { id: preorderId } = useParams();
+
   // State
   const [cartData, setCartData] = useState(null);
   const [pointData, setPointData] = useState(null);
@@ -193,7 +194,9 @@ export default function CheckoutPage() {
       ward: !ward,
     };
     setErrors(newErrors);
+
     const hasError = Object.values(newErrors).some((e) => e);
+
     if (hasError) {
       toast.error("Vui lòng điền đầy đủ thông tin bắt buộc");
       return;
